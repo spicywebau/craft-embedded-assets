@@ -52,7 +52,11 @@ class OEmbedService extends BaseApplicationComponent
 			$asset = $this->_storeFile($media, $folderId);
 		}
 
-		$record->assedId         = $media->assetId;
+		if($asset)
+		{
+			$record->assetId = $asset->id;
+		}
+
 		$record->type            = $media->type;
 		$record->version         = $media->version;
 		$record->url             = $media->url;

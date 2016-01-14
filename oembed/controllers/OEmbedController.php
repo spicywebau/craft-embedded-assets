@@ -53,6 +53,22 @@ class OEmbedController extends BaseController
 		$model->width           = $media['width'];
 		$model->height          = $media['height'];
 
-		craft()->oEmbed->saveAsset($model, $folderId);
+		$json = array();
+
+		try
+		{
+			craft()->oEmbed->saveAsset($model, $folderId);
+
+			$json['success'] = true;
+			$json['media'] = $model;
+			$json['folderId'] = $folderId;
+		}
+		catch(\Exception $e)
+		{
+			$json['success'] = false;
+			$json['error'] = $e->getMessage();
+		}
+
+		$this->returnJson($json);
 	}
 }
