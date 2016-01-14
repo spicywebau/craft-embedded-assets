@@ -1,8 +1,9 @@
 (function($, Craft)
 {
+	/**
+	 * OEmbed Class (Singleton)
+	 */
 	var OEmbed = new (Garnish.Base.extend({
-
-		EmbedModal: null,
 
 		init: function()
 		{
@@ -16,6 +17,34 @@
 
 				that.initEmbedButton(this);
 			};
+		},
+
+		parseUrl: function(url)
+		{
+			var params = {
+				url: url
+			};
+
+			Craft.postActionRequest('oEmbed/parseUrl', params, $.proxy(function(response, textStatus)
+			{
+				if(textStatus == 'success')
+				{
+					if(response.success)
+					{
+						this.trigger('parseUrl', {
+							media: response.media
+						})
+					}
+					else
+					{
+						Craft.cp.displayError(response.error);
+					}
+				}
+				else
+				{
+					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+				}
+			}, this));
 		},
 
 		initEmbedButton: function(assetIndex)
@@ -37,10 +66,11 @@
 
 		openEmbedModal: function()
 		{
-			var modal = new this.EmbedModal();
+			var modal = new OEmbed.EmbedModal();
 
 			modal.show();
 		}
+
 	}))();
 
 	window.OEmbed = OEmbed;
