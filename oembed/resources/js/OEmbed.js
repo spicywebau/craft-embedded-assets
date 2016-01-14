@@ -38,6 +38,23 @@
 			}, this));
 		},
 
+		saveAsset: function(params)
+		{
+			Craft.postActionRequest('oEmbed/saveAsset', params, $.proxy(function(response, textStatus)
+			{
+				if(textStatus == 'success')
+				{
+					this.trigger('saveAsset', response);
+
+					console.log(response);
+				}
+				else
+				{
+					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+				}
+			}, this));
+		},
+
 		initEmbedButton: function(assetIndex)
 		{
 			var $header = $('#extra-headers');
@@ -59,7 +76,15 @@
 		{
 			var modal = new OEmbed.EmbedModal();
 
+			modal.on('saveAsset', $.proxy(this.onSaveAsset, this));
 			modal.show();
+		},
+
+		onSaveAsset: function(e)
+		{
+			this.saveAsset({
+				media: e.media
+			});
 		}
 
 	}))();

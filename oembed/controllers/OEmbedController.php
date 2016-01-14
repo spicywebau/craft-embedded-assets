@@ -9,9 +9,7 @@ class OEmbedController extends BaseController
 		$this->requireAjaxRequest();
 
 		$url = craft()->request->getPost('url');
-
-		$essence = new \Essence\Essence();
-		$media = $essence->extract($url);
+		$media = craft()->oEmbed->parseUrl($url);
 
 		$json = array();
 
@@ -27,5 +25,34 @@ class OEmbedController extends BaseController
 		}
 
 		$this->returnJson($json);
+	}
+
+	public function actionSaveAsset()
+	{
+		$this->requireAjaxRequest();
+
+		$folderId = craft()->request->getPost('folderId');
+		$media = craft()->request->getPost('media');
+
+		$model = new OEmbedModel();
+
+		$model->type            = $media['type'];
+		$model->version         = $media['version'];
+		$model->url             = $media['url'];
+		$model->title           = $media['title'];
+		$model->description     = $media['description'];
+		$model->authorName      = $media['authorName'];
+		$model->authorUrl       = $media['authorUrl'];
+		$model->providerName    = $media['providerName'];
+		$model->providerUrl     = $media['providerUrl'];
+		$model->cacheAge        = $media['cacheAge'];
+		$model->thumbnailUrl    = $media['thumbnailUrl'];
+		$model->thumbnailWidth  = $media['thumbnailWidth'];
+		$model->thumbnailHeight = $media['thumbnailHeight'];
+		$model->html            = $media['html'];
+		$model->width           = $media['width'];
+		$model->height          = $media['height'];
+
+		craft()->oEmbed->saveAsset($model, $folderId);
 	}
 }

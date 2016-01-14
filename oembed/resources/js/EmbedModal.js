@@ -97,9 +97,12 @@
 				return;
 			}
 
-			this.trigger('embed', {
-				// TODO
-			});
+			if(this.media)
+			{
+				this.trigger('saveAsset', {
+					media: this.media
+				});
+			}
 
 			this.hide();
 		},
