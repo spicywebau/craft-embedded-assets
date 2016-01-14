@@ -13,8 +13,6 @@ class OEmbedService extends BaseApplicationComponent
 
 	public function saveAsset(OEmbedModel $media, $folderId)
 	{
-		$file = $this->_storeFile($media, $folderId);
-
 		$isExisting = false;
 		$record = null;
 
