@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class OEmbedModel extends BaseComponentModel
+class EmbeddedAssetsModel extends BaseComponentModel
 {
 	protected function defineAttributes()
 	{

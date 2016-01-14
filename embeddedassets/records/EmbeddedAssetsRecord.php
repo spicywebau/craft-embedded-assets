@@ -2,11 +2,11 @@
 
 namespace Craft;
 
-class OEmbedRecord extends BaseRecord
+class EmbeddedAssetsRecord extends BaseRecord
 {
 	public function getTableName()
 	{
-		return 'oembed';
+		return 'embeddedassets';
 	}
 
 	public function defineRelations()

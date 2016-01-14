@@ -1,9 +1,9 @@
 (function($, Craft)
 {
 	/**
-	 * OEmbed Class (Singleton)
+	 * EmbeddedAssets Class (Singleton)
 	 */
-	var OEmbed = new (Garnish.Base.extend({
+	var EmbeddedAssets = new (Garnish.Base.extend({
 
 		assetIndex: null,
 
@@ -28,7 +28,7 @@
 				url: url
 			};
 
-			Craft.postActionRequest('oEmbed/parseUrl', params, $.proxy(function(response, textStatus)
+			Craft.postActionRequest('embeddedAssets/parseUrl', params, $.proxy(function(response, textStatus)
 			{
 				if(textStatus == 'success')
 				{
@@ -44,7 +44,7 @@
 		saveAsset: function(params)
 		{
 			console.log(params);
-			Craft.postActionRequest('oEmbed/saveAsset', params, $.proxy(function(response, textStatus)
+			Craft.postActionRequest('embeddedAssets/saveAsset', params, $.proxy(function(response, textStatus)
 			{
 				console.log(response, textStatus);
 				if(textStatus == 'success')
@@ -79,7 +79,7 @@
 
 		openEmbedModal: function()
 		{
-			var modal = new OEmbed.EmbedModal();
+			var modal = new EmbeddedAssets.EmbedModal();
 
 			modal.on('saveAsset', $.proxy(this.onSaveAsset, this));
 			modal.show();
@@ -95,6 +95,6 @@
 
 	}))();
 
-	window.OEmbed = OEmbed;
+	window.EmbeddedAssets = EmbeddedAssets;
 
 })(jQuery, Craft);

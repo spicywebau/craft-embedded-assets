@@ -2,14 +2,14 @@
 
 namespace Craft;
 
-class OEmbedController extends BaseController
+class EmbeddedAssetsController extends BaseController
 {
 	public function actionParseUrl()
 	{
 		$this->requireAjaxRequest();
 
 		$url = craft()->request->getPost('url');
-		$media = craft()->oEmbed->parseUrl($url);
+		$media = craft()->embeddedAssets->parseUrl($url);
 
 		$json = array();
 
@@ -34,7 +34,7 @@ class OEmbedController extends BaseController
 		$folderId = craft()->request->getPost('folderId');
 		$media = craft()->request->getPost('media');
 
-		$model = new OEmbedModel();
+		$model = new EmbeddedAssetsModel();
 
 		$model->type            = $media['type'];
 		$model->version         = $media['version'];
@@ -57,7 +57,7 @@ class OEmbedController extends BaseController
 
 		try
 		{
-			craft()->oEmbed->saveAsset($model, $folderId);
+			craft()->embeddedAssets->saveAsset($model, $folderId);
 
 			$json['success'] = true;
 			$json['media'] = $model;

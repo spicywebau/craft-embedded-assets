@@ -2,16 +2,16 @@
 
 namespace Craft;
 
-class OEmbedPlugin extends BasePlugin
+class EmbeddedAssetsPlugin extends BasePlugin
 {
 	public function getName()
 	{
-		return Craft::t('oEmbed');
+		return Craft::t('Embedded Assets');
 	}
 
 	public function getDescription()
 	{
-		return 'Add oEmbeddable media such as YouTube videos to your assets manager';
+		return 'Add embeddable media such as YouTube videos to your assets manager';
 	}
 
 	public function getVersion()
@@ -36,12 +36,12 @@ class OEmbedPlugin extends BasePlugin
 
 	public function getDocumentationUrl()
 	{
-		return 'https://github.com/benjamminf/craft-oembed';
+		return 'https://github.com/benjamminf/craft-embedded-assets';
 	}
 
 	public function getReleaseFeedUrl()
 	{
-		return 'https://raw.githubusercontent.com/benjamminf/craft-oembed/master/releases.json';
+		return 'https://raw.githubusercontent.com/benjamminf/craft-embedded-assets/master/releases.json';
 	}
 
 	public function init()
@@ -62,16 +62,16 @@ class OEmbedPlugin extends BasePlugin
 
 	protected function loadDependencies()
 	{
-		require CRAFT_PLUGINS_PATH . '/oembed/vendor/autoload.php';
+		require CRAFT_PLUGINS_PATH . '/embeddedassets/vendor/autoload.php';
 	}
 
 	protected function includeResources()
 	{
 		if(!craft()->request->isAjaxRequest())
 		{
-			craft()->templates->includeCssResource('oembed/css/main.css');
-			craft()->templates->includeJsResource('oembed/js/OEmbed.js');
-			craft()->templates->includeJsResource('oembed/js/EmbedModal.js');
+			craft()->templates->includeCssResource('embeddedassets/css/main.css');
+			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedAssets.js');
+			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
 		}
 	}
 }

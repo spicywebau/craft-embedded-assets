@@ -2,7 +2,7 @@
 
 namespace Craft;
 
-class OEmbedService extends BaseApplicationComponent
+class EmbeddedAssetsService extends BaseApplicationComponent
 {
 	public function parseUrl($url)
 	{
@@ -11,14 +11,14 @@ class OEmbedService extends BaseApplicationComponent
 		return $essence->extract($url);
 	}
 
-	public function saveAsset(OEmbedModel $media, $folderId)
+	public function saveAsset(EmbeddedAssetsModel $media, $folderId)
 	{
 		$isExisting = false;
 		$record = null;
 
 		if(is_int($media->id))
 		{
-			$record = OEmbedRecord::model()->findById($media->id);
+			$record = EmbeddedAssetsRecord::model()->findById($media->id);
 
 			if($record)
 			{
@@ -31,7 +31,7 @@ class OEmbedService extends BaseApplicationComponent
 		}
 		else
 		{
-			$record = OEmbedRecord::model()->findByAttributes(array(
+			$record = EmbeddedAssetsRecord::model()->findByAttributes(array(
 				'assetId' => $media->assetId,
 			));
 
@@ -41,7 +41,7 @@ class OEmbedService extends BaseApplicationComponent
 			}
 			else
 			{
-				$record = new OEmbedRecord();
+				$record = new EmbeddedAssetsRecord();
 			}
 		}
 
@@ -123,7 +123,7 @@ class OEmbedService extends BaseApplicationComponent
 		return $success;
 	}
 
-	private function _storeFile(OEmbedModel $media, $folderId)
+	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
 	{
 		if($media->thumbnailUrl)
 		{

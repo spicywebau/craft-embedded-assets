@@ -1,3 +1,3 @@
-# oEmbed media for Craft CMS
+# Embedded assets for Craft CMS
 
-Add oEmbeddable media such as YouTube videos to your assets manager
+Add embeddable media such as YouTube videos to your assets manager
