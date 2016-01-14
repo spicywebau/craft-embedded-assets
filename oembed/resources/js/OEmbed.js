@@ -29,16 +29,7 @@
 			{
 				if(textStatus == 'success')
 				{
-					if(response.success)
-					{
-						this.trigger('parseUrl', {
-							media: response.media
-						})
-					}
-					else
-					{
-						Craft.cp.displayError(response.error);
-					}
+					this.trigger('parseUrl', response);
 				}
 				else
 				{

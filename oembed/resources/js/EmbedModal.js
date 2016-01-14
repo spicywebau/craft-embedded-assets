@@ -66,15 +66,19 @@
 		{
 			var media = e.media;
 
-			console.log(media);
+			if(e.success)
+			{
+				this.$media.prop('href', media.url);
+				this.$mediaTitle.text(media.title);
+				this.$mediaDesc.text(media.description);
+				this.$mediaImage.css('backgroundImage', 'url(' + media.thumbnailUrl + ')');
+				this.$mediaType.text(media.type);
 
-			this.$media.prop('href', media.url);
-			this.$mediaTitle.text(media.title);
-			this.$mediaDesc.text(media.description);
-			this.$mediaImage.css('backgroundImage', 'url(' + media.thumbnailUrl + ')');
-			this.$mediaType.text(media.type);
-
-			this.$media.css('display', '');
+				this.$media.css('display', '');
+			}
+			
+			this.$media.css('display', e.success ? '' : 'none');
+			this.displayErrors('url', e.errors);
 
 			this.updateSizeAndPosition();
 		},
@@ -134,7 +138,7 @@
 				case 'url':
 				{
 					$input = this.$urlField;
-					$errorList = this.$urlField;
+					$errorList = this.$urlErrors;
 
 					break;
 				}

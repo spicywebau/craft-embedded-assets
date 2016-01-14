@@ -23,7 +23,7 @@ class OEmbedController extends BaseController
 		else
 		{
 			$json['success'] = false;
-			$json['error'] = Craft::t('Could not find any embeddable media from this URL.');
+			$json['errors'] = array(Craft::t('Could not find any embeddable media from this URL.'));
 		}
 
 		$this->returnJson($json);
