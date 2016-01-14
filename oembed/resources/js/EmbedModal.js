@@ -2,6 +2,8 @@
 {
 	var EmbedModal = Garnish.Modal.extend({
 
+		media: null,
+
 		init: function()
 		{
 			this.base();
@@ -31,7 +33,7 @@
 					'</a>',
 					'<div class="buttons right" style="margin-top: 0;">',
 						'<div id="oembed-cancel-button" class="btn">', Craft.t('Cancel'), '</div>',
-						'<input id="oembed-save-button" type="submit" class="btn submit" value="', Craft.t('Save'), '">',
+						'<input id="oembed-save-button" type="submit" class="btn submit disabled" disabled value="', Craft.t('Save'), '">',
 					'</div>',
 				'</div>'
 			].join('')).appendTo(this.$form);
@@ -65,6 +67,7 @@
 		onParseUrl: function(e)
 		{
 			var media = e.media;
+			this.media = media;
 
 			if(e.success)
 			{
@@ -76,7 +79,8 @@
 
 				this.$media.css('display', '');
 			}
-			
+
+			this.$saveBtn.toggleClass('disabled', !e.success).prop('disabled', !e.success);
 			this.$media.css('display', e.success ? '' : 'none');
 			this.displayErrors('url', e.errors);
 
