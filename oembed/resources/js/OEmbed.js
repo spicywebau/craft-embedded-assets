@@ -43,9 +43,6 @@
 
 		saveAsset: function(params)
 		{
-			// TODO Cleanup
-			params.folderId = this.assetIndex.getDefaultSourceKey().split(':')[1] | 0;
-
 			Craft.postActionRequest('oEmbed/saveAsset', params, $.proxy(function(response, textStatus)
 			{
 				if(textStatus == 'success')
@@ -89,6 +86,7 @@
 		onSaveAsset: function(e)
 		{
 			this.saveAsset({
+				folderId: this.assetIndex.getDefaultSourceKey().split(':')[1] | 0,
 				media: e.media
 			});
 		}
