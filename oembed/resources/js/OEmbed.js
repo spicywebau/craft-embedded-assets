@@ -5,6 +5,8 @@
 	 */
 	var OEmbed = new (Garnish.Base.extend({
 
+		assetIndex: null,
+
 		init: function()
 		{
 			var that = this;
@@ -13,6 +15,7 @@
 
 			fn.init = function()
 			{
+				that.assetIndex = this;
 				superInit.apply(this, arguments);
 
 				that.initEmbedButton(this);
@@ -40,6 +43,9 @@
 
 		saveAsset: function(params)
 		{
+			// TODO Cleanup
+			params.folderId = this.assetIndex.getDefaultSourceKey().split(':')[1] | 0;
+
 			Craft.postActionRequest('oEmbed/saveAsset', params, $.proxy(function(response, textStatus)
 			{
 				if(textStatus == 'success')
