@@ -1,0 +1,35 @@
+{
+	"name": "essence/essence",
+	"type": "library",
+	"description": "Extracts information about medias on the web, like youtube videos, twitter statuses or blog articles.",
+	"version": "3.1.0",
+	"authors": [{
+		"name": "Félix Girault",
+		"email": "felix.girault@gmail.com",
+		"homepage": "http://www.felix-girault.fr",
+		"role": "Developer"
+	}],
+	"keywords": [
+		"embed",
+		"oembed",
+		"opengraph",
+		"media"
+	],
+	"license": "BSD-2-Clause",
+	"homepage": "http://github.com/essence/essence",
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=5.5.0",
+		"essence/dom": "~1.0.0",
+		"essence/http": "~1.0.0",
+		"fg/parkour": "~1.1.0"
+	},
+	"suggest": {
+		"ext-curl": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Essence\\": "lib/Essence"
+		}
+	}
+}

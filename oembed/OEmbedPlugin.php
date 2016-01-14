@@ -50,6 +50,7 @@ class OEmbedPlugin extends BasePlugin
 
 		if(craft()->request->isCpRequest() && $this->isCraftRequiredVersion())
 		{
+			$this->loadDependencies();
 			$this->includeResources();
 		}
 	}
@@ -59,12 +60,18 @@ class OEmbedPlugin extends BasePlugin
 		return version_compare(craft()->getVersion(), '2.5', '>=');
 	}
 
+	protected function loadDependencies()
+	{
+		require CRAFT_PLUGINS_PATH . '/oembed/vendor/autoload.php';
+	}
+
 	protected function includeResources()
 	{
-		if(!craft()->request->isAjaxRequest() && craft()->userSession->isAdmin())
+		if(!craft()->request->isAjaxRequest())
 		{
 			craft()->templates->includeCssResource('oembed/css/main.css');
-			craft()->templates->includeJsResource('oembed/js/main.js');
+			craft()->templates->includeJsResource('oembed/js/OEmbed.js');
+			craft()->templates->includeJsResource('oembed/js/EmbedModal.js');
 		}
 	}
 }

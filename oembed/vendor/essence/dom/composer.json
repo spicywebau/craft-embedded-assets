@@ -1,0 +1,23 @@
+{
+	"name": "essence/dom",
+	"type": "library",
+	"description": "Essence's DOM parser.",
+	"version": "1.0.0",
+	"authors": [{
+		"name": "Félix Girault",
+		"email": "felix.girault@gmail.com",
+		"homepage": "http://www.felix-girault.fr",
+		"role": "Developer"
+	}],
+	"keywords": [
+		"DOM",
+		"parser"
+	],
+	"license": "MIT",
+	"homepage": "http://github.com/essence/dom",
+	"autoload": {
+		"psr-4": {
+			"Essence\\Dom\\": "src"
+		}
+	}
+}
