@@ -118,6 +118,10 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 					{
 						$media->assetId = $asset->id;
 						$record->assetId = $asset->id;
+
+						$asset->getContent()->title = $media->title;
+
+						craft()->assets->storeFile($asset);
 					}
 
 					$record->save(false);
