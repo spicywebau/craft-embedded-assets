@@ -2,6 +2,18 @@
 
 namespace Craft;
 
+/**
+ * This hack overrides the `move_uploaded_file()` function in the Craft namespace, and allows it to support files
+ * injected into the `$_FILES` array.
+ *
+ * The `move_uploaded_files()` function, as stated in the PHP docs, will only work if the file was submitted through a
+ * POST request, which isn't the case when injecting. The override calls another similar function that doesn't have this
+ * restriction if the original function fails.
+ *
+ * @param $filename
+ * @param $destination
+ * @return bool
+ */
 function move_uploaded_file($filename, $destination)
 {
 	return \move_uploaded_file($filename, $destination) || rename($filename, $destination);
