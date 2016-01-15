@@ -147,6 +147,11 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		{
 			$this->_addToFiles('assets-upload', $media->thumbnailUrl);
 
+			$fileExt = IOHelper::getExtension($media->thumbnailUrl);
+			$fileName = AssetsHelper::cleanAssetName($media->title, false) . '.' . $fileExt;
+
+			$_FILES['assets-upload']['name'] = $fileName;
+
 			$response = craft()->assets->uploadFile($folderId);
 
 			if($response->isSuccess())
