@@ -155,7 +155,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			$this->_addToFiles('assets-upload', $media->thumbnailUrl);
 
 			$fileExt = IOHelper::getExtension($media->thumbnailUrl);
-			$fileName = AssetsHelper::cleanAssetName($media->title, false) . '.' . $fileExt;
+			$fileName = uniqid('embed_') . '.' . $fileExt;
 
 			$_FILES['assets-upload']['name'] = $fileName;
 
@@ -167,6 +167,10 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 				$file = craft()->assets->getFileById($fileId);
 
 				return $file;
+			}
+			else
+			{
+				throw new \Exception('Collision when uploading thumbnail.');
 			}
 		}
 
