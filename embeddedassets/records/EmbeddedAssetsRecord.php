@@ -19,7 +19,7 @@ class EmbeddedAssetsRecord extends BaseRecord
 	protected function defineAttributes()
 	{
 		return array(
-			'type'            => AttributeType::Number,
+			'type'            => AttributeType::String,
 			'version'         => AttributeType::String,
 			'url'             => AttributeType::String,
 			'title'           => AttributeType::String,

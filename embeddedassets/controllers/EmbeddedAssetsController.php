@@ -57,16 +57,24 @@ class EmbeddedAssetsController extends BaseController
 
 		try
 		{
-			craft()->embeddedAssets->saveAsset($model, $folderId);
+			$success = craft()->embeddedAssets->saveAsset($model, $folderId);
 
-			$json['success'] = true;
-			$json['media'] = $model;
-			$json['folderId'] = $folderId;
+			if($success)
+			{
+				$json['media'] = $model;
+				$json['folderId'] = $folderId;
+			}
+			else
+			{
+				$json['errors'] = $model->getAllErrors();
+			}
+
+			$json['success'] = $success;
 		}
 		catch(\Exception $e)
 		{
 			$json['success'] = false;
-			$json['error'] = $e->getMessage();
+			$json['errors'] = array($e->getMessage());
 		}
 
 		$this->returnJson($json);

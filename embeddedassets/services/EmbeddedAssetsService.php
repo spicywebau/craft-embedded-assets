@@ -62,18 +62,6 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			}
 		}
 
-		$asset = craft()->assets->getFileById($media->assetId);
-
-		if(!$asset)
-		{
-			$asset = $this->_storeFile($media, $folderId);
-		}
-
-		if($asset)
-		{
-			$record->assetId = $asset->id;
-		}
-
 		$record->type            = $media->type;
 		$record->version         = $media->version;
 		$record->url             = $media->url;
@@ -112,6 +100,19 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 				try
 				{
+					$asset = craft()->assets->getFileById($media->assetId);
+
+					if(!$asset)
+					{
+						$asset = $this->_storeFile($media, $folderId);
+					}
+
+					if($asset)
+					{
+						$media->assetId = $asset->id;
+						$record->assetId = $asset->id;
+					}
+
 					$record->save(false);
 					$media->id = $record->id;
 

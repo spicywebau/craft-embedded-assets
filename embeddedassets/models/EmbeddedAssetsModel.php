@@ -8,7 +8,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 	{
 		return array_merge(parent::defineAttributes(), array(
 			'assetId'         => AttributeType::Number,
-			'type'            => AttributeType::Number,
+			'type'            => AttributeType::String,
 			'version'         => AttributeType::String,
 			'url'             => AttributeType::String,
 			'title'           => AttributeType::String,
