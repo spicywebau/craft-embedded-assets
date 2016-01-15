@@ -52,6 +52,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		{
 			$this->loadDependencies();
 			$this->includeResources();
+			$this->includeThumbnails();
 		}
 	}
 
@@ -72,6 +73,14 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			craft()->templates->includeCssResource('embeddedassets/css/main.css');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedAssets.js');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
+		}
+	}
+
+	public static function includeThumbnails()
+	{
+		if(!craft()->request->isAjaxRequest())
+		{
+			
 		}
 	}
 

@@ -18,8 +18,14 @@
 				that.assetIndex = this;
 				superInit.apply(this, arguments);
 
-				that.initEmbedButton(this);
+				that.setup();
 			};
+		},
+
+		setup: function()
+		{
+			this.setupEmbedButton();
+			this.setupThumbnails();
 		},
 
 		parseUrl: function(url)
@@ -58,8 +64,10 @@
 			}, this));
 		},
 
-		initEmbedButton: function(assetIndex)
+		setupEmbedButton: function()
 		{
+			var assetIndex = this.assetIndex;
+
 			var $header = $('#extra-headers');
 			var $buttons = assetIndex.$uploadButton.parent();
 			var $buttonGroup = $('<div class="btngroup">').appendTo($header);
@@ -73,6 +81,19 @@
 				.appendTo($buttonGroup);
 
 			this.addListener($embedButton, 'click', 'openEmbedModal');
+		},
+
+		setupThumbnails: function()
+		{
+			var assetIndex = this.assetIndex;
+
+			assetIndex.on('updateElements', function(e)
+			{
+				var view = e.target.view;
+				var elements = view.getAllElements();
+
+				console.log(elements);
+			});
 		},
 
 		openEmbedModal: function()
