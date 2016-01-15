@@ -80,17 +80,12 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		return 'embed_';
 	}
 
-	/*
-	public function modifyAssetSources($sources, $context)
+	public function defineAdditionalAssetTableAttributes()
 	{
-
+		return array(
+			'provider' => array('label' => Craft::t('Provider')),
+		);
 	}
-
-	public function defineAdditionalAssetTableAttributes($attributes)
-	{
-
-	}
-	*/
 
 	public function getAssetTableAttributeHtml($element, $attribute)
 	{
@@ -109,6 +104,18 @@ class EmbeddedAssetsPlugin extends BasePlugin
 							array(
 								'url' => $embed->url,
 								'name' => mb_strimwidth($embed->url, 0, 50, '...'),
+							)
+						);
+					}
+
+					case 'provider':
+					{
+						return HtmlHelper::encodeParams(
+							'<a href="{url}" target="_blank" data-provider="{data}">{name}</a>',
+							array(
+								'url' => $embed->providerUrl,
+								'data' => StringHelper::toCamelCase($embed->providerName),
+								'name' => $embed->providerName,
 							)
 						);
 					}
@@ -163,6 +170,11 @@ class EmbeddedAssetsPlugin extends BasePlugin
 					}
 				}
 			}
+		}
+
+		if($attribute === 'provider')
+		{
+			return '';
 		}
 
 		return null;
