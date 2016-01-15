@@ -68,7 +68,7 @@
 			assetIndex.$uploadInput.appendTo($buttonGroup);
 			$buttons.remove();
 
-			var $embedButton = $('<div class="btn submit" data-icon="field">')
+			var $embedButton = $('<div class="btn submit">')
 				.text(Craft.t('Embed link'))
 				.appendTo($buttonGroup);
 

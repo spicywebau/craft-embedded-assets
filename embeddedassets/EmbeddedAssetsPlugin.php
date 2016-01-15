@@ -75,6 +75,11 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		}
 	}
 
+	public static function getFileNamePrefix()
+	{
+		return 'embed_';
+	}
+
 	/*
 	public function modifyAssetSources($sources, $context)
 	{

@@ -61,7 +61,10 @@ class EmbeddedAssetsController extends BaseController
 
 			if($success)
 			{
-				$json['media'] = $model;
+				$asset = craft()->assets->getFileById($model->assetId);
+
+				$json['media'] = $model->getAttributes(null, true);
+				$json['asset'] = $asset->getAttributes(null, true);
 				$json['folderId'] = $folderId;
 			}
 			else

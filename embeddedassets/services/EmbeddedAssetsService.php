@@ -30,176 +30,100 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 	public function getEmbeddedAsset(AssetFileModel $asset)
 	{
-		$record = EmbeddedAssetsRecord::model()->findByAttributes(array('assetId' => $asset->id));
+		$embed = EmbeddedAssetsModel::populateFromAsset($asset);
 
-		return $record ? EmbeddedAssetsModel::populateModel($record) : null;
+		return $embed ? $embed : null;
 	}
 
 	public function saveEmbeddedAsset(EmbeddedAssetsModel $media, $folderId)
 	{
-		$isExisting = false;
-		$record = null;
+		$event = new Event($this, array(
+			'media' => $media,
+		));
 
-		if(is_int($media->id))
+		$this->onBeforeSaveEmbed($event);
+
+		if($event->performAction)
 		{
-			$record = EmbeddedAssetsRecord::model()->findById($media->id);
+			// Create transaction only if this isn't apart of an already occurring transaction
+			$transaction = craft()->db->getCurrentTransaction() ? false : craft()->db->beginTransaction();
 
-			if($record)
+			try
 			{
-				$isExisting = true;
-			}
-			else
-			{
-				throw new Exception(Craft::t('No embedded asset exists with the ID "{id}".', array('id' => $media->id)));
-			}
-		}
-		else
-		{
-			$record = EmbeddedAssetsRecord::model()->findByAttributes(array(
-				'assetId' => $media->assetId,
-			));
+				$asset = $this->_storeFile($media, $folderId);
+				$asset->getContent()->title = $media->title;
 
-			if($record)
-			{
-				$isExisting = true;
-			}
-			else
-			{
-				$record = new EmbeddedAssetsRecord();
-			}
-		}
+				craft()->assets->storeFile($asset);
 
-		$record->type            = $media->type;
-		$record->version         = $media->version;
-		$record->url             = $media->url;
-		$record->title           = $media->title;
-		$record->description     = $media->description;
-		$record->authorName      = $media->authorName;
-		$record->authorUrl       = $media->authorUrl;
-		$record->providerName    = $media->providerName;
-		$record->providerUrl     = $media->providerUrl;
-		$record->cacheAge        = $media->cacheAge;
-		$record->thumbnailUrl    = $media->thumbnailUrl;
-		$record->thumbnailWidth  = $media->thumbnailWidth;
-		$record->thumbnailHeight = $media->thumbnailHeight;
-		$record->html            = $media->html;
-		$record->width           = $media->width;
-		$record->height          = $media->height;
+				$media->assetId = $asset->id;
 
-		$record->validate();
-		$media->addErrors($record->getErrors());
-
-		$success = !$media->hasErrors();
-
-		if($success)
-		{
-			$event = new Event($this, array(
-				'media'      => $media,
-				'isNewEmbed' => !$isExisting,
-			));
-
-			$this->onBeforeSaveEmbed($event);
-
-			if($event->performAction)
-			{
-				// Create transaction only if this isn't apart of an already occurring transaction
-				$transaction = craft()->db->getCurrentTransaction() ? false : craft()->db->beginTransaction();
-
-				try
+				if($transaction)
 				{
-					$asset = craft()->assets->getFileById($media->assetId);
-
-					if(!$asset)
-					{
-						$asset = $this->_storeFile($media, $folderId);
-					}
-
-					if($asset)
-					{
-						$media->assetId = $asset->id;
-						$record->assetId = $asset->id;
-
-						$asset->getContent()->title = $media->title;
-
-						craft()->assets->storeFile($asset);
-					}
-
-					$record->save(false);
-					$media->id = $record->id;
-
-					if($transaction)
-					{
-						$transaction->commit();
-					}
+					$transaction->commit();
 				}
-				catch(\Exception $e)
+			}
+			catch(\Exception $e)
+			{
+				if($transaction)
 				{
-					if($transaction)
-					{
-						$transaction->rollback();
-					}
-
-					throw $e;
+					$transaction->rollback();
 				}
 
-				$this->onSaveEmbed(new Event($this, array(
-					'media'      => $media,
-					'isNewEmbed' => !$isExisting,
-				)));
+				throw $e;
 			}
+
+			$this->onSaveEmbed(new Event($this, array(
+				'media' => $media,
+				'asset' => $asset,
+			)));
 		}
 
-		return $success;
+		return true;
 	}
 
 	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
 	{
-		if($media->thumbnailUrl)
+		$fileName = EmbeddedAssetsPlugin::getFileNamePrefix() . StringHelper::UUID() . '.json';
+		$fileData = $media->getAttributes(null, true);
+		$fileData['__embeddedasset__'] = true;
+
+		$this->_addToFiles('assets-upload', $fileName, JsonHelper::encode($fileData));
+
+		$response = craft()->assets->uploadFile($folderId);
+
+		if($response->isSuccess())
 		{
-			$this->_addToFiles('assets-upload', $media->thumbnailUrl);
+			$fileId = $response->getDataItem('fileId');
+			$file = craft()->assets->getFileById($fileId);
 
-			$fileExt = IOHelper::getExtension($media->thumbnailUrl);
-			$fileName = uniqid('embed_') . '.' . $fileExt;
-
-			$_FILES['assets-upload']['name'] = $fileName;
-
-			$response = craft()->assets->uploadFile($folderId);
-
-			if($response->isSuccess())
-			{
-				$fileId = $response->getDataItem('fileId');
-				$file = craft()->assets->getFileById($fileId);
-
-				return $file;
-			}
-			else
-			{
-				throw new \Exception('Collision when uploading thumbnail.');
-			}
+			return $file;
 		}
-
-		return false;
+		else
+		{
+			throw new \Exception($response->errorMessage);
+		}
 	}
 
 	/**
 	 * @param $key
 	 * @param $url
+	 * @param $data
 	 * @see http://stackoverflow.com/a/13915285/556609
 	 */
-	private function _addToFiles($key, $url)
+	private function _addToFiles($key, $url, $data = null)
 	{
 		$tempName = tempnam('/tmp', 'php_files');
 		$originalName = basename(parse_url($url, PHP_URL_PATH));
 
-		$imgRawData = file_get_contents($url);
-		file_put_contents($tempName, $imgRawData);
+		$fileData = (is_string($data) ? $data : file_get_contents($url));
+		file_put_contents($tempName, $fileData);
 
 		$_FILES[$key] = array(
 			'name'     => $originalName,
 			'type'     => mime_content_type($tempName),
 			'tmp_name' => $tempName,
 			'error'    => 0,
-			'size'     => strlen($imgRawData),
+			'size'     => strlen($fileData),
 		);
 	}
 
