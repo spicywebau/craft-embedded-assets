@@ -28,6 +28,13 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		return $essence->extract($url);
 	}
 
+	public function getEmbeddedAsset(AssetFileModel $asset)
+	{
+		$record = EmbeddedAssetsRecord::model()->findByAttributes(array('assetId' => $asset->id));
+
+		return $record ? EmbeddedAssetsModel::populateModel($record) : null;
+	}
+
 	public function saveAsset(EmbeddedAssetsModel $media, $folderId)
 	{
 		$isExisting = false;

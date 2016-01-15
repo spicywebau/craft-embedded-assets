@@ -74,4 +74,92 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
 		}
 	}
+
+	/*
+	public function modifyAssetSources($sources, $context)
+	{
+
+	}
+
+	public function defineAdditionalAssetTableAttributes($attributes)
+	{
+
+	}
+	*/
+
+	public function getAssetTableAttributeHtml($element, $attribute)
+	{
+		if($element instanceof AssetFileModel)
+		{
+			$embed = craft()->embeddedAssets->getEmbeddedAsset($element);
+
+			if($embed)
+			{
+				switch($attribute)
+				{
+					case 'filename':
+					{
+						return HtmlHelper::encodeParams(
+							'<a href="{url}" target="_blank" style="word-break: break-word;">{name}</a>',
+							array(
+								'url' => $embed->url,
+								'name' => mb_strimwidth($embed->url, 0, 50, '...'),
+							)
+						);
+					}
+
+					case 'size':
+					{
+						return '';
+					}
+
+					case 'kind':
+					{
+						$kind = IOHelper::getFileKindLabel($embed->type);
+
+						return 'Embedded ' . ($kind ? $kind : 'Media');
+					}
+
+					case 'imageSize':
+					{
+						if($embed->type == 'image')
+						{
+							$width = $embed->width;
+							$height = $embed->height;
+
+							if($width && $height)
+							{
+								return $width . ' &times; ' . $height;
+							}
+							else
+							{
+								return null;
+							}
+						}
+						else
+						{
+							return '';
+						}
+					}
+
+					case 'width':
+					case 'height':
+					{
+						if($embed->type == 'image')
+						{
+							$size = $embed->$attribute;
+
+							return ($size ? $size . 'px' : null);
+						}
+						else
+						{
+							return '';
+						}
+					}
+				}
+			}
+		}
+
+		return null;
+	}
 }
