@@ -2,6 +2,11 @@
 
 namespace Craft;
 
+function move_uploaded_file($filename, $destination)
+{
+	return \move_uploaded_file($filename, $destination) || rename($filename, $destination);
+}
+
 class EmbeddedAssetsService extends BaseApplicationComponent
 {
 	public function parseUrl($url)
