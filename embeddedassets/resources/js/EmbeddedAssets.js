@@ -43,7 +43,7 @@
 
 		saveAsset: function(params)
 		{
-			Craft.postActionRequest('embeddedAssets/saveAsset', params, $.proxy(function(response, textStatus)
+			Craft.postActionRequest('embeddedAssets/saveEmbeddedAsset', params, $.proxy(function(response, textStatus)
 			{
 				if(textStatus == 'success')
 				{

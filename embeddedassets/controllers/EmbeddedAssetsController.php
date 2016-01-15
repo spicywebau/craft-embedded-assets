@@ -27,7 +27,7 @@ class EmbeddedAssetsController extends BaseController
 		$this->returnJson($json);
 	}
 
-	public function actionSaveAsset()
+	public function actionSaveEmbeddedAsset()
 	{
 		$this->requireAjaxRequest();
 
@@ -57,7 +57,7 @@ class EmbeddedAssetsController extends BaseController
 
 		try
 		{
-			$success = craft()->embeddedAssets->saveAsset($model, $folderId);
+			$success = craft()->embeddedAssets->saveEmbeddedAsset($model, $folderId);
 
 			if($success)
 			{

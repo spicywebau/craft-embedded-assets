@@ -35,7 +35,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		return $record ? EmbeddedAssetsModel::populateModel($record) : null;
 	}
 
-	public function saveAsset(EmbeddedAssetsModel $media, $folderId)
+	public function saveEmbeddedAsset(EmbeddedAssetsModel $media, $folderId)
 	{
 		$isExisting = false;
 		$record = null;
