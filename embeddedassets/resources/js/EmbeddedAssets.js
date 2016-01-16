@@ -61,6 +61,9 @@
 			{
 				if(textStatus == 'success')
 				{
+					var media = response.media;
+					this.setThumbnail(media.id, media.thumbnailUrl);
+
 					this.trigger('saveAsset', response);
 				}
 				else

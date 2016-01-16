@@ -36,8 +36,6 @@
 
 			EmbeddedAssets.on('saveAsset', function(e)
 			{
-				EmbeddedAssets.setThumbnail(e.media.id, e.media.thumbnailUrl);
-
 				that.assetIndex.updateElements();
 			});
 
