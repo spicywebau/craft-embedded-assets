@@ -32,7 +32,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			$whitelist[$i] = preg_quote($url);
 		}
 
-		$regexp = '%^(https?:)?//([a-z0-9]+\.)?(' . implode('|', $whitelist) . ')([:/].*)?$%';
+		$regexp = '%^(https?:)?//([a-z0-9\-]+\.)?(' . implode('|', $whitelist) . ')([:/].*)?$%';
 
 		$config = \HTMLPurifier_Config::createDefault();
 		$config->set('HTML.SafeIframe', true);
