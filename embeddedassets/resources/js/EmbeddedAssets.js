@@ -55,6 +55,9 @@
 				if(textStatus == 'success')
 				{
 					this.trigger('saveAsset', response);
+				
+					var media = response.media;
+					this.setThumbnail(media.id, media.thumbnailUrl);
 
 					this.assetIndex.updateElements();
 				}
@@ -119,6 +122,16 @@
 		getThumbnail: function(assetId)
 		{
 			return this.thumbnails && this.thumbnails[assetId] ? this.thumbnails[assetId] : null;
+		},
+
+		setThumbnail: function(assetId, thumbnail)
+		{
+			if(!this.thumbnails)
+			{
+				this.thumbnails = {};
+			}
+
+			this.thumbnails[assetId | 0] = thumbnail;
 		},
 
 		onSaveAsset: function(e)
