@@ -56,7 +56,7 @@
 				{
 					this.trigger('saveAsset', response);
 
-					console.log(response);
+					this.assetIndex.updateElements();
 				}
 				else
 				{
