@@ -68,14 +68,13 @@
 		setupEmbedButton: function()
 		{
 			var assetIndex = this.assetIndex;
+			var $buttonGroup = assetIndex.$uploadButton.parent()
+				.removeClass('buttons')
+				.addClass('btngroup');
 
-			var $header = $('#extra-headers');
-			var $buttons = assetIndex.$uploadButton.parent();
-			var $buttonGroup = $('<div class="btngroup">').appendTo($header);
-
-			assetIndex.$uploadButton.appendTo($buttonGroup);
-			assetIndex.$uploadInput.appendTo($buttonGroup);
-			$buttons.remove();
+			// Make sure the input is not the first (or last) element in the button group so border radii will be
+			// applied correctly.
+			assetIndex.$uploadInput.insertAfter(assetIndex.$uploadButton);
 
 			var $embedButton = $('<div class="btn submit">')
 				.text(Craft.t('Embed link'))
