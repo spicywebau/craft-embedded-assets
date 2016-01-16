@@ -151,6 +151,14 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		);
 	}
 
+	public static function getParameters()
+	{
+		return array(
+			'maxwidth' => 800,
+			'maxheight' => 600,
+		);
+	}
+
 	public function defineAdditionalAssetTableAttributes()
 	{
 		return array(

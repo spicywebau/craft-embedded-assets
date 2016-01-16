@@ -44,8 +44,9 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 	public function parseUrl($url)
 	{
 		$essence = new \Essence\Essence();
+		$options = EmbeddedAssetsPlugin::getParameters();
 
-		return $essence->extract($url);
+		return $essence->extract($url, $options);
 	}
 
 	public function getEmbeddedAsset(AssetFileModel $asset)
