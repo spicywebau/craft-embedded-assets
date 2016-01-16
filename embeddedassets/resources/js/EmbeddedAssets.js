@@ -8,32 +8,16 @@
 		assetIndex: null,
 		thumbnails: [], // Populated in EmbeddedAssetsPlugin.php
 
-		init: function()
+		patchClass: function(Patchee, Patcher)
 		{
-			var that = this;
+			var fn = Patchee.prototype;
+			var init = fn.init;
 
-			var AssetIndexFn = Craft.AssetIndex.prototype;
-			var AssetIndexInit = AssetIndexFn.init;
-
-			AssetIndexFn.init = function()
+			fn.init = function()
 			{
-				AssetIndexInit.apply(this, arguments);
-
-				new that.EmbeddedIndex(this);
+				init.apply(this, arguments);
+				new Patcher(this);
 			};
-
-			/*
-			var AssetSelectInputFn = Craft.AssetSelectInput.prototype;
-			var AssetSelectInputResetElements = AssetSelectInputFn.resetElements;
-
-			AssetSelectInputFn.resetElements = function()
-			{
-				new that.EmbeddedInput(this);
-				AssetSelectInputResetElements.apply(this, arguments);
-
-				var $elements = this.$elements;
-			};
-			*/
 		},
 
 		parseUrl: function(url)
@@ -86,6 +70,24 @@
 			}
 
 			this.thumbnails[assetId | 0] = thumbnail;
+		},
+
+		applyThumbnails: function($elements)
+		{
+			var that = this;
+
+			$elements.each(function()
+			{
+				var $this = $(this);
+				var id = $this.data('id') | 0;
+				var thumbnail = that.getThumbnail(id);
+
+				if(thumbnail)
+				{
+					var $img = $this.find('.elementthumb > img');
+					$img.prop('srcset', thumbnail);
+				}
+			});
 		}
 
 	}))();

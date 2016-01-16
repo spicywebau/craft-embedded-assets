@@ -42,20 +42,9 @@
 			this.assetIndex.on('updateElements', function(e)
 			{
 				var view = e.target.view;
-				var elements = view.getAllElements();
+				var $elements = view.getAllElements();
 
-				elements.each(function()
-				{
-					var $this = $(this);
-					var id = $this.data('id') | 0;
-					var thumbnail = EmbeddedAssets.getThumbnail(id);
-
-					if(thumbnail)
-					{
-						var $img = $this.find('.elementthumb > img');
-						$img.prop('srcset', thumbnail);
-					}
-				});
+				EmbeddedAssets.applyThumbnails($elements);
 			});
 		},
 
@@ -76,6 +65,8 @@
 		}
 
 	});
+
+	EmbeddedAssets.patchClass(Craft.AssetIndex, EmbeddedIndex);
 
 	EmbeddedAssets.EmbeddedIndex = EmbeddedIndex;
 
