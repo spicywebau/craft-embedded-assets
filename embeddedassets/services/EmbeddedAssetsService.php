@@ -55,7 +55,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 				craft()->assets->storeFile($asset);
 
-				$media->assetId = $asset->id;
+				$media->id = $asset->id;
 
 				if($transaction)
 				{
@@ -86,6 +86,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$fileName = EmbeddedAssetsPlugin::getFileNamePrefix() . StringHelper::UUID() . '.json';
 		$fileData = $media->getAttributes(null, true);
 		$fileData['__embeddedasset__'] = true;
+		unset($fileData['id']);
 
 		$this->_addToFiles('assets-upload', $fileName, JsonHelper::encode($fileData));
 

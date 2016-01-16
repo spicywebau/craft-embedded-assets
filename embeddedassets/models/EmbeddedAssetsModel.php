@@ -26,7 +26,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 					unset($data['__embeddedasset__']);
 
 					$embed = new EmbeddedAssetsModel();
-					$embed->assetId = $asset->id;
+					$embed->id = $asset->id;
 
 					foreach($data as $key => $value)
 					{
@@ -48,7 +48,6 @@ class EmbeddedAssetsModel extends BaseComponentModel
 	protected function defineAttributes()
 	{
 		return array_merge(parent::defineAttributes(), array(
-			'assetId'         => AttributeType::Number,
 			'type'            => AttributeType::String,
 			'version'         => AttributeType::String,
 			'url'             => AttributeType::String,

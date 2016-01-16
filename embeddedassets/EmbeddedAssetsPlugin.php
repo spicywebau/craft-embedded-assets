@@ -52,7 +52,6 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		{
 			$this->loadDependencies();
 			$this->includeResources();
-			$this->includeThumbnails();
 		}
 	}
 
@@ -73,15 +72,39 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			craft()->templates->includeCssResource('embeddedassets/css/main.css');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedAssets.js');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
+			craft()->templates->includeJs('window.EmbeddedAssets.thumbnails=' . JsonHelper::encode($this->_getThumbnails()));
 		}
 	}
 
-	public static function includeThumbnails()
+	private function _getThumbnails()
 	{
-		if(!craft()->request->isAjaxRequest())
+		// Escape for using in LIKE clause
+		// See: http://www.yiiframework.com/doc/guide/1.1/en/database.query-builder
+		$prefix = strtr(self::getFileNamePrefix(), array('%' => '\%', '_' => '\_'));
+		$results = craft()->db->createCommand()
+			->select('assetfiles.*')
+			->from('assetfiles assetfiles')
+			->where(array(
+				'like',
+				'assetfiles.filename',
+				$prefix . '%.json'
+			))
+			->queryAll();
+
+		$assets = AssetFileModel::populateModels($results, 'id');
+		$thumbnails = array();
+
+		foreach($assets as $id => $asset)
 		{
-			
+			$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
+
+			if($embed)
+			{
+				$thumbnails[$id] = $embed->thumbnailUrl;
+			}
 		}
+
+		return $thumbnails;
 	}
 
 	public static function getFileNamePrefix()
