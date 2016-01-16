@@ -21,6 +21,26 @@ function move_uploaded_file($filename, $destination)
 
 class EmbeddedAssetsService extends BaseApplicationComponent
 {
+	private $_purifier = null;
+
+	public function __construct()
+	{
+		$whitelist = EmbeddedAssetsPlugin::getWhitelist();
+
+		foreach($whitelist as $i => $url)
+		{
+			$whitelist[$i] = preg_quote($url);
+		}
+
+		$regexp = '%^(https?:)?//([a-z0-9]+\.)?(' . implode('|', $whitelist) . ')([:/].*)?$%';
+
+		$config = \HTMLPurifier_Config::createDefault();
+		$config->set('HTML.SafeIframe', true);
+		$config->set('URI.SafeIframeRegexp', $regexp);
+		$config->set('Cache.SerializerPath', \Yii::app()->getRuntimePath());
+		$this->_purifier = new \HTMLPurifier($config);
+	}
+
 	public function parseUrl($url)
 	{
 		$essence = new \Essence\Essence();
@@ -64,6 +84,12 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$event = new Event($this, array(
 			'media' => $media,
 		));
+
+		// Purify HTML is necessary
+		if($media->html && !$media->safeHtml)
+		{
+			$media->safeHtml = $this->_purifier->purify($media->html);
+		}
 
 		$this->onBeforeSaveEmbed($event);
 

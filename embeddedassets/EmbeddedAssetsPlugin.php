@@ -114,6 +114,15 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		return 'embed_';
 	}
 
+	public static function getWhitelist()
+	{
+		return array(
+			'vimeo.com',
+			'youtube.com',
+			'youtube-nocookie.com',
+		);
+	}
+
 	public function defineAdditionalAssetTableAttributes()
 	{
 		return array(

@@ -67,6 +67,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 			'thumbnailWidth'  => AttributeType::Number,
 			'thumbnailHeight' => AttributeType::Number,
 			'html'            => AttributeType::String,
+			'safeHtml'        => AttributeType::String,
 			'width'           => AttributeType::Number,
 			'height'          => AttributeType::Number,
 		));
