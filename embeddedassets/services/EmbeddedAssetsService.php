@@ -35,6 +35,30 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		return $embed ? $embed : null;
 	}
 
+	public function getEmbeddedAssets($assets, $indexBy = null)
+	{
+		$embeds = array();
+
+		foreach($assets as $i => $asset)
+		{
+			$embed = $this->getEmbeddedAsset($asset);
+
+			if($embed)
+			{
+				if($indexBy)
+				{
+					$embeds[$asset->$indexBy] = $embed;
+				}
+				else
+				{
+					$embeds[] = $embed;
+				}
+			}
+		}
+
+		return $embeds;
+	}
+
 	public function saveEmbeddedAsset(EmbeddedAssetsModel $media, $folderId)
 	{
 		$event = new Event($this, array(
