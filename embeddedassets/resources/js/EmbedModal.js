@@ -1,4 +1,4 @@
-(function($, Craft, EmbeddedAssets)
+(function($)
 {
 	var EmbedModal = Garnish.Modal.extend({
 
@@ -173,4 +173,4 @@
 
 	EmbeddedAssets.EmbedModal = EmbedModal;
 
-})(jQuery, Craft, EmbeddedAssets);
+})(jQuery);

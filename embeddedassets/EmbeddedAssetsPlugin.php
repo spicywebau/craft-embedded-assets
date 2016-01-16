@@ -71,6 +71,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		{
 			craft()->templates->includeCssResource('embeddedassets/css/main.css');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedAssets.js');
+			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedIndex.js');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
 			craft()->templates->includeJs('window.EmbeddedAssets.thumbnails=' . JsonHelper::encode($this->_getThumbnails()));
 		}
