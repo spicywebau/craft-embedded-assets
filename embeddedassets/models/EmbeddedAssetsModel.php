@@ -18,22 +18,27 @@ class EmbeddedAssetsModel extends BaseComponentModel
 					$url = UrlHelper::getUrlWithProtocol($url, $protocol);
 				}
 
-				$rawData = file_get_contents($url);
-				$data = JsonHelper::decode($rawData);
+				// See http://stackoverflow.com/questions/272361/how-can-i-handle-the-warning-of-file-get-contents-function-in-php
+				$rawData = @file_get_contents($url);
 
-				if($data['__embeddedasset__'])
+				if($rawData)
 				{
-					unset($data['__embeddedasset__']);
+					$data = JsonHelper::decode($rawData);
 
-					$embed = new EmbeddedAssetsModel();
-					$embed->id = $asset->id;
-
-					foreach($data as $key => $value)
+					if($data['__embeddedasset__'])
 					{
-						$embed->$key = $value;
-					}
+						unset($data['__embeddedasset__']);
 
-					return $embed;
+						$embed = new EmbeddedAssetsModel();
+						$embed->id = $asset->id;
+
+						foreach($data as $key => $value)
+						{
+							$embed->$key = $value;
+						}
+
+						return $embed;
+					}
 				}
 			}
 			catch(\Exception $e)
