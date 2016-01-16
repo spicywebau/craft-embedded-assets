@@ -6,6 +6,7 @@
 	var EmbeddedAssets = new (Garnish.Base.extend({
 
 		assetIndex: null,
+		thumbnails: null, // Populated in EmbeddedAssetsPlugin.php
 
 		init: function()
 		{
@@ -85,6 +86,7 @@
 
 		setupThumbnails: function()
 		{
+			var that = this;
 			var assetIndex = this.assetIndex;
 
 			assetIndex.on('updateElements', function(e)
@@ -92,7 +94,18 @@
 				var view = e.target.view;
 				var elements = view.getAllElements();
 
-				console.log(elements);
+				elements.each(function()
+				{
+					var $this = $(this);
+					var id = $this.data('id') | 0;
+					var thumbnail = that.getThumbnail(id);
+
+					if(thumbnail)
+					{
+						var $img = $this.find('.elementthumb > img');
+						$img.prop('srcset', thumbnail);
+					}
+				});
 			});
 		},
 
@@ -102,6 +115,11 @@
 
 			modal.on('saveAsset', $.proxy(this.onSaveAsset, this));
 			modal.show();
+		},
+
+		getThumbnail: function(assetId)
+		{
+			return this.thumbnails && this.thumbnails[assetId] ? this.thumbnails[assetId] : null;
 		},
 
 		onSaveAsset: function(e)
