@@ -58,7 +58,6 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	protected function defineSettings()
 	{
 		return array(
-			'filenamePrefix' => array(AttributeType::String, 'default' => 'embed_'),
 			'whitelist' => array(AttributeType::Mixed, 'default' => array(
 				'23hq.com',
 				'app.net',
@@ -95,13 +94,24 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			'parameters' => array(AttributeType::Mixed, 'default' => array(
 				'maxwidth' => 1280,
 				'maxheight' => 960,
-			))
+			)),
 		);
 	}
 
-	public function prepSettings($settings)
+	public function prepSettings($postSettings)
 	{
-		// Modify $settings here...
+		$settings = array(
+			'whitelist' => explode(PHP_EOL, $postSettings['whitelist']),
+			'parameters' => array()
+		);
+
+		foreach($postSettings['parameters'] as $parameter)
+		{
+			$param = $parameter['param'];
+			$value = $parameter['value'];
+
+			$settings['parameters'][$param] = $value;
+		}
 
 		return $settings;
 	}
@@ -169,52 +179,21 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 	public static function getFileNamePrefix()
 	{
-		return 'embed_';
+		return craft()->config->get('filenamePrefix', 'embeddedassets');
 	}
 
 	public static function getWhitelist()
 	{
-		return array(
-			'23hq.com',
-			'app.net',
-			'animoto.com',
-			'aol.com',
-			'collegehumor.com',
-			'dailymotion.com',
-			'deviantart.com',
-			'embed.ly',
-			'fav.me',
-			'flic.kr',
-			'flickr.com',
-			'funnyordie.com',
-			'hulu.com',
-			'imgur.com',
-			'instagr.am',
-			'instagram.com',
-			'kickstarter.com',
-			'meetup.com',
-			'meetup.ps',
-			'nfb.ca',
-			'official.fm',
-			'rdio.com',
-			'twitter.com',
-			'vimeo.com',
-			'vine.co',
-			'wikipedia.org',
-			'wikimedia.org',
-			'wordpress.com',
-			'youtu.be',
-			'youtube.com',
-			'youtube-nocookie.com',
-		);
+		$plugin = craft()->plugins->getPlugin('embeddedAssets');
+
+		return $plugin->getSettings()->whitelist;
 	}
 
 	public static function getParameters()
 	{
-		return array(
-			'maxwidth' => 800,
-			'maxheight' => 600,
-		);
+		$plugin = craft()->plugins->getPlugin('embeddedAssets');
+
+		return $plugin->getSettings()->parameters;
 	}
 
 	public function defineAdditionalAssetTableAttributes()
