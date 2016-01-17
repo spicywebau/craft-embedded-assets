@@ -1,0 +1,21 @@
+{% import '_includes/forms' as forms %}
+
+<div class="settings">
+
+	{{ forms.textField({
+		label: "Filename Prefix"|t,
+		instructions: "The string to be prefixed to embedded asset files."|t,
+		id: 'filenamePrefix',
+		name: 'filenamePrefix',
+		required: true
+	}) }}
+
+	{{ forms.textareaField({
+		label: "Whitelist"|t,
+		instructions: "List of domains that will be preservered when purifying the HTML. Subdomains will also be included."|t,
+		id: 'whitelist',
+		name: 'whitelist',
+		rows: 8
+	}) }}
+
+</div>

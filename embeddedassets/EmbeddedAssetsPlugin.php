@@ -55,6 +55,64 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		}
 	}
 
+	protected function defineSettings()
+	{
+		return array(
+			'filenamePrefix' => array(AttributeType::String, 'default' => 'embed_'),
+			'whitelist' => array(AttributeType::Mixed, 'default' => array(
+				'23hq.com',
+				'app.net',
+				'animoto.com',
+				'aol.com',
+				'collegehumor.com',
+				'dailymotion.com',
+				'deviantart.com',
+				'embed.ly',
+				'fav.me',
+				'flic.kr',
+				'flickr.com',
+				'funnyordie.com',
+				'hulu.com',
+				'imgur.com',
+				'instagr.am',
+				'instagram.com',
+				'kickstarter.com',
+				'meetup.com',
+				'meetup.ps',
+				'nfb.ca',
+				'official.fm',
+				'rdio.com',
+				'twitter.com',
+				'vimeo.com',
+				'vine.co',
+				'wikipedia.org',
+				'wikimedia.org',
+				'wordpress.com',
+				'youtu.be',
+				'youtube.com',
+				'youtube-nocookie.com',
+			)),
+			'parameters' => array(AttributeType::Mixed, 'default' => array(
+				'maxwidth' => 1280,
+				'maxheight' => 960,
+			))
+		);
+	}
+
+	public function prepSettings($settings)
+	{
+		// Modify $settings here...
+
+		return $settings;
+	}
+
+	public function getSettingsHtml()
+	{
+		return craft()->templates->render('embeddedassets/settings', array(
+			'settings' => $this->getSettings()
+		));
+	}
+
 	public function isCraftRequiredVersion()
 	{
 		return version_compare(craft()->getVersion(), '2.5', '>=');
