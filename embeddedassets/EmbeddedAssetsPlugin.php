@@ -101,14 +101,17 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	public function prepSettings($postSettings)
 	{
 		$settings = array(
-			'whitelist' => explode(PHP_EOL, $postSettings['whitelist']),
+			'whitelist' => array_map(function($domain)
+			{
+				return trim($domain);
+			}, explode(PHP_EOL, $postSettings['whitelist'])),
 			'parameters' => array()
 		);
 
 		foreach($postSettings['parameters'] as $parameter)
 		{
-			$param = $parameter['param'];
-			$value = $parameter['value'];
+			$param = trim($parameter['param']);
+			$value = trim($parameter['value']);
 
 			$settings['parameters'][$param] = $value;
 		}
