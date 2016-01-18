@@ -247,9 +247,14 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 					case 'kind':
 					{
-						$kind = IOHelper::getFileKindLabel($embed->type);
+						switch($embed->type)
+						{
+							case 'photo': return Craft::t("Embedded Image");
+							case 'video': return Craft::t("Embedded Video");
+							case 'link':  return Craft::t("Embedded Link");
+						}
 
-						return 'Embedded ' . ($kind ? $kind : 'Media');
+						return Craft::t("Embedded Media");
 					}
 
 					case 'imageSize':
