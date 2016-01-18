@@ -70,8 +70,8 @@ You can configure the settings of the plugin through the control panel. Advanced
 ### Whitelist
 
 This is a list of domains (separated by a new line) that will be preserved when purifying the HTML. Purified HTML is
-found in the `EmbeddedAssetModel::safeHtml` parameter, and is recommended to be used over the `html` parameter. Domains
-in this list will automatically include all subdomains, directories and protocols, so they do not (and should not) be
+found in the `safeHtml` parameter, and is recommended to be used over the `html` parameter. Domains
+in this list will automatically include all subdomains, directories and protocols, so they do not need to (and should not) be
 specified.
 
 It's important to emphasise that this whitelist does not apply to links added through the modal window (all links are
