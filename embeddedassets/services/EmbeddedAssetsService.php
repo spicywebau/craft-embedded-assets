@@ -138,6 +138,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$fileData = $media->getAttributes(null, true);
 		$fileData['__embeddedasset__'] = true;
 		unset($fileData['id']);
+		unset($fileData['settings']);
 
 		$this->_addToFiles('assets-upload', $fileName, JsonHelper::encode($fileData));
 

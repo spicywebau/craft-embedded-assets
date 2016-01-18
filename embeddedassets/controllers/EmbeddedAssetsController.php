@@ -37,7 +37,6 @@ class EmbeddedAssetsController extends BaseController
 		$model = new EmbeddedAssetsModel();
 
 		$model->type            = $media['type'];
-		$model->version         = $media['version'];
 		$model->url             = $media['url'];
 		$model->title           = $media['title'];
 		$model->description     = $media['description'];
