@@ -74,6 +74,10 @@ found in the `EmbeddedAssetModel::safeHtml` parameter, and is recommended to be 
 in this list will automatically include all subdomains, directories and protocols, so they do not (and should not) be
 specified.
 
+It's important to emphasise that this whitelist does not apply to links added through the modal window (all links are
+welcome here). This means that you only need to consider URL's in the `html` parameter. Keep in mind some providers will
+use different or multiple domains here - for example, YouTube may embed videos with the `youtube-nocookie.com` domain.
+
 The plugin comes with this default whitelist, which should be enough for the majority of uses:
 
 - 23hq.com
