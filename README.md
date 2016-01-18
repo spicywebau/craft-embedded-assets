@@ -27,8 +27,8 @@ And you're done!
 ```
 
 As embedded assets are still normal asset files, you can access them through the `craft.assets` elements API. In order
-to get the actual embed data, call the `craft.embeddedAssets.fromAsset(asset)` function where `asset` is the embedded
-asset model.
+to get the actual embed data, call the `craft.embeddedAssets.fromAsset(asset)` function where `asset` is the asset
+model.
 
 ### `craft.embeddedAssets.*`
 
