@@ -2,9 +2,7 @@
 
 Add embeddable media such as YouTube videos to your assets manager
 
-## Screenshots
+## Demo
 
-![Embedded Assets index screenshot](screenshots/screenshot-01.png)
-![Embedded Assets URL input screenshot](screenshots/screenshot-02.png)
-![Embedded Assets field screenshot](screenshots/screenshot-03.png)
-![Embedded Assets modal index screenshot](screenshots/screenshot-04.png)
+![Embedded Assets index demo](screenshots/demo-01.gif)
+![Embedded Assets URL input demo](screenshots/demo-02.gif)
