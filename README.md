@@ -15,7 +15,9 @@ Add embeddable media such as YouTube videos to your assets manager.
 
 And you're done!
 
-## Template Usage
+## Usage
+
+### Templates
 
 ```twig
 {% for asset in assets %}
@@ -29,6 +31,14 @@ And you're done!
 As embedded assets are still normal asset files, you can access them through the `craft.assets` elements API. In order
 to get the actual embed data, call the `craft.embeddedAssets.fromAsset(asset)` function where `asset` is the asset
 model.
+
+### Fields
+
+As embedded assets are stored as JSON files, they can be targeted when creating Asset fields. If you want to allow/disallow embedded assets from being selected, you can modify the "Restrict allowed file types?" setting to either include or exclude JSON files.
+
+Unfortunately there was no way of explicitly specifying embedded types, but this is the next best thing.
+
+## API
 
 ### `craft.embeddedAssets.*`
 
