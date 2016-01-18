@@ -81,6 +81,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 				'nfb.ca',
 				'official.fm',
 				'rdio.com',
+				'soundcloud.com',
 				'twitter.com',
 				'vimeo.com',
 				'vine.co',

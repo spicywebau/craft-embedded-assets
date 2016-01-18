@@ -98,6 +98,7 @@ The plugin comes with this default whitelist, which should be enough for the maj
 - nfb.ca
 - official.fm
 - rdio.com
+- soundcloud.com
 - twitter.com
 - vimeo.com
 - vine.co
