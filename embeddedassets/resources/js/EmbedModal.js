@@ -51,6 +51,7 @@
 			this.$urlField.prop('placeholder', 'http://');
 
 			this.addListener(this.$urlField, 'change', 'onUrlChange');
+			this.addListener(this.$urlField, 'paste', 'onUrlPaste');
 			this.addListener(this.$cancelBtn, 'click', 'hide');
 			this.addListener(this.$form, 'submit', 'onFormSubmit');
 
@@ -60,6 +61,17 @@
 		onUrlChange: function(e)
 		{
 			var url = this.$urlField.val();
+
+			var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
+			var pastedData = clipboardData.getData('text');
+
+			EmbeddedAssets.parseUrl(url);
+		},
+
+		onUrlPaste: function(e)
+		{
+			var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
+			var url = clipboardData.getData('text');
 
 			EmbeddedAssets.parseUrl(url);
 		},
