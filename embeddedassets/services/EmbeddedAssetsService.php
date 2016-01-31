@@ -22,6 +22,14 @@ function move_uploaded_file($filename, $destination)
 class EmbeddedAssetsService extends BaseApplicationComponent
 {
 	private $_purifier = null;
+	private $_ogProperties = array(
+		'title' => \Opengraph\Opengraph::OG_TITLE,
+		'description' => \Opengraph\Opengraph::OG_DESCRIPTION,
+		'providerName' => \Opengraph\Opengraph::OG_SITE_NAME,
+		'thumbnailUrl' => \Opengraph\Opengraph::OG_IMAGE,
+		'thumbnailWidth' => \Opengraph\Opengraph::OG_IMAGE_WIDTH,
+		'thumbnailHeight' => \Opengraph\Opengraph::OG_IMAGE_HEIGHT,
+	);
 
 	public function __construct()
 	{
@@ -46,7 +54,40 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$essence = new \Essence\Essence();
 		$options = EmbeddedAssetsPlugin::getParameters();
 
-		return $essence->extract($url, $options);
+		$result = $essence->extract($url, $options);
+
+		if($result && $result->html)
+		{
+			$properties = array();
+
+			foreach($result as $property => $value)
+			{
+				if(empty($value) && isset($this->_ogProperties[$property]))
+				{
+					$properties[] = $property;
+				}
+			}
+
+			if(!empty($properties))
+			{
+				try
+				{
+					$data = $this->_readExternalFile($url);
+
+					$reader = new \Opengraph\Reader();
+					$reader->parse($data);
+
+					foreach($properties as $property)
+					{
+						$ogProperty = $this->_ogProperties[$property];
+						$result->$property = $reader->getMeta($ogProperty);
+					}
+				}
+				catch(\Exception $e) {}
+			}
+		}
+
+		return $result;
 	}
 
 	public function getEmbeddedAsset(AssetFileModel $asset)
@@ -178,6 +219,39 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			'error'    => 0,
 			'size'     => strlen($fileData),
 		);
+	}
+
+	/**
+	 * Reads in data from an external link.
+	 *
+	 * @param $url
+	 * @return bool|mixed|string
+	 */
+	private function _readExternalFile($url)
+	{
+		if(function_exists('curl_init'))
+		{
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+			$data = curl_exec($ch);
+			curl_close($ch);
+
+			return $data;
+		}
+
+		$allowUrlFopen = preg_match('/1|yes|on|true/i', ini_get('allow_url_fopen'));
+		if($allowUrlFopen)
+		{
+			return @file_get_contents($url);
+		}
+
+		return false;
 	}
 
 	/**
