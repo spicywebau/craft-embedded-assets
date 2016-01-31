@@ -3,6 +3,7 @@
 	var EmbedModal = Garnish.Modal.extend({
 
 		media: null,
+		currentUrl: null,
 
 		init: function()
 		{
@@ -18,12 +19,13 @@
 							'<label for="embeddedassets-url-field">', Craft.t('URL'), '</label>',
 							'<div class="instructions"><p>', Craft.t('The link to the asset to embed.'), '</p></div>',
 						'</div>',
-						'<div class="input">',
+						'<div id="embeddedassets-url" class="input">',
+							'<div id="embeddedassets-url-spinner" class="spinner" style="display: none;"></div>',
 							'<input id="embeddedassets-url-field" type="text" class="text fullwidth" autocomplete="off">',
 							'<ul id="embeddedassets-url-errors" class="errors" style="display: none;"></ul>',
 						'</div>',
 					'</div>',
-					'<a id="embeddedassets-media" target="_blank" style="display: none">',
+					'<a id="embeddedassets-media" class="hidden disabled" target="_blank">',
 						'<div id="embeddedassets-media-image"></div>',
 						'<div id="embeddedassets-media-content">',
 							'<p id="embeddedassets-media-title"></p>',
@@ -38,6 +40,8 @@
 				'</div>'
 			].join('')).appendTo(this.$form);
 
+			this.$url = body.find('#embeddedassets-url');
+			this.$urlSpinner = body.find('#embeddedassets-url-spinner');
 			this.$urlField = body.find('#embeddedassets-url-field');
 			this.$urlErrors = body.find('#embeddedassets-url-errors');
 			this.$media = body.find('#embeddedassets-media');
@@ -51,6 +55,7 @@
 			this.$urlField.prop('placeholder', 'http://');
 
 			this.addListener(this.$urlField, 'change', 'onUrlChange');
+			this.addListener(this.$urlField, 'blur', 'onUrlChange');
 			this.addListener(this.$urlField, 'paste', 'onUrlPaste');
 			this.addListener(this.$cancelBtn, 'click', 'hide');
 			this.addListener(this.$form, 'submit', 'onFormSubmit');
@@ -62,7 +67,7 @@
 		{
 			var url = this.$urlField.val();
 
-			EmbeddedAssets.parseUrl(url);
+			this.parseUrl(url);
 		},
 
 		onUrlPaste: function(e)
@@ -70,7 +75,32 @@
 			var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
 			var url = clipboardData.getData('text');
 
-			EmbeddedAssets.parseUrl(url);
+			this.parseUrl(url);
+		},
+
+		parseUrl: function(url)
+		{
+			if(this.currentUrl != url)
+			{
+				this.currentUrl = url;
+
+				this.displayErrors('url', false);
+
+				if(url)
+				{
+					this.$urlSpinner.show();
+					this.$media.addClass('disabled');
+
+					EmbeddedAssets.parseUrl(url);
+				}
+				else
+				{
+					this.$urlSpinner.hide();
+					this.$media.addClass('hidden disabled');
+					
+					this.updateSizeAndPosition();
+				}
+			}
 		},
 
 		onParseUrl: function(e)
@@ -86,11 +116,12 @@
 				this.$mediaImage.css('backgroundImage', 'url(' + media.thumbnailUrl + ')');
 				this.$mediaType.text(media.type);
 
-				this.$media.css('display', '');
+				this.$media.removeClass('hidden disabled');
 			}
 
+			this.$urlSpinner.hide();
 			this.$saveBtn.toggleClass('disabled', !e.success).prop('disabled', !e.success);
-			this.$media.css('display', e.success ? '' : 'none');
+			this.$media.toggleClass('hidden', !e.success);
 			this.displayErrors('url', e.errors);
 
 			this.updateSizeAndPosition();

@@ -1,3 +1,13 @@
+#embeddedassets-url {
+	position: relative;
+}
+
+#embeddedassets-url-spinner {
+	position: absolute;
+	top: 0;
+	right: 4px;
+}
+
 #embeddedassets-url-field {
 	width: 430px;
 }
@@ -13,6 +23,15 @@
 	border: 1px solid transparent;
 	color: #29323d;
 	text-decoration: none;
+}
+
+#embeddedassets-media.hidden {
+	display: none;
+}
+
+#embeddedassets-media.disabled {
+	opacity: 0.5;
+	pointer-events: none;
 }
 
 #embeddedassets-media:hover {
