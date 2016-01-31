@@ -62,9 +62,6 @@
 		{
 			var url = this.$urlField.val();
 
-			var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
-			var pastedData = clipboardData.getData('text');
-
 			EmbeddedAssets.parseUrl(url);
 		},
 
