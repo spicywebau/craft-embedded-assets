@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "56236c8908741f7bf544b2d128346ebb",
-    "content-hash": "8f90b914a2c6a25c77b7a03b86adec16",
+    "hash": "7da7cfcc28e34b5b1ae80e4c57255ef3",
+    "content-hash": "97c24be9272679ce8a55206c90265c93",
     "packages": [
         {
             "name": "essence/dom",
@@ -140,6 +140,52 @@
                 "http"
             ],
             "time": "2015-07-23 20:33:50"
+        },
+        {
+            "name": "euskadi31/opengraph",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/euskadi31/Opengraph.git",
+                "reference": "35645b1bbe9309f8b46734e3eb8f01e6613aeb52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/euskadi31/Opengraph/zipball/35645b1bbe9309f8b46734e3eb8f01e6613aeb52",
+                "reference": "35645b1bbe9309f8b46734e3eb8f01e6613aeb52",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "atoum/atoum": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Opengraph": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Axel Etcheverry",
+                    "email": "axel@etcheverry.biz",
+                    "homepage": "http://www.axel-etcheverry.com"
+                }
+            ],
+            "description": "A PHP 5.3+ framework for OpenGraph Protocol",
+            "keywords": [
+                "OpenGraph Protocol",
+                "og",
+                "opengraph",
+                "sdk"
+            ],
+            "time": "2013-11-25 14:33:37"
         },
         {
             "name": "fg/parkour",

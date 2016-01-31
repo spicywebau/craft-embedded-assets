@@ -187,5 +187,53 @@
             "oembed",
             "opengraph"
         ]
+    },
+    {
+        "name": "euskadi31/opengraph",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/euskadi31/Opengraph.git",
+            "reference": "35645b1bbe9309f8b46734e3eb8f01e6613aeb52"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/euskadi31/Opengraph/zipball/35645b1bbe9309f8b46734e3eb8f01e6613aeb52",
+            "reference": "35645b1bbe9309f8b46734e3eb8f01e6613aeb52",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "atoum/atoum": "dev-master"
+        },
+        "time": "2013-11-25 14:33:37",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Opengraph": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Axel Etcheverry",
+                "email": "axel@etcheverry.biz",
+                "homepage": "http://www.axel-etcheverry.com"
+            }
+        ],
+        "description": "A PHP 5.3+ framework for OpenGraph Protocol",
+        "keywords": [
+            "OpenGraph Protocol",
+            "og",
+            "opengraph",
+            "sdk"
+        ]
     }
 ]

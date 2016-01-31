@@ -3,6 +3,7 @@
 		"vendor-dir": "embeddedassets/vendor"
 	},
 	"require": {
-		"essence/essence": "3.1.0"
+		"essence/essence": "3.1.0",
+		"euskadi31/opengraph": "^1.0"
 	}
 }

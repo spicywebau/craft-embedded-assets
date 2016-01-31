@@ -1,0 +1,25 @@
+{
+    "name": "euskadi31/Opengraph",
+    "type": "library",
+    "description": "A PHP 5.3+ framework for OpenGraph Protocol",
+    "keywords": ["sdk","opengraph", "og", "OpenGraph Protocol"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Axel Etcheverry",
+            "email": "axel@etcheverry.biz",
+            "homepage": "http://www.axel-etcheverry.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "atoum/atoum": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Opengraph": "src/"
+        }
+    }
+}
