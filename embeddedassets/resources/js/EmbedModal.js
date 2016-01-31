@@ -19,7 +19,7 @@
 							'<div class="instructions"><p>', Craft.t('The link to the asset to embed.'), '</p></div>',
 						'</div>',
 						'<div class="input">',
-							'<input id="embeddedassets-url-field" type="text" class="text fullwidth">',
+							'<input id="embeddedassets-url-field" type="text" class="text fullwidth" autocomplete="off">',
 							'<ul id="embeddedassets-url-errors" class="errors" style="display: none;"></ul>',
 						'</div>',
 					'</div>',
