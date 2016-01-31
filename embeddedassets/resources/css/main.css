@@ -66,6 +66,11 @@
 	color: #8f98a3;
 }
 
+#embeddedassets-media-title.empty,
+#embeddedassets-media-description.empty {
+	font-style: italic;
+}
+
 #embeddedassets-media-type {
 	display: inline-block;
 	border: 1px solid #c1c1c1;

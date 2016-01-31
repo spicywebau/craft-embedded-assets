@@ -111,8 +111,8 @@
 			if(e.success)
 			{
 				this.$media.prop('href', media.url);
-				this.$mediaTitle.text(media.title);
-				this.$mediaDesc.text(media.description);
+				this.$mediaTitle.html(media.title || Craft.t("No title")).toggleClass('empty', !media.title);
+				this.$mediaDesc.html(media.description || Craft.t("No description")).toggleClass('empty', !media.description);
 				this.$mediaImage.css('backgroundImage', 'url(' + media.thumbnailUrl + ')');
 				this.$mediaType.text(media.type);
 
