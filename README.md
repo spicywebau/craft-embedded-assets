@@ -2,6 +2,9 @@
 
 Add embeddable media such as YouTube videos to your assets manager.
 
+### Important
+**There has been reports of numerous issues with v0.2.0. While they are being resolved, please [download the previous version (0.0.1)](https://github.com/benjamminf/craft-embedded-assets/releases/tag/0.0.1). Thanks for your patience!**
+
 ## Demo
 
 ![Embedded Assets index demo](screenshots/demo-01.gif)
