@@ -28,13 +28,21 @@
 
 			Craft.postActionRequest('embeddedAssets/parseUrl', params, $.proxy(function(response, textStatus)
 			{
-				if(textStatus == 'success')
+				if(textStatus == 'success' && response.success)
 				{
 					this.trigger('parseUrl', response);
 				}
 				else
 				{
-					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+					var errors = response.errors && response.errors.length ?
+						response.errors :
+						[Craft.t('An unknown error occurred.')];
+
+					for(var i = 0; i < errors.length; i++)
+					{
+						var error = errors[i];
+						Craft.cp.displayError(error);
+					}
 				}
 			}, this));
 		},
@@ -43,7 +51,7 @@
 		{
 			Craft.postActionRequest('embeddedAssets/saveEmbeddedAsset', params, $.proxy(function(response, textStatus)
 			{
-				if(textStatus == 'success')
+				if(textStatus == 'success' && response.success)
 				{
 					var media = response.media;
 					this.setThumbnail(media.id, media.thumbnailUrl);
@@ -52,7 +60,15 @@
 				}
 				else
 				{
-					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+					var errors = response.errors && response.errors.length ?
+						response.errors :
+						[Craft.t('An unknown error occurred.')];
+
+					for(var i = 0; i < errors.length; i++)
+					{
+						var error = errors[i];
+						Craft.cp.displayError(error);
+					}
 				}
 			}, this));
 		},
