@@ -86,6 +86,17 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	}
 
 	/**
+	 * Loads all dependencies for this plugin.
+	 * The plugin currently depends on the Essence library.
+	 *
+	 * @see https://github.com/essence/essence
+	 */
+	public static function loadDependencies()
+	{
+		require CRAFT_PLUGINS_PATH . '/embeddedassets/vendor/autoload.php';
+	}
+
+	/**
 	 * Initialise the plugin by loading dependencies and resources.
 	 */
 	public function init()
@@ -94,7 +105,6 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 		if(craft()->request->isCpRequest() && $this->isCraftRequiredVersion())
 		{
-			$this->loadDependencies();
 			$this->includeResources();
 		}
 	}
@@ -315,17 +325,6 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		}
 
 		return null;
-	}
-
-	/**
-	 * Loads all dependencies for this plugin.
-	 * The plugin currently depends on the Essence library.
-	 *
-	 * @see https://github.com/essence/essence
-	 */
-	protected function loadDependencies()
-	{
-		require CRAFT_PLUGINS_PATH . '/embeddedassets/vendor/autoload.php';
 	}
 
 	/**

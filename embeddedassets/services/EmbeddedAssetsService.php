@@ -2,6 +2,8 @@
 
 namespace Craft;
 
+EmbeddedAssetsPlugin::loadDependencies();
+
 /**
  * This hack overrides the `move_uploaded_file()` function in the Craft namespace, and allows it to support files
  * injected into the `$_FILES` array.
