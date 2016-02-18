@@ -35,6 +35,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 	public function __construct()
 	{
+		require_once Craft::getPathOfAlias('system.vendors.htmlpurifier') . '/HTMLPurifier.standalone.php';
+
 		$whitelist = EmbeddedAssetsPlugin::getWhitelist();
 
 		foreach($whitelist as $i => $url)
