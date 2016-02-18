@@ -1,5 +1,15 @@
 [
 	{
+		"version": "0.2.1",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.2.1.zip",
+		"date": "2016-02-19T10:21:00+11:00",
+		"notes": [
+			"[Fixed] Fixed \"Opengraph not found\" error on front-end templates",
+			"[Fixed] Fixed fatal issue with non-ASCII characters in entry slugs",
+			"[Fixed] Implemented better error capturing and reporting to fix front-end Javascript issues"
+		]
+	},
+	{
 		"version": "0.2.0",
 		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.2.0.zip",
 		"date": "2016-01-31T23:00:00+11:00",
