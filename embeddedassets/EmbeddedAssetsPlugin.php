@@ -219,6 +219,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	{
 		return array(
 			'provider' => array('label' => Craft::t('Provider')),
+			'author' => array('label' => Craft::t('Author')),
 		);
 	}
 
@@ -262,6 +263,17 @@ class EmbeddedAssetsPlugin extends BasePlugin
 								'url' => $embed->providerUrl,
 								'data' => StringHelper::toCamelCase($embed->providerName),
 								'name' => $embed->providerName,
+							)
+						);
+					}
+
+					case 'author':
+					{
+						return HtmlHelper::encodeParams(
+							'<a href="{url}" target="_blank">{name}</a>',
+							array(
+								'url' => $embed->authorUrl,
+								'name' => $embed->authorName,
 							)
 						);
 					}
@@ -323,9 +335,11 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			}
 		}
 
-		if($attribute === 'provider')
+		switch($attribute)
 		{
-			return '';
+			case 'provider':
+			case 'author':
+				return '';
 		}
 
 		return null;
