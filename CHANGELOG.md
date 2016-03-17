@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v0.3.0
+- `Added` Added plugin icon
+- `Added` Added author asset table attribute
+- `Improved` Embed URL's in asset table now have their protocol and www's stripped
+
 #### v0.2.1
 - `Fixed` Fixed "Opengraph not found" error on front-end templates
 - `Fixed` Fixed fatal issue with non-ASCII characters in entry slugs
