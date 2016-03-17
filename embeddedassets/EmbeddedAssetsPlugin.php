@@ -241,11 +241,15 @@ class EmbeddedAssetsPlugin extends BasePlugin
 				{
 					case 'filename':
 					{
+						$stripProtocol = preg_replace('/^((https?:\/\/)|(\/\/))/', '', $embed->url);
+						$stripWWW = preg_replace('/^www\./', '', $stripProtocol);
+						$trimmedUrl = mb_strimwidth($stripWWW, 0, 50, '...');
+
 						return HtmlHelper::encodeParams(
 							'<a href="{url}" target="_blank" style="word-break: break-word;">{name}</a>',
 							array(
 								'url' => $embed->url,
-								'name' => mb_strimwidth($embed->url, 0, 50, '...'),
+								'name' => $trimmedUrl,
 							)
 						);
 					}
