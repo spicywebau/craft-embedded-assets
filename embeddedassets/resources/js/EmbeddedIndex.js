@@ -60,6 +60,7 @@
 		{
 			EmbeddedAssets.saveAsset({
 				folderId: this.assetIndex.getDefaultSourceKey().split(':')[1] | 0,
+				url: e.url,
 				media: e.media
 			});
 		}

@@ -11,7 +11,9 @@ class EmbeddedAssetsController extends BaseController
 		$url = craft()->request->getPost('url');
 		$media = craft()->embeddedAssets->parseUrl($url);
 
-		$json = array();
+		$json = array(
+			'url' => $url,
+		);
 
 		if($media)
 		{
@@ -32,12 +34,14 @@ class EmbeddedAssetsController extends BaseController
 		$this->requireAjaxRequest();
 
 		$folderId = craft()->request->getPost('folderId');
+		$url = craft()->request->getPost('url');
 		$media = craft()->request->getPost('media');
 
 		$model = new EmbeddedAssetsModel();
 
 		$model->type            = $media['type'];
 		$model->url             = $media['url'];
+		$model->requestUrl      = $url;
 		$model->title           = $media['title'];
 		$model->description     = $media['description'];
 		$model->authorName      = $media['authorName'];

@@ -106,6 +106,8 @@
 		onParseUrl: function(e)
 		{
 			var media = e.media;
+
+			this.url = e.url;
 			this.media = media;
 
 			if(e.success)
@@ -140,6 +142,7 @@
 			if(this.media)
 			{
 				this.trigger('saveAsset', {
+					url: this.url,
 					media: this.media
 				});
 			}
