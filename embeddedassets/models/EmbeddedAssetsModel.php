@@ -32,9 +32,12 @@ class EmbeddedAssetsModel extends BaseComponentModel
 						$embed = new EmbeddedAssetsModel();
 						$embed->id = $asset->id;
 
-						foreach($data as $key => $value)
+						foreach($embed->attributeNames() as $key)
 						{
-							$embed->$key = $value;
+							if(isset($data[$key]))
+							{
+								$embed->$key = $data[$key];
+							}
 						}
 
 						return $embed;
