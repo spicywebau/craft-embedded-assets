@@ -55,6 +55,7 @@ Unfortunately there was no way of explicitly specifying embedded types, but this
 | `id`              | The ID of the asset.                                                                                   |
 | `type`            | The type of media the embedded asset is. Either `photo`, `video`, `link` or `rich`.                    |
 | `url`             | The URL of the media.                                                                                  |
+| `requestUrl`      | The URL that was originally provided by the user.                                                      |
 | `title`           | The title of the media.                                                                                |
 | `description`     | The description of the media.                                                                          |
 | `authorName`      | The author of the media.                                                                               |
