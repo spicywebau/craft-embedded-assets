@@ -40,6 +40,12 @@ class EmbeddedAssetsModel extends BaseComponentModel
 							}
 						}
 
+						// For embedded assets saved with version 0.2.1 or below, this will provide a usable fallback
+						if(empty($embed->requestUrl))
+						{
+							$embed->requestUrl = $embed->url;
+						}
+
 						return $embed;
 					}
 				}
@@ -58,6 +64,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 		return array_merge(parent::defineAttributes(), array(
 			'type'            => AttributeType::String,
 			'url'             => AttributeType::String,
+			'requestUrl'      => AttributeType::String,
 			'title'           => AttributeType::String,
 			'description'     => AttributeType::String,
 			'authorName'      => AttributeType::String,
