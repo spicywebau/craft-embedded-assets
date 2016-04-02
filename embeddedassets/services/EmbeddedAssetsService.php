@@ -179,7 +179,22 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
 	{
-		$fileName = EmbeddedAssetsPlugin::getFileNamePrefix() . StringHelper::UUID() . '.json';
+		$fileLabel = substr(AssetsHelper::cleanAssetName($media->getTitle()), 0, 40);
+		$filePrefix = EmbeddedAssetsPlugin::getFileNamePrefix();
+		$fileExtension = '.json';
+		$fileName = $filePrefix . $fileLabel . $fileExtension;
+
+		$existingFile = craft()->assets->findFile(array(
+			'folderId' => $folderId,
+			'filename' => $fileName
+		));
+
+		if($existingFile)
+		{
+			$fileUniqueId = DateTimeHelper::currentUTCDateTime()->format("ymd_His");
+			$fileName = $filePrefix . $fileLabel . '_' . $fileUniqueId . $fileExtension;
+		}
+
 		$fileData = $media->getAttributes(null, true);
 		$fileData['__embeddedasset__'] = true;
 		unset($fileData['id']);

@@ -59,6 +59,26 @@ class EmbeddedAssetsModel extends BaseComponentModel
 		return null;
 	}
 
+	public function getTitle()
+	{
+		$checkOrder = array(
+			$this->title,
+			$this->providerName,
+			$this->description,
+			$this->authorName,
+		);
+
+		foreach($checkOrder as $property)
+		{
+			if(!empty($property))
+			{
+				return $property;
+			}
+		}
+
+		return $this->url;
+	}
+
 	protected function defineAttributes()
 	{
 		return array_merge(parent::defineAttributes(), array(
