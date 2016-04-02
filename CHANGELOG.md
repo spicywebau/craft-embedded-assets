@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v0.3.1
+- `Added` Embedded asset models now include the original provided URL under the "requestUrl" attribute
+- `Improved` Embedded asset file names now include the title of the embedded media
+- `Improved` Implemented a more secure way of reading embedded asset files
+
 #### v0.3.0
 - `Added` Added plugin icon
 - `Added` Added author asset table attribute
