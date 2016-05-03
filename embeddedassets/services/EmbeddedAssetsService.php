@@ -231,9 +231,13 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$fileData = (is_string($data) ? $data : file_get_contents($url));
 		file_put_contents($tempName, $fileData);
 
+		$fileInfo = finfo_open(FILEINFO_MIME);
+		$mimeType = finfo_file($fileInfo, $tempName);
+		finfo_close($fileInfo);
+
 		$_FILES[$key] = array(
 			'name'     => $originalName,
-			'type'     => mime_content_type($tempName),
+			'type'     => $mimeType,
 			'tmp_name' => $tempName,
 			'error'    => 0,
 			'size'     => strlen($fileData),
