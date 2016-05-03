@@ -10,16 +10,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 		{
 			try
 			{
-				$url = $asset->getUrl();
-
-				if(!UrlHelper::isAbsoluteUrl($url))
-				{
-					$protocol = craft()->request->isSecureConnection() ? 'https' : 'http';
-					$url = UrlHelper::getUrlWithProtocol($url, $protocol);
-				}
-
-				// See http://stackoverflow.com/questions/272361/how-can-i-handle-the-warning-of-file-get-contents-function-in-php
-				$rawData = @file_get_contents($url);
+				$rawData = craft()->embeddedAssets->readAssetFile($asset);
 
 				if($rawData)
 				{

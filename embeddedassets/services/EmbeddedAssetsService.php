@@ -180,6 +180,19 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		return true;
 	}
 
+	public function readAssetFile(AssetFileModel $asset)
+	{
+		$url = $asset->getUrl();
+
+		if(!UrlHelper::isAbsoluteUrl($url))
+		{
+			$protocol = craft()->request->isSecureConnection() ? 'https' : 'http';
+			$url = UrlHelper::getUrlWithProtocol($url, $protocol);
+		}
+
+		return $this->_readExternalFile($url);
+	}
+
 	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
 	{
 		$fileLabel = substr(AssetsHelper::cleanAssetName($media->getTitle()), 0, 40);
@@ -266,6 +279,12 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 			$data = curl_exec($ch);
+
+			if(!empty(curl_error($ch)))
+			{
+				$data = false;
+			}
+
 			curl_close($ch);
 
 			return $data;
