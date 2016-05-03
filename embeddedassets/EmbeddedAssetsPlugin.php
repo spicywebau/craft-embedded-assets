@@ -96,6 +96,14 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	}
 
 	/**
+	 * @return string
+	 */
+	public static function getCacheKey()
+	{
+		return 'embeddedassets_thumbs';
+	}
+
+	/**
 	 * Loads all dependencies for this plugin.
 	 * The plugin currently depends on the Essence library.
 	 *
@@ -412,33 +420,42 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	 */
 	private function _getThumbnails()
 	{
-		// TODO Redo this using the elements API so it's not depending on the DB schema
-		// Escape for using in LIKE clause
-		// See: http://www.yiiframework.com/doc/guide/1.1/en/database.query-builder
-		$prefix = strtr(self::getFileNamePrefix(), array('%' => '\%', '_' => '\_'));
-		$results = craft()->db->createCommand()
-			->select('assetfiles.*')
-			->from('assetfiles assetfiles')
-			->where(array(
-				'like',
-				'assetfiles.filename',
-				$prefix . '%.json'
-			))
-			->queryAll();
+		$cacheKey = self::getCacheKey();
+		$cache = craft()->cache->get($cacheKey);
 
-		$assets = AssetFileModel::populateModels($results, 'id');
-		$thumbnails = array();
-
-		foreach($assets as $id => $asset)
+		if(!$cache)
 		{
-			$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
+			// TODO Redo this using the elements API so it's not depending on the DB schema
+			// Escape for using in LIKE clause
+			// See: http://www.yiiframework.com/doc/guide/1.1/en/database.query-builder
+			$prefix = strtr(self::getFileNamePrefix(), array('%' => '\%', '_' => '\_'));
+			$results = craft()->db->createCommand()
+				->select('assetfiles.*')
+				->from('assetfiles assetfiles')
+				->where(array(
+					'like',
+					'assetfiles.filename',
+					$prefix . '%.json'
+				))
+				->queryAll();
 
-			if($embed)
+			$assets = AssetFileModel::populateModels($results, 'id');
+			$thumbnails = array();
+
+			foreach($assets as $id => $asset)
 			{
-				$thumbnails[$id] = $embed->thumbnailUrl;
+				$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
+
+				if($embed)
+				{
+					$thumbnails[$id] = $embed->thumbnailUrl;
+				}
 			}
+
+			craft()->cache->set($cacheKey, $thumbnails);
+			$cache = $thumbnails;
 		}
 
-		return $thumbnails;
+		return $cache;
 	}
 }

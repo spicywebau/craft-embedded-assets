@@ -168,6 +168,9 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 				throw $e;
 			}
 
+			$cacheKey = EmbeddedAssetsPlugin::getCacheKey();
+			craft()->cache->delete($cacheKey);
+
 			$this->onSaveEmbed(new Event($this, array(
 				'media' => $media,
 				'asset' => $asset,
