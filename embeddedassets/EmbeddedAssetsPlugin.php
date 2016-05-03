@@ -31,6 +31,16 @@ class EmbeddedAssetsPlugin extends BasePlugin
 		return '0.0.1';
 	}
 
+	public function getCraftMinimumVersion()
+	{
+		return '2.5';
+	}
+
+	public function getPHPMinimumVersion()
+	{
+		return '5.5';
+	}
+
 	public function getDeveloper()
 	{
 		return 'Benjamin Fleming';
@@ -103,10 +113,30 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	{
 		parent::init();
 
-		if(craft()->request->isCpRequest() && $this->isCraftRequiredVersion())
+		if(craft()->request->isCpRequest() && $this->isCompatible())
 		{
 			$this->includeResources();
 		}
+	}
+
+	/**
+	 * Checks if the plugin is compatible before installation.
+	 *
+	 * @return bool
+	 */
+	public function onBeforeInstall()
+	{
+		return $this->isCompatible();
+	}
+
+	/**
+	 * Returns if the plugin is compatible with the current system stack.
+	 *
+	 * @return bool
+	 */
+	public function isCompatible()
+	{
+		return $this->isCraftRequiredVersion() && $this->isPHPRequiredVersion();
 	}
 
 	/**
@@ -116,7 +146,17 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	 */
 	public function isCraftRequiredVersion()
 	{
-		return version_compare(craft()->getVersion(), '2.5', '>=');
+		return version_compare(craft()->getVersion(), $this->getCraftMinimumVersion(), '>=');
+	}
+
+	/**
+	 * Defines the earliest version of PHP that this plugin is compatible with.
+	 *
+	 * @return boolean - Whether the current version of PHP is compatible
+	 */
+	public function isPHPRequiredVersion()
+	{
+		return version_compare(PHP_VERSION, $this->getPHPMinimumVersion(), '>=');
 	}
 
 	/**
