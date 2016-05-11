@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v0.3.2
+- `Improved` Improved reading performance on embedded asset files
+- `Improved` Implemented control panel caching on embedded asset thumbnails
+- `Improved` Now checking for compatible PHP version (5.5+)
+
 #### v0.3.1
 - `Added` Embedded asset models now include the original provided URL under the "requestUrl" attribute
 - `Improved` Embedded asset file names now include the title of the embedded media
