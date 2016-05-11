@@ -1,5 +1,15 @@
 [
 	{
+		"version": "0.3.2",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.2.zip",
+		"date": "2016-05-11T15:35:00+11:00",
+		"notes": [
+			"[Improved] Improved reading performance on embedded asset files",
+			"[Improved] Implemented control panel caching on embedded asset thumbnails",
+			"[Improved] Now checking for compatible PHP version (5.5+)"
+		]
+	},
+	{
 		"version": "0.3.1",
 		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.1.zip",
 		"date": "2016-04-02T11:50:00+11:00",
