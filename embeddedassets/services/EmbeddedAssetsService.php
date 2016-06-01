@@ -216,7 +216,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		unset($fileData['id']);
 		unset($fileData['settings']);
 
-		$this->_addToFiles('assets-upload', $fileName, JsonHelper::encode($fileData));
+		$this->_addToFiles('assets-upload', $fileName, JsonHelper::encode($fileData), 'application/json');
 
 		$response = craft()->assets->uploadFile($folderId);
 
@@ -237,9 +237,10 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 	 * @param $key
 	 * @param $url
 	 * @param $data
+	 * @param $mimeType - A fallback mime type in case it can't be detected
 	 * @see http://stackoverflow.com/a/13915285/556609
 	 */
-	private function _addToFiles($key, $url, $data = null)
+	private function _addToFiles($key, $url, $data = null, $mimeType = 'text/plain')
 	{
 		$tempName = tempnam('/tmp', 'php_files');
 		$originalName = basename(parse_url($url, PHP_URL_PATH));
@@ -247,9 +248,16 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$fileData = (is_string($data) ? $data : file_get_contents($url));
 		file_put_contents($tempName, $fileData);
 
-		$fileInfo = finfo_open(FILEINFO_MIME);
-		$mimeType = finfo_file($fileInfo, $tempName);
-		finfo_close($fileInfo);
+		if(function_exists('finfo_open'))
+		{
+			$fileInfo = finfo_open(FILEINFO_MIME);
+			$mimeType = finfo_file($fileInfo, $tempName);
+			finfo_close($fileInfo);
+		}
+		else if(function_exists('mime_content_type'))
+		{
+			$mimeType = mime_content_type($tempName);
+		}
 
 		$_FILES[$key] = array(
 			'name'     => $originalName,
