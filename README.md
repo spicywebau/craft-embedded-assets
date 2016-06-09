@@ -9,6 +9,8 @@ Add embeddable media such as YouTube videos to your assets manager.
 
 ## Installation
 
+**Embedded Assets requires Craft CMS 2.5+ and PHP 5.5+ minimum**
+
 1. Copy the `embeddedassets` folder to your plugins directory and install the plugin through the control panel.
 2. Modify your `general.php` configuration file to include the setting `'extraAllowedFileExtensions' => 'json'`. This
    needs to be done because the embedded assets are stored as JSON files, and Craft doesn't allow JSON files by default. 
@@ -140,3 +142,23 @@ other parameters.
 This parameter is found in the `config.php` file, and specifies the string to prefix embed files with. This setting is
 not normally required to be changed, but can be modified in case you already have JSON files in your assets folders
 that are prefixed with `embed_`, and do not want them to be recognised by the plugin.
+
+## FAQ
+
+### Embedded Assets won't install
+
+As mentioned above, Embedded Assets requires Craft CMS 2.5+ and PHP 5.5+ as a minimum.
+
+### How can I get YouTube/Vimeo ID's?
+
+Embedded Assets goal is to be agnostic to the provider of media, by adhering to the oEmbed spec. The benefit for this is so that the plugin is not tied to a fixed set of providers – any website link that contains oEmbed data can be used as an embedded asset. While it would be useful, the downside to adding vendor-specific functionality means that the plugin would then be dependent on one or many third-party services.
+
+That said, there's a way of getting this data, using a little bit of Twig markup. The following code will extract the ID from a YouTube URL (you could also use the same approach for Vimeo and other URL's):
+
+```twig
+{% set embed = craft.embeddedAssets.fromAsset(asset) %}
+{% if embed.providerName|lower == 'youtube' %}
+    {% set videoId = embed.url|replace('/.+watch\\?v=(.+)/', '$1') %}
+    ...
+{% endif %}
+```
