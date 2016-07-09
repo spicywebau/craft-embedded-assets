@@ -1,5 +1,13 @@
 [
 	{
+		"version": "0.3.3",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.3.zip",
+		"date": "2016-07-09T11:38:00+10:00",
+		"notes": [
+			"[Fixed] Fixed issue where certain filenames weren't being cleansed properly, resulting in the file not being recognised by the plugin"
+		]
+	},
+	{
 		"version": "0.3.2",
 		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.2.zip",
 		"date": "2016-05-11T15:35:00+11:00",
