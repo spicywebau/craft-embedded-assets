@@ -195,7 +195,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
 	{
-		$fileLabel = substr(AssetsHelper::cleanAssetName($media->getTitle()), 0, 40);
+		$fileLabel = substr(preg_replace('/[^a-z0-9]+/i', '-', $media->getTitle()), 0, 40);
 		$filePrefix = EmbeddedAssetsPlugin::getFileNamePrefix();
 		$fileExtension = '.json';
 		$fileName = $filePrefix . $fileLabel . $fileExtension;
@@ -207,7 +207,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 		if($existingFile)
 		{
-			$fileUniqueId = DateTimeHelper::currentUTCDateTime()->format("ymd_His");
+			$fileUniqueId = DateTimeHelper::currentUTCDateTime()->format('ymd_His');
 			$fileName = $filePrefix . $fileLabel . '_' . $fileUniqueId . $fileExtension;
 		}
 
