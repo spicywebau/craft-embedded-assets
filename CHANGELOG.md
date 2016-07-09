@@ -1,5 +1,8 @@
 ## Changelog
 
+#### v0.3.3
+- `Fixed` Fixed issue where certain filenames weren't being cleansed properly, resulting in the file not being recognised by the plugin
+
 #### v0.3.2
 - `Improved` Improved reading performance on embedded asset files
 - `Improved` Implemented control panel caching on embedded asset thumbnails

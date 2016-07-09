@@ -23,7 +23,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 	public function getVersion()
 	{
-		return '0.3.2';
+		return '0.3.3';
 	}
 
 	public function getSchemaVersion()
