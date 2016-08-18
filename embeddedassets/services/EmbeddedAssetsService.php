@@ -287,8 +287,9 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 			$data = curl_exec($ch);
+			$error = curl_error($ch);
 
-			if(!empty(curl_error($ch)))
+			if(!empty($error))
 			{
 				$data = false;
 			}
