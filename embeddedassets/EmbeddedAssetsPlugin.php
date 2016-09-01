@@ -425,30 +425,23 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 		if(!$cache)
 		{
-			// TODO Redo this using the elements API so it's not depending on the DB schema
-			// Escape for using in LIKE clause
-			// See: http://www.yiiframework.com/doc/guide/1.1/en/database.query-builder
-			$prefix = strtr(self::getFileNamePrefix(), array('%' => '\%', '_' => '\_'));
-			$results = craft()->db->createCommand()
-				->select('assetfiles.*')
-				->from('assetfiles assetfiles')
-				->where(array(
-					'like',
-					'assetfiles.filename',
-					$prefix . '%.json'
-				))
-				->queryAll();
+			
+			$prefix = self::getFileNamePrefix();
+			$assets = craft()->elements->getCriteria(ElementType::Asset, array(
+				'kind' => 'json',
+				'filename' => $prefix.'*',
+				'limit' => null,
+			))->find();
 
-			$assets = AssetFileModel::populateModels($results, 'id');
 			$thumbnails = array();
 
-			foreach($assets as $id => $asset)
+			foreach($assets as $asset)
 			{
 				$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
 
 				if($embed)
 				{
-					$thumbnails[$id] = $embed->thumbnailUrl;
+					$thumbnails[$asset->id] = $embed->thumbnailUrl;
 				}
 			}
 
