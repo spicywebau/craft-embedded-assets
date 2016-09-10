@@ -1,5 +1,10 @@
 ## Changelog
 
+#### v0.3.4
+- `Improved` Getting thumbnails is now more reliable (cheers @mmikkel)
+- `Improved` Added logging at all critical points to aid in diagnosing issues
+- `Fixed` Fixed issue with PHP 5.4 and below (this plugin supports 5.5+ but if you're bold enough you could use it on 5.4)
+
 #### v0.3.3
 - `Fixed` Fixed issue where certain filenames weren't being cleansed properly, resulting in the file not being recognised by the plugin
 
