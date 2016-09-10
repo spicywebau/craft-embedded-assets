@@ -1,5 +1,15 @@
 [
 	{
+		"version": "0.3.4",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.4.zip",
+		"date": "2016-09-10T13:38:00+10:00",
+		"notes": [
+			"[Improved] Getting thumbnails is now more reliable (cheers @mmikkel)",
+			"[Improved] Added logging at all critical points to aid in diagnosing issues",
+			"[Fixed] Fixed issue with PHP 5.4 and below (this plugin supports 5.5+ but if you're bold enough you could use it on 5.4)"
+		]
+	},
+	{
 		"version": "0.3.3",
 		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.3.zip",
 		"date": "2016-07-09T11:38:00+10:00",
