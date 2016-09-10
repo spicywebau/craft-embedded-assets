@@ -43,6 +43,8 @@ class EmbeddedAssetsModel extends BaseComponentModel
 			}
 			catch(\Exception $e)
 			{
+				EmbeddedAssetsPlugin::log("Error reading embedded asset data on asset {$asset->id} (\"{$e->getMessage()}\")", LogLevel::Error);
+
 				return null;
 			}
 		}

@@ -58,10 +58,14 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$essence = new \Essence\Essence();
 		$options = EmbeddedAssetsPlugin::getParameters();
 
+		EmbeddedAssetsPlugin::log("Requesting URL \"{$url}\"");
+
 		$result = $essence->extract($url, $options);
 
 		if($result && $result->html)
 		{
+			EmbeddedAssetsPlugin::log("Embed data found");
+
 			$properties = array();
 
 			foreach($result as $property => $value)
@@ -74,9 +78,16 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 			if(!empty($properties))
 			{
+				EmbeddedAssetsPlugin::log("Some data missing - looking for related Open Graph metadata");
+
 				try
 				{
 					$data = $this->_readExternalFile($url);
+
+					if(!$data)
+					{
+						throw new \Exception("Could not read data");
+					}
 
 					$reader = new \Opengraph\Reader();
 					$reader->parse($data);
@@ -87,7 +98,10 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 						$result->$property = $reader->getMeta($ogProperty);
 					}
 				}
-				catch(\Exception $e) {}
+				catch(\Exception $e)
+				{
+					EmbeddedAssetsPlugin::log("Error requesting/parsing Open Graph metadata (\"{$e->getMessage()}\")", LogLevel::Warning);
+				}
 			}
 		}
 
@@ -160,6 +174,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 			}
 			catch(\Exception $e)
 			{
+				EmbeddedAssetsPlugin::log("Error saving embedded asset (\"{$e->getMessage()}\")", LogLevel::Error);
+
 				if($transaction)
 				{
 					$transaction->rollback();
@@ -207,6 +223,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 		if($existingFile)
 		{
+			EmbeddedAssetsPlugin::log("File with name \"{$fileName}\" already exists in this location");
+
 			$fileUniqueId = DateTimeHelper::currentUTCDateTime()->format('ymd_His');
 			$fileName = $filePrefix . $fileLabel . '_' . $fileUniqueId . $fileExtension;
 		}
@@ -250,12 +268,16 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 		if(function_exists('finfo_open'))
 		{
+			EmbeddedAssetsPlugin::log("Setting embedded asset file mime type with `finfo`");
+
 			$fileInfo = finfo_open(FILEINFO_MIME);
 			$mimeType = finfo_file($fileInfo, $tempName);
 			finfo_close($fileInfo);
 		}
 		else if(function_exists('mime_content_type'))
 		{
+			EmbeddedAssetsPlugin::log("Setting embedded asset file mime type with `mime_content_type`");
+
 			$mimeType = mime_content_type($tempName);
 		}
 
@@ -278,6 +300,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 	{
 		if(function_exists('curl_init'))
 		{
+			EmbeddedAssetsPlugin::log("Reading file with `curl`");
+
 			$ch = curl_init();
 
 			curl_setopt($ch, CURLOPT_AUTOREFERER, true);
@@ -291,6 +315,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 			if(!empty($error))
 			{
+				EmbeddedAssetsPlugin::log("Error reading file (\"{$error}\")", LogLevel::Error);
+
 				$data = false;
 			}
 
@@ -302,6 +328,8 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$allowUrlFopen = preg_match('/1|yes|on|true/i', ini_get('allow_url_fopen'));
 		if($allowUrlFopen)
 		{
+			EmbeddedAssetsPlugin::log("Reading file with `file_get_contents`");
+
 			return @file_get_contents($url);
 		}
 
