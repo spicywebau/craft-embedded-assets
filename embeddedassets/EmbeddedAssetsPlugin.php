@@ -100,7 +100,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	 */
 	public static function getCacheKey()
 	{
-		return 'embeddedassets_thumbs';
+		return 'embeddedassets_thumbs_' . self::getVersion();
 	}
 
 	/**
