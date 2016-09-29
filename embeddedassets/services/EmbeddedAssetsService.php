@@ -260,7 +260,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 	 */
 	private function _addToFiles($key, $url, $data = null, $mimeType = 'text/plain')
 	{
-		$tempName = tempnam('/tmp', 'php_files');
+		$tempName = tempnam(craft()->getRuntimePath() . '/temp', 'embedded_assets_');
 		$originalName = basename(parse_url($url, PHP_URL_PATH));
 
 		$fileData = (is_string($data) ? $data : file_get_contents($url));
