@@ -27,7 +27,29 @@ class EmbeddedAssetsModel extends BaseComponentModel
 						{
 							if(isset($data[$key]))
 							{
-								$embed->$key = $data[$key];
+								switch($key)
+								{
+									case 'url':
+									case 'requestUrl':
+									case 'authorUrl':
+									case 'providerUrl':
+									case 'thumbnailUrl':
+									{
+										if(UrlHelper::isAbsoluteUrl($data[$key]))
+										{
+											$embed->$key = $data[$key];
+										}
+										else
+										{
+											$embed->$key = UrlHelper::getSiteUrl($data[$key]);
+										}
+									}
+									break;
+									default:
+									{
+										$embed->$key = $data[$key];
+									}
+								}
 							}
 						}
 
