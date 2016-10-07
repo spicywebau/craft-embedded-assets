@@ -25,7 +25,7 @@ And you're done!
 {% for asset in assets %}
 	{% set embed = craft.embeddedAssets.fromAsset(asset) %}
 	{% if embed %}
-		{{ embed.safeHtml }}
+		{{ embed.safeHtml|raw }}
 	{% endif %}
 {% endfor %}
 ```
