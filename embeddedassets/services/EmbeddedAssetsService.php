@@ -214,7 +214,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		$fileLabel = substr(preg_replace('/[^a-z0-9]+/i', '-', $media->getTitle()), 0, 40);
 		$filePrefix = EmbeddedAssetsPlugin::getFileNamePrefix();
 		$fileExtension = '.json';
-		$fileName = $filePrefix . $fileLabel . $fileExtension;
+		$fileName = AssetsHelper::cleanAssetName($filePrefix . $fileLabel . $fileExtension);
 
 		$existingFile = craft()->assets->findFile(array(
 			'folderId' => $folderId,
