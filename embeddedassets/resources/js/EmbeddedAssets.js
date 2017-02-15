@@ -94,21 +94,19 @@
 			else
 			{
 				var that = this;
-				var url = Craft.getActionUrl('embeddedAssets/getThumbnail', { id: assetId });
-				var image = new Image();
 
-				image.onload = function()
+				Craft.postActionRequest('embeddedAssets/getThumbnail', { id: assetId }, function(e)
 				{
-					that.setThumbnail(assetId, url);
-					callback(url);
-				};
-
-				image.onerror = function()
-				{
-					that.thumbnails[assetId] = false;
-				};
-
-				image.src = url;
+					if(e.success)
+					{
+						that.setThumbnail(assetId, e.url);
+						callback(e.url);
+					}
+					else
+					{
+						that.setThumbnail(assetId, false);
+					}
+				});
 			}
 		},
 

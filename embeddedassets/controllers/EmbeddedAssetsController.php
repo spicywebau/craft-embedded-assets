@@ -88,7 +88,12 @@ class EmbeddedAssetsController extends BaseController
 
 	public function actionGetThumbnail()
 	{
+		$this->requireAjaxRequest();
+
 		$id = craft()->request->getParam('id');
+		$json = array(
+			'success' => false,
+		);
 
 		if($id)
 		{
@@ -114,11 +119,13 @@ class EmbeddedAssetsController extends BaseController
 
 			if($thumbnailUrl)
 			{
-				craft()->request->redirect($thumbnailUrl);
+				$json = array(
+					'success' => true,
+					'url' => $thumbnailUrl,
+				);
 			}
 		}
 
-		http_response_code(404);
-		ob_end_clean();
+		$this->returnJson($json);
 	}
 }
