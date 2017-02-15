@@ -8,6 +8,15 @@
 		assetIndex: null,
 		thumbnails: {},
 
+		init: function()
+		{
+			var savedThumbsJson = localStorage.getItem('embeddedAssetsThumbs');
+			if(savedThumbsJson)
+			{
+				this.thumbnails = JSON.parse(savedThumbsJson);
+			}
+		},
+
 		patchClass: function(Patchee, Patcher)
 		{
 			var fn = Patchee.prototype;
@@ -90,8 +99,8 @@
 
 				image.onload = function()
 				{
-					that.thumbnails[assetId] = url;
-					that.getThumbnail(assetId, callback)
+					that.setThumbnail(assetId, url);
+					callback(url);
 				};
 
 				image.onerror = function()
@@ -101,6 +110,14 @@
 
 				image.src = url;
 			}
+		},
+
+		setThumbnail: function(assetId, url)
+		{
+			this.thumbnails[assetId] = url;
+
+			// Cache thumbnails on the client too for improved performance
+			localStorage.setItem('embeddedAssetsThumbs', JSON.stringify(this.thumbnails));
 		},
 
 		applyThumbnails: function($elements)
