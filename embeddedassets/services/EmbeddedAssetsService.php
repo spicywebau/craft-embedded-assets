@@ -198,15 +198,25 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 	public function readAssetFile(AssetFileModel $asset)
 	{
-		$url = $asset->getUrl();
+		$assetSource = $asset->getSource();
 
-		if(!UrlHelper::isAbsoluteUrl($url))
+		if(strtolower($assetSource->type) == 'local')
 		{
-			$protocol = craft()->request->isSecureConnection() ? 'https' : 'http';
-			$url = UrlHelper::getUrlWithProtocol($url, $protocol);
+			$path = $assetSource->settings['path'] . $asset->getFolder()->path . $asset->filename;
+			$assetPath = realpath($path);
+		}
+		else
+		{
+			$assetPath = $asset->getUrl();
+
+			if(!UrlHelper::isAbsoluteUrl($assetPath))
+			{
+				$protocol = craft()->request->isSecureConnection() ? 'https' : 'http';
+				$assetPath = UrlHelper::getUrlWithProtocol($assetPath, $protocol);
+			}
 		}
 
-		return $this->_readExternalFile($url);
+		return $this->_readExternalFile($assetPath);
 	}
 
 	private function _storeFile(EmbeddedAssetsModel $media, $folderId)
@@ -298,7 +308,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 	 */
 	private function _readExternalFile($url)
 	{
-		if(function_exists('curl_init'))
+		if(preg_match('/^(https?):\/\//', $url) && function_exists('curl_init'))
 		{
 			EmbeddedAssetsPlugin::log("Reading file with `curl`");
 
@@ -324,13 +334,14 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 
 			return $data;
 		}
-
-		$allowUrlFopen = preg_match('/1|yes|on|true/i', ini_get('allow_url_fopen'));
-		if($allowUrlFopen)
+		else
 		{
-			EmbeddedAssetsPlugin::log("Reading file with `file_get_contents`");
+			if(preg_match('/1|yes|on|true/i', ini_get('allow_url_fopen')))
+			{
+				EmbeddedAssetsPlugin::log("Reading file with `file_get_contents`");
 
-			return @file_get_contents($url);
+				return @file_get_contents($url);
+			}
 		}
 
 		return false;
