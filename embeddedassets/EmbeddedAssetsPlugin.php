@@ -72,6 +72,16 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	}
 
 	/**
+	 * Shorthand for getting the read timeout setting.
+	 *
+	 * @return mixed
+	 */
+	public static function getReadTimeout()
+	{
+		return craft()->config->get('readTimeout', 'embeddedassets');
+	}
+
+	/**
 	 * Shorthand for getting the whitelist setting.
 	 *
 	 * @return mixed
