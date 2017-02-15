@@ -85,4 +85,48 @@ class EmbeddedAssetsController extends BaseController
 
 		$this->returnJson($json);
 	}
+
+	public function actionGetThumbnail()
+	{
+		$this->requireAjaxRequest();
+
+		$id = craft()->request->getParam('id');
+		$json = array(
+			'success' => false,
+		);
+
+		if($id)
+		{
+			$cacheKey = EmbeddedAssetsPlugin::getCacheKey($id);
+			$thumbnailUrl = craft()->cache->get($cacheKey);
+
+			if(!$thumbnailUrl)
+			{
+				$asset = craft()->elements->getCriteria(ElementType::Asset, ['id' => $id])->first();
+				$thumbnailUrl = '';
+
+				if($asset)
+				{
+					$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
+
+					if($embed && $embed->thumbnailUrl)
+					{
+						$thumbnailUrl = $embed->thumbnailUrl;
+					}
+				}
+
+				craft()->cache->set($cacheKey, $thumbnailUrl);
+			}
+
+			if(UrlHelper::isAbsoluteUrl($thumbnailUrl))
+			{
+				$json = array(
+					'success' => true,
+					'url' => $thumbnailUrl,
+				);
+			}
+		}
+
+		$this->returnJson($json);
+	}
 }

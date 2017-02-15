@@ -72,6 +72,16 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	}
 
 	/**
+	 * Shorthand for getting the read timeout setting.
+	 *
+	 * @return mixed
+	 */
+	public static function getReadTimeout()
+	{
+		return craft()->config->get('readTimeout', 'embeddedassets');
+	}
+
+	/**
 	 * Shorthand for getting the whitelist setting.
 	 *
 	 * @return mixed
@@ -98,9 +108,9 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	/**
 	 * @return string
 	 */
-	public static function getCacheKey()
+	public static function getCacheKey($id=null)
 	{
-		return 'embeddedassets-0.3.4_thumbs';
+		return 'embeddedassets-0.3.4_thumbs' . ($id ? ':' . $id : '');
 	}
 
 	/**
@@ -405,50 +415,6 @@ class EmbeddedAssetsPlugin extends BasePlugin
 			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedIndex.js');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbeddedInput.js');
 			craft()->templates->includeJsResource('embeddedassets/js/EmbedModal.js');
-			craft()->templates->includeJs('window.EmbeddedAssets.thumbnails=' . JsonHelper::encode($this->_getThumbnails()));
 		}
-	}
-
-	/**
-	 * Returns an array of all embedded assets thumbnails, indexed by the asset file models ID.
-	 * This method is used to inject the asset thumbnails into the CP front-end. Since embedded asset files are stored
-	 * as JSON files, there's no supported way of setting the thumbnail on the front-end for these files. The
-	 * alternative is to pass a list of these thumbnails to the front-end, and use JS to patch them on-top of the
-	 * elements system.
-	 *
-	 * @return array
-	 */
-	private function _getThumbnails()
-	{
-		$cacheKey = self::getCacheKey();
-		$cache = craft()->cache->get($cacheKey);
-
-		if(!$cache)
-		{
-			
-			$prefix = self::getFileNamePrefix();
-			$assets = craft()->elements->getCriteria(ElementType::Asset, array(
-				'kind' => 'json',
-				'filename' => $prefix.'*',
-				'limit' => null,
-			))->find();
-
-			$thumbnails = array();
-
-			foreach($assets as $asset)
-			{
-				$embed = craft()->embeddedAssets->getEmbeddedAsset($asset);
-
-				if($embed)
-				{
-					$thumbnails[$asset->id] = $embed->thumbnailUrl;
-				}
-			}
-
-			craft()->cache->set($cacheKey, $thumbnails);
-			$cache = $thumbnails;
-		}
-
-		return $cache;
 	}
 }
