@@ -39,7 +39,7 @@ class EmbeddedAssetsModel extends BaseComponentModel
 										{
 											$embed->$key = $data[$key];
 										}
-										else
+										else if(!empty($data[$key]))
 										{
 											$embed->$key = UrlHelper::getSiteUrl($data[$key]);
 										}

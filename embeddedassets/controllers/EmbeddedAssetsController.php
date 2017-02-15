@@ -103,6 +103,7 @@ class EmbeddedAssetsController extends BaseController
 			if(!$thumbnailUrl)
 			{
 				$asset = craft()->elements->getCriteria(ElementType::Asset, ['id' => $id])->first();
+				$thumbnailUrl = '';
 
 				if($asset)
 				{
@@ -117,7 +118,7 @@ class EmbeddedAssetsController extends BaseController
 				craft()->cache->set($cacheKey, $thumbnailUrl);
 			}
 
-			if($thumbnailUrl)
+			if(UrlHelper::isAbsoluteUrl($thumbnailUrl))
 			{
 				$json = array(
 					'success' => true,
