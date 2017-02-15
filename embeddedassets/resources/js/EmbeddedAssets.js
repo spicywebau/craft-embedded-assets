@@ -6,7 +6,7 @@
 	var EmbeddedAssets = new (Garnish.Base.extend({
 
 		assetIndex: null,
-		thumbnails: [], // Populated in EmbeddedAssetsPlugin.php
+		thumbnails: {},
 
 		patchClass: function(Patchee, Patcher)
 		{
@@ -73,19 +73,34 @@
 			}, this));
 		},
 
-		getThumbnail: function(assetId)
+		getThumbnail: function(assetId, callback)
 		{
-			return this.thumbnails && this.thumbnails[assetId] ? this.thumbnails[assetId] : null;
-		},
-
-		setThumbnail: function(assetId, thumbnail)
-		{
-			if(!this.thumbnails)
+			if(this.thumbnails.hasOwnProperty(assetId))
 			{
-				this.thumbnails = {};
+				if(this.thumbnails[assetId])
+				{
+					callback(this.thumbnails[assetId]);
+				}
 			}
+			else
+			{
+				var that = this;
+				var url = Craft.getActionUrl('embeddedAssets/getThumbnail', { id: assetId });
+				var image = new Image();
 
-			this.thumbnails[assetId | 0] = thumbnail;
+				image.onload = function()
+				{
+					that.thumbnails[assetId] = url;
+					that.getThumbnail(assetId, callback)
+				};
+
+				image.onerror = function()
+				{
+					that.thumbnails[assetId] = false;
+				};
+
+				image.src = url;
+			}
 		},
 
 		applyThumbnails: function($elements)
@@ -96,13 +111,14 @@
 			{
 				var $this = $(this);
 				var id = $this.data('id') | 0;
-				var thumbnail = that.getThumbnail(id);
 
-				if(thumbnail)
+				console.log(this)
+
+				that.getThumbnail(id, function(url)
 				{
 					var $img = $this.find('.elementthumb > img');
-					$img.prop('srcset', thumbnail);
-				}
+					$img.prop('srcset', url);
+				});
 			});
 		}
 
