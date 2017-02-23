@@ -1,6 +1,9 @@
 ## Changelog
 
-### v0.4.0
+### v0.4.1
+- `Fixed` Fixed issue with asset source directories using environment variables
+
+#### v0.4.0
 - `Improved` Big performance improvement when loading embedded asset thumbnails in the control panel
 - `Improved` Local embedded assets are now read by their path, improving server's ability to read embedded assets (thanks @awcross)
 - `Improved` Relative URL's now work with thumbnails and URL's in embedded asset data
