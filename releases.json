@@ -1,5 +1,25 @@
 [
 	{
+		"version": "0.4.1",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.4.1.zip",
+		"date": "2017-02-23T12:00:00-08:00",
+		"notes": [
+			"[Fixed] Fixed issue with asset source directories using environment variables"
+		]
+	},
+	{
+		"version": "0.4.0",
+		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.4.0.zip",
+		"date": "2017-02-15T15:30:00-08:00",
+		"notes": [
+			"[Improved] Big performance improvement when loading embedded asset thumbnails in the control panel",
+			"[Improved] Local embedded assets are now read by their path, improving server's ability to read embedded assets (thanks @awcross)",
+			"[Improved] Relative URL's now work with thumbnails and URL's in embedded asset data",
+			"[Fixed] Fixed issue on some servers when saving embedded asset files (thanks @leevigraham)",
+			"[Fixed] Fixed issue where some embedded assets would create multiple files (thanks @timkelty)"
+		]
+	},
+	{
 		"version": "0.3.4",
 		"downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/0.3.4.zip",
 		"date": "2016-09-10T13:38:00+10:00",

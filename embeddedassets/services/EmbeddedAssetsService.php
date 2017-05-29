@@ -203,6 +203,7 @@ class EmbeddedAssetsService extends BaseApplicationComponent
 		if(strtolower($assetSource->type) == 'local')
 		{
 			$path = $assetSource->settings['path'] . $asset->getFolder()->path . $asset->filename;
+			$path = craft()->config->parseEnvironmentString($path);
 			$assetPath = realpath($path);
 		}
 		else

@@ -23,7 +23,7 @@ class EmbeddedAssetsPlugin extends BasePlugin
 
 	public function getVersion()
 	{
-		return '0.3.4';
+		return '0.4.1';
 	}
 
 	public function getSchemaVersion()
@@ -236,6 +236,13 @@ class EmbeddedAssetsPlugin extends BasePlugin
 	 */
 	public function prepSettings($postSettings)
 	{
+		if ( is_array($postSettings['whitelist'])) {
+			// Assume this is already processed, i.e. in the context of
+			// importing through a tool such as Schematic.
+			// Return early
+			return $postSettings;
+		}
+
 		$settings = array(
 			'whitelist' => array_map(function($domain)
 			{
