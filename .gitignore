@@ -1,1 +1,2 @@
-/oembed/vendor/**/.git
+/node_modules
+/vendor

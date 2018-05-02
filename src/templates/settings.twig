@@ -1,0 +1,32 @@
+{% import '_includes/forms' as forms %}
+
+<div class="settings">
+
+	{{ forms.textareaField({
+		label: "Whitelist"|t('embeddedassets'),
+		instructions: "List of domains that will be preservered when purifying the HTML. Subdomains will also be included."|t('embeddedassets'),
+		id: 'whitelist',
+		name: 'whitelist',
+		rows: 8,
+		value: settings.whitelist|join('\n'),
+	}) }}
+
+	{% set paramRows = [] %}
+	{% for param, value in settings.parameters %}
+		{% set paramRows = paramRows|merge([{ param: param, value: value }]) %}
+	{% endfor %}
+
+	{{ forms.editableTableField({
+		label: "Parameters"|t('embeddedassets'),
+		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),
+		id: 'parameters',
+		name: 'parameters',
+		rows: paramRows,
+		cols: {
+			param: { type: 'singleline', heading: "Parameter Name"|t('embeddedassets'), class: 'code' },
+			value: { type: 'singleline', heading: "Value"|t('embeddedassets') },
+		},
+		addRowLabel: "Add a parameter"|t('embeddedassets'),
+	}) }}
+
+</div>
