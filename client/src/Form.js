@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import Craft from 'craft'
+import { uniqueId } from './utilities'
 
 export default class Form
 {
@@ -7,36 +8,38 @@ export default class Form
 	{
 		this.$element = null
 		this.$input = null
+		this.$iframe = null
 	}
 
 	create()
 	{
-		const label = Craft.t('embeddedassets', "URL")
-		const instructions = Craft.t('embeddedassets', "The link to the content you'd like to embed.")
+		const inputId = uniqueId()
+		const iframeId = uniqueId()
 
-		const previewUrl = Craft.getActionUrl('embeddedassets/actions/get-preview')
+		const cancelLabel = Craft.t('app', "Cancel")
+		const saveLabel = Craft.t('app', "Save")
 
 		this.$element = $(`
 			<div class="embedded-assets_form">
-				<div class="field">
-					<div class="heading">
-						<label for="embeddedassets-url" class="required">${label}</label>
-						<div class="instructions">
-							<p>${instructions}</p>
-						</div>
-					</div>
-					<div class="input ltr">
-						<input class="text fullwidth" type="text" placeholder="http://" id="embeddedassets-url" name="url" autocomplete="off">
-					</div>
+				<div class="embedded-assets_field">
+					<label for="${inputId}">URL</label>
+					<input type="text" placeholder="http://" id="${inputId}" name="url" autocomplete="off">
 				</div>
 				<div class="embedded-assets_preview">
-					<iframe src="${previewUrl}"></iframe>
+					<iframe id="${iframeId}" src="about:blank"></iframe>
+				</div>
+			</div>
+			<div class="hud-footer">
+				<div class="buttons right">
+					<div class="btn">${cancelLabel}</div>
+					<input class="btn submit" type="submit" value="${saveLabel}">
+					<div class="spinner hidden"></div>
 				</div>
 			</div>
 		`)
 
-		this.$input = this.$element.find('input')
-
+		this.$input = this.$element.find(`#${inputId}`)
+		this.$iframe = this.$element.find(`#${iframeId}`)
 
 	}
 
@@ -45,5 +48,6 @@ export default class Form
 		this.$element.remove()
 		this.$element = null
 		this.$input = null
+		this.$iframe = null
 	}
 }

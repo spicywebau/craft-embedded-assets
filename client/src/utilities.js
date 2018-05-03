@@ -8,3 +8,8 @@ export function monkeypatch(Class, method, callback)
 		callback(this)
 	}
 }
+
+export function uniqueId()
+{
+	return 'uid' + Math.random().toString(36).substr(2)
+}

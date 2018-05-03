@@ -8,4 +8,50 @@
 			margin-right: 7px;
 		}
 	}
+
+	&_form {
+		padding: 8px 0;
+	}
+
+	&_field {
+		display: flex;
+		padding: 0 24px;
+
+		> label,
+		> input {
+			padding: 14px 0;
+			font-size: 14px;
+			line-height: 20px;
+		}
+
+		> label {
+			order: 1;
+			padding-right: 14px;
+			font-weight: normal;
+			color: #8f98a3;
+		}
+
+		> input {
+			order: 2;
+			flex: 1;
+			box-sizing: border-box;
+			display: block;
+			border-radius: 0;
+			border: 0;
+			background: transparent;
+			color: #29323d;
+			appearance: none;
+			outline: 0;
+		}
+	}
+
+	&_preview {
+		border-top: 1px solid rgba(0, 0, 20, 0.1);
+		height: 300px;
+
+		> iframe {
+			width: 100%;
+			height: 100%;
+		}
+	}
 }

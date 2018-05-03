@@ -13,6 +13,11 @@ export default class Modal
 
 	create($target, settings = {})
 	{
+		settings = Object.assign({
+			mainClass: 'embedded-assets_hud',
+			minBodyWidth: 340,
+		}, settings)
+
 		this.form = new Form()
 		this.form.create()
 
