@@ -28,7 +28,8 @@
     "rss": "https://github.com/benjamminf/craft-embedded-assets/commits/master.atom"
   },
   "require": {
-    "craftcms/cms": "^3.0.0"
+    "craftcms/cms": "^3.0.0",
+    "embed/embed": "^3.3"
   },
   "autoload": {
     "psr-4": {

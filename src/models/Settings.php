@@ -45,11 +45,22 @@ class Settings extends Model
 		'maxheight' => '1080',
 	];
 
+	public $embedlyKey = '';
+	public $iframelyKey = '';
+	public $googleKey = '';
+	public $soundcloudKey = '';
+	public $facebookKey = '';
+
 	public function rules()
 	{
 		return [
 			['whitelist', 'each', 'rule' => ['string']],
 			['parameters', 'each', 'rule' => ['string']],
+			['embedlyKey', 'string'],
+			['iframelyKey', 'string'],
+			['googleKey', 'string'],
+			['soundcloudKey', 'string'],
+			['facebookKey', 'string'],
 		];
 	}
 }

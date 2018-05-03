@@ -1,9 +1,14 @@
 <?php
 namespace benf\embeddedassets;
 
-use yii\base\Component;
+use yii\web\Response;
 
-class Controller extends Component
+use craft\web\Controller as BaseController;
+
+class Controller extends BaseController
 {
-
+	public function actionGetPreview()
+	{
+		return '';
+	}
 }
