@@ -2,71 +2,73 @@
 
 <div class="settings">
 
-	{{ forms.textareaField({
-		label: "Whitelist"|t('embeddedassets'),
-		instructions: "List of domains that will be preservered when purifying the HTML. Subdomains will also be included."|t('embeddedassets'),
-		id: 'whitelist',
-		name: 'whitelist',
-		rows: 8,
-		value: settings.whitelist|join('\n'),
+	{{ forms.textField({
+		label: "embed.ly API Key"|t('embeddedassets'),
+		instructions: "An {api} key to be used as a fallback data provider."|t('embeddedassets', {
+			api: '[embed.ly API](http://docs.embed.ly/docs/embedly-api)',
+		}),
+		id: 'embedlyKey',
+		name: 'embedlyKey',
+		value: settings.embedlyKey,
+		errors: settings.getErrors('embedlyKey'),
 	}) }}
 
-	{% set paramRows = [] %}
-	{% for param, value in settings.parameters %}
-		{% set paramRows = paramRows|merge([{ param: param, value: value }]) %}
-	{% endfor %}
+	{{ forms.textField({
+		label: "iFramely API Key"|t('embeddedassets'),
+		instructions: "An {api} key to be used as a fallback data provider."|t('embeddedassets', {
+			api: '[iFramely API](https://iframely.com/docs/iframely-api)',
+		}),
+		id: 'iframelyKey',
+		name: 'iframelyKey',
+		value: settings.iframelyKey,
+		errors: settings.getErrors('iframelyKey'),
+	}) }}
+
+	{{ forms.textField({
+		label: "Google API Key"|t('embeddedassets'),
+		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
+			api: '[Google API](https://developers.google.com/maps/documentation/embed/guide)',
+		}),
+		id: 'googleKey',
+		name: 'googleKey',
+		value: settings.googleKey,
+		errors: settings.getErrors('googleKey'),
+	}) }}
+
+	{{ forms.textField({
+		label: "SoundCloud API Key"|t('embeddedassets'),
+		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
+			api: '[SoundCloud API](https://developers.soundcloud.com/docs/api/guide)',
+		}),
+		id: 'soundcloudKey',
+		name: 'soundcloudKey',
+		value: settings.soundcloudKey,
+		errors: settings.getErrors('soundcloudKey'),
+	}) }}
+
+	{{ forms.textField({
+		label: "Facebook Graph API Key"|t('embeddedassets'),
+		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
+			api: '[Facebook Graph API](https://developers.facebook.com/docs/graph-api)',
+		}),
+		id: 'facebookKey',
+		name: 'facebookKey',
+		value: settings.facebookKey,
+		errors: settings.getErrors('facebookKey'),
+	}) }}
 
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),
 		id: 'parameters',
 		name: 'parameters',
-		rows: paramRows,
+		rows: settings.parameters,
+		errors: settings.getErrors('parameters'),
 		cols: {
 			param: { type: 'singleline', heading: "Parameter Name"|t('embeddedassets'), class: 'code' },
-			value: { type: 'singleline', heading: "Value"|t('embeddedassets') },
+			value: { type: 'singleline', heading: "Value"|t('embeddedassets'), class: 'code' },
 		},
 		addRowLabel: "Add a parameter"|t('embeddedassets'),
-	}) }}
-
-	{{ forms.textField({
-		label: "embed.ly API Key"|t('embeddedassets'),
-		instructions: "An [embed.ly API](http://docs.embed.ly/docs/embedly-api) key to be used as a fallback data provider."|t('embeddedassets'),
-		id: 'embedlyKey',
-		name: 'embedlyKey',
-		value: settings.embedlyKey,
-	}) }}
-
-	{{ forms.textField({
-		label: "iFramely API Key"|t('embeddedassets'),
-		instructions: "An [iFramely API](https://iframely.com/docs/iframely-api) key to be used as a fallback data provider."|t('embeddedassets'),
-		id: 'iframelyKey',
-		name: 'iframelyKey',
-		value: settings.iframelyKey,
-	}) }}
-
-	{{ forms.textField({
-		label: "Google API Key"|t('embeddedassets'),
-		instructions: "A [Google API](https://developers.google.com/maps/documentation/embed/guide) key to be used as a fallback data provider."|t('embeddedassets'),
-		id: 'googleKey',
-		name: 'googleKey',
-		value: settings.googleKey,
-	}) }}
-
-	{{ forms.textField({
-		label: "SoundCloud API Key"|t('embeddedassets'),
-		instructions: "A [SoundCloud API](https://developers.soundcloud.com/docs/api/guide) key to be used as a fallback data provider."|t('embeddedassets'),
-		id: 'soundcloudKey',
-		name: 'soundcloudKey',
-		value: settings.soundcloudKey,
-	}) }}
-
-	{{ forms.textField({
-		label: "Facebook Graph API Key"|t('embeddedassets'),
-		instructions: "A [Facebook Graph API](https://developers.facebook.com/docs/graph-api) key to be used as a fallback data provider."|t('embeddedassets'),
-		id: 'facebookKey',
-		name: 'facebookKey',
-		value: settings.facebookKey,
 	}) }}
 
 </div>
