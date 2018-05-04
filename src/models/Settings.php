@@ -16,6 +16,10 @@ class Settings extends Model
 		['param' => 'maxheight', 'value' => '1080'],
 	];
 
+	public $whitelist = [
+
+	];
+
 	public function rules()
 	{
 		return [

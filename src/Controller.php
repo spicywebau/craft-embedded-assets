@@ -17,17 +17,20 @@ class Controller extends BaseController
 		$requestService = Craft::$app->getRequest();
 
 		$url = $requestService->getRequiredParam('url');
-		$info = EmbeddedAssets::$plugin->methods->requestUrl($url);
+		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
 
 		$response = [
 			'success' => false,
 			'payload' => null,
 		];
 
-		if ($info)
+		if ($embeddedAsset)
 		{
 			$response['success'] = true;
-			$response['payload'] = $info;
+			$response['payload'] = [
+				'info' => $embeddedAsset,
+				'isSafe' => $embeddedAsset->isSafe(),
+			];
 		}
 
 		return $this->asJson($response);

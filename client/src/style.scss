@@ -10,48 +10,93 @@
 	}
 
 	&_form {
-		padding: 8px 0;
-	}
 
-	&_field {
-		display: flex;
-		padding: 0 24px;
+		&_field {
+			display: flex;
+			padding: 0 24px;
 
-		> label,
-		> input {
-			padding: 14px 0;
-			font-size: 14px;
-			line-height: 20px;
+			> label,
+			> input {
+				padding: 22px 0;
+				font-size: 14px;
+				line-height: 20px;
+			}
+
+			> label {
+				order: 1;
+				padding-right: 14px;
+				font-weight: normal;
+				color: #8f98a3;
+			}
+
+			> input {
+				order: 2;
+				flex: 1;
+				box-sizing: border-box;
+				display: block;
+				border-radius: 0;
+				border: 0;
+				background: transparent;
+				color: #29323d;
+				appearance: none;
+				outline: 0;
+			}
 		}
 
-		> label {
-			order: 1;
-			padding-right: 14px;
-			font-weight: normal;
-			color: #8f98a3;
-		}
+		&_preview {
+			position: relative;
+			overflow: hidden;
+			border-top: 1px solid rgba(0, 0, 20, 0.1);
+			transition: height 0.3s;
 
-		> input {
-			order: 2;
-			flex: 1;
-			box-sizing: border-box;
-			display: block;
-			border-radius: 0;
-			border: 0;
-			background: transparent;
-			color: #29323d;
-			appearance: none;
-			outline: 0;
+			.spinner {
+				pointer-events: none;
+				position: absolute;
+				top: 100px * (1/2);
+				left: 50%;
+				transform: translate(-50%, -50%);
+				opacity: 0;
+				transition: opacity 0.3s;
+			}
+
+			.embedded-assets_preview {
+				opacity: 0;
+				transition: opacity 0.3s;
+			}
+
+			.embedded-assets_form[data-state='idle'] & {
+				height: 0 !important;
+				border-top: 0;
+			}
+
+			.embedded-assets_form[data-state='requesting'] & {
+				height: 100px !important;
+
+				.spinner {
+					opacity: 1;
+				}
+			}
+
+			.embedded-assets_form[data-state='requested'] &,
+			.embedded-assets_form[data-state='saving'] & {
+				height: 300px;
+
+				.embedded-assets_preview {
+					opacity: 1;
+				}
+			}
 		}
 	}
 
 	&_preview {
-		border-top: 1px solid rgba(0, 0, 20, 0.1);
-		height: 300px;
 
-		> iframe {
-			width: 100%;
-			height: 100%;
+		&_code {
+			padding: 24px;
+			background-color: #f2f5f8;
+
+			iframe {
+				margin: 0 !important;
+			}
 		}
 	}
 }

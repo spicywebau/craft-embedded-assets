@@ -44,6 +44,11 @@ class Service extends Component
 
 	}
 
+	public function checkWhitelist(string $url): bool
+	{
+		return true;
+	}
+
 	private function _adapterToModel(Adapter $adapter): EmbeddedAsset
 	{
 		return new EmbeddedAsset([

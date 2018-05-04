@@ -15,12 +15,10 @@ export default class Modal
 	{
 		settings = Object.assign({
 			mainClass: 'embedded-assets_hud',
-			minBodyWidth: 340,
+			minBodyWidth: 400,
 		}, settings)
 
 		this.form = new Form()
-		this.form.create()
-
 		this.hud = new Garnish.HUD($target, this.form.$element, settings)
 
 		this._callEvent('onCreate')
@@ -31,6 +29,9 @@ export default class Modal
 
 	destroy()
 	{
+		this.form.destroy()
+		this.form = null
+
 		this.hud.hide()
 		this.hud.$hud.remove()
 		this.hud.$shade.remove()
