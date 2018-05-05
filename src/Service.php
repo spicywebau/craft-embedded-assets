@@ -39,13 +39,9 @@ class Service extends Component
 		return $this->_adapterToModel($adapter);
 	}
 
-	public function saveAsset(EmbeddedAsset $embeddedAsset)
-	{
-
-	}
-
 	public function checkWhitelist(string $url): bool
 	{
+		// TODO
 		return true;
 	}
 

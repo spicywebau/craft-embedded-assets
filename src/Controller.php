@@ -1,49 +1,84 @@
 <?php
 namespace benf\embeddedassets;
 
-use yii\web\NotFoundHttpException;
+use craft\elements\Asset;
+use craft\helpers\Assets;
+use craft\helpers\FileHelper;
+use craft\helpers\Json;
+use craft\models\VolumeFolder;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 use Craft;
 use craft\web\Controller as BaseController;
-use craft\helpers\UrlHelper;
-
-use benf\embeddedassets\assets\Preview as PreviewAsset;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
+use benf\embeddedassets\assets\Preview as PreviewAsset;
 
 class Controller extends BaseController
 {
-	public function actionRequestUrl(): Response
+	public function actionSave(): Response
 	{
 		$this->requireAcceptsJson();
 
+		$response = null;
+
+		$assetsService = Craft::$app->getAssets();
+		$elementsService = Craft::$app->getElements();
 		$requestService = Craft::$app->getRequest();
 
 		$url = $requestService->getRequiredParam('url');
+		$folderId = $requestService->getRequiredParam('folderId');
+
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+		$folder = $assetsService->findFolder(['id' => $folderId]);
 
-		$response = [
-			'success' => false,
-			'payload' => null,
-		];
-
-		if ($embeddedAsset)
+		if (!$folder)
 		{
-			$isSafe = $embeddedAsset->isSafe();
-			$previewUrl = UrlHelper::actionUrl('embeddedassets/actions/preview-url', ['url' => $url]);
-
-			$response['success'] = true;
-			$response['payload'] = [
-				'info' => $embeddedAsset,
-				'previewUrl' => $isSafe ? $previewUrl : false,
-			];
+			throw new BadRequestHttpException('The target folder provided for uploading is not valid');
 		}
 
-		return $this->asJson($response);
+		$this->_requirePermissionByFolder('saveAssetInVolume', $folder);
+
+		$tempFilePath = Assets::tempFilePath();
+		$fileContents = Json::encode($embeddedAsset);
+
+		FileHelper::writeToFile($tempFilePath, $fileContents);
+
+		$fileName = Assets::prepareAssetName($embeddedAsset->title ?: $embeddedAsset->url) . '.json';
+		$fileName = $assetsService->getNameReplacementInFolder($fileName, $folderId);
+
+		$asset = new Asset();
+		$asset->tempFilePath = $tempFilePath;
+		$asset->filename = $fileName;
+		$asset->newFolderId = $folder->id;
+		$asset->volumeId = $folder->volumeId;
+		$asset->avoidFilenameConflicts = true;
+		$asset->setScenario(Asset::SCENARIO_CREATE);
+
+		$result = $elementsService->saveElement($asset);
+
+		// In case of error, let user know about it.
+		if (!$result)
+		{
+			$errors = $asset->getFirstErrors();
+			$response = $this->asErrorJson(Craft::t('app', "Failed to save the Asset:") . implode(";\n", $errors));
+		}
+		else
+		{
+			$response = $this->asJson([
+				'success' => true,
+				'payload' => [
+					'assetId' => $asset->id,
+					'folderId' => $folderId,
+				],
+			]);
+		}
+
+		return $response;
 	}
 
-	public function actionPreviewUrl(): Response
+	public function actionPreview(): Response
 	{
 		$requestService = Craft::$app->getRequest();
 		$viewService = Craft::$app->getView();
@@ -53,15 +88,46 @@ class Controller extends BaseController
 		$callback = $requestService->getParam('callback');
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
 
-		$response = Craft::$app->getResponse();
-		$headers = $response->getHeaders();
-		$headers->set('content-type', 'text/html; charset=utf-8');
-		$response->format = Response::FORMAT_RAW;
-		$response->data = $viewService->renderTemplate('embeddedassets/_preview', [
+		$template = $viewService->renderTemplate('embeddedassets/_preview', [
 			'embeddedAsset' => $embeddedAsset,
 			'callback' => $callback,
 		]);
 
+		$response = $this->asRaw($template);
+		$headers = $response->getHeaders();
+		$headers->set('content-type', 'text/html; charset=utf-8');
+
 		return $response;
+	}
+
+	/**
+	 * Require an Assets permissions.
+	 *
+	 * @param string $permissionName Name of the permission to require.
+	 * @param VolumeFolder $folder Folder on the Volume on which to require the permission.
+	 */
+	private function _requirePermissionByFolder(string $permissionName, VolumeFolder $folder)
+	{
+		if (!$folder->volumeId) {
+			$userTemporaryFolder = Craft::$app->getAssets()->getCurrentUserTemporaryUploadFolder();
+
+			// Skip permission check only if it's the user's temporary folder
+			if ($userTemporaryFolder->id == $folder->id) {
+				return;
+			}
+		}
+
+		$this->_requirePermissionByVolumeId($permissionName, $folder->volumeId);
+	}
+
+	/**
+	 * Require an Assets permissions.
+	 *
+	 * @param string $permissionName Name of the permission to require.
+	 * @param int $volumeId The Volume id on which to require the permission.
+	 */
+	private function _requirePermissionByVolumeId(string $permissionName, int $volumeId)
+	{
+		$this->requirePermission($permissionName.':'.$volumeId);
 	}
 }

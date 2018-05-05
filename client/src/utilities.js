@@ -5,7 +5,7 @@ export function monkeypatch(Class, method, callback)
 	Class.prototype[method] = function()
 	{
 		methodFn.apply(this, arguments)
-		callback(this)
+		callback.call(this)
 	}
 }
 

@@ -1,12 +1,17 @@
 import $ from 'jquery'
 import Garnish from 'garnish'
+import Emitter from './Emitter'
 import Form from './Form'
+import { uniqueId } from '../utilities'
 
-export default class Modal
+export default class Modal extends Emitter
 {
-	constructor(settings = {})
+	constructor(getFolderId = ()=>-1)
 	{
-		this.settings = settings
+		super()
+
+		this._getFolderId = getFolderId
+
 		this.form = null
 		this.hud = null
 	}
@@ -14,24 +19,71 @@ export default class Modal
 	create($target, settings = {})
 	{
 		settings = Object.assign({
-			mainClass: 'embedded-assets_hud',
+			hudClass: 'hud embedded-assets_hud',
+			mainClass: 'embedded-assets_hud_main',
+			bodyClass: 'body embedded-assets_hud_body',
 			minBodyWidth: 400,
 		}, settings)
 
-		this.form = new Form()
-		this.hud = new Garnish.HUD($target, this.form.$element, settings)
+		const cancelId = uniqueId()
+		const saveId = uniqueId()
+		const spinnerId = uniqueId()
+		const cancelLabel = Craft.t('app', `Cancel`)
+		const saveLabel = Craft.t('app', `Save`)
 
-		this._callEvent('onCreate')
+		this.$footer = $(`
+			<div class="hud-footer embedded-assets_hud_footer">
+				<div class="buttons right">
+					<div id="${cancelId}" class="btn">${cancelLabel}</div>
+					<div id="${saveId}" class="btn submit">${saveLabel}</div>
+					<div id="${spinnerId}" class="spinner hidden"></div>
+				</div>
+			</div>
+		`)
 
-		this.hud.on('show', () => this._callEvent('onShow'))
-		this.hud.on('hide', () => this._callEvent('onHide'))
+		this.$cancel = this.$footer.find(`#${cancelId}`)
+		this.$save = this.$footer.find(`#${saveId}`)
+		this.$spinner = this.$footer.find(`#${spinnerId}`)
 
-		this.hud.on('show', () => this.form && this.form.request())
-		this.hud.on('hide', () => this.form && this.form.setState('idle'))
+		this.form = new Form(this._getFolderId)
+		this.hud = new Garnish.HUD($target, this.form.$element.add(this.$footer), settings)
+
+		this.trigger('create')
+
+		this.$save.on('click', e => this.$save.hasClass('disabled') && e.stopImmediatePropagation())
+
+		this.$cancel.on('click', () => this.form.clear())
+		this.$save.on('click', () => this.form.save())
+		this.form.on('submit', () => this.form.save())
+
+		this.form.on('save', e => this.trigger('save', e))
+		this.hud.on('show', () => this.trigger('show'))
+		this.hud.on('hide', () => this.trigger('hide'))
+
+		this.form.on('clear', () => this.hide())
+		this.form.on('save', () => this.hide())
+		this.hud.on('show', () => this.form.request())
+		this.hud.on('hide', () => this.form.setState('idle'))
+
+		this.hideFooter()
+		this.form.on('idle', () => this.hideFooter())
+		this.form.on('requesting', () => this.hideFooter())
+		this.form.on('requested', () => this.showFooter())
+
+		this.form.on('idle', () => this.setSaving(false))
+		this.form.on('requesting', () => this.setSaving(false))
+		this.form.on('requested', () => this.setSaving(false))
+		this.form.on('saving', () => this.setSaving())
 	}
 
 	destroy()
 	{
+		if (this.$footer)
+		{
+			this.$footer.remove()
+			this.$footer = null
+		}
+
 		if (this.form)
 		{
 			this.form.destroy()
@@ -46,7 +98,7 @@ export default class Modal
 			this.hud = null
 		}
 
-		this._callEvent('onDestroy')
+		this.trigger('destroy')
 	}
 
 	show($target, settings = {})
@@ -70,7 +122,7 @@ export default class Modal
 			this.create($target, settings)
 		}
 
-		this._callEvent('onShow')
+		this.trigger('show')
 	}
 
 	hide()
@@ -80,19 +132,33 @@ export default class Modal
 			this.hud.hide()
 		}
 
-		this._callEvent('onHide')
+		this.trigger('hide')
+	}
+
+	hideFooter()
+	{
+		if (this.hud)
+		{
+			this.hud.$hud.removeClass('show-footer')
+		}
+	}
+
+	showFooter()
+	{
+		if (this.hud)
+		{
+			this.hud.$hud.addClass('show-footer')
+		}
+	}
+
+	setSaving(enabled = true)
+	{
+		this.$save.toggleClass('disabled', enabled)
+		this.$spinner.toggleClass('hidden', !enabled)
 	}
 
 	isShowing()
 	{
 		return this.hud.showing
-	}
-
-	_callEvent(event)
-	{
-		if (typeof this.settings[event] === 'function')
-		{
-			this.settings[event].call(this)
-		}
 	}
 }

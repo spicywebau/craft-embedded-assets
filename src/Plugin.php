@@ -5,7 +5,9 @@ use yii\base\Event;
 
 use Craft;
 use craft\base\Plugin as BasePlugin;
+use craft\services\Assets;
 use craft\web\View;
+use craft\events\GetAssetThumbUrlEvent;
 use craft\events\TemplateEvent;
 
 use benf\embeddedassets\assets\Main as MainAsset;
@@ -42,6 +44,15 @@ class Plugin extends BasePlugin
 				{
 					$viewService = Craft::$app->getView();
 					$viewService->registerAssetBundle(MainAsset::class);
+				}
+			);
+
+			Event::on(
+				Assets::class,
+				Assets::EVENT_GET_ASSET_THUMB_URL,
+				function(GetAssetThumbUrlEvent $event)
+				{
+					// $event->url = '';
 				}
 			);
 		}

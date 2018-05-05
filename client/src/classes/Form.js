@@ -1,17 +1,19 @@
 import $ from 'jquery'
 import Craft from 'craft'
+import Emitter from './Emitter'
 import { uniqueId, isUrl } from '../utilities'
 
-export default class Form
+export default class Form extends Emitter
 {
-	constructor()
+	constructor(getFolderId = ()=>-1)
 	{
+		super()
+
+		this._getFolderId = getFolderId
+
 		const inputId = uniqueId()
 		const bodyId = uniqueId()
 		const previewId = uniqueId()
-
-		const cancelLabel = Craft.t('app', "Cancel")
-		const saveLabel = Craft.t('app', "Save")
 
 		const formAction = Craft.getActionUrl('embeddedassets/actions/save')
 
@@ -26,13 +28,6 @@ export default class Form
 					<div class="spinner"></div>
 				</div>
 			</form>
-			<div class="hud-footer">
-				<div class="buttons right">
-					<div class="btn">${cancelLabel}</div>
-					<input class="btn submit" type="submit" value="${saveLabel}">
-					<div class="spinner hidden"></div>
-				</div>
-			</div>
 		`)
 
 		this.$input = this.$element.find(`#${inputId}`)
@@ -77,7 +72,6 @@ export default class Form
 		}
 
 		this._monitorPreviewHeight()
-
 		this.setState('idle')
 	}
 
@@ -92,12 +86,12 @@ export default class Form
 		cancelAnimationFrame(this._previewMonitor)
 
 		delete window[this._callbackName]
+
+		this.trigger('destroy')
 	}
 
-	request(url = null)
+	request(url = this.$input.val())
 	{
-		url = url || this.$input.val()
-
 		if (this._url !== url)
 		{
 			this._url = url
@@ -114,9 +108,35 @@ export default class Form
 		}
 	}
 
-	save()
+	clear()
 	{
-		console.log('save')
+		this.$input.val('')
+
+		this.trigger('clear')
+		this.setState('idle')
+	}
+
+	save(url = this.$input.val(), folderId = this._getFolderId())
+	{
+		Craft.queueActionRequest('embeddedassets/actions/save', { url, folderId }, (response, status) =>
+		{
+			if (status === 'success' && response.success)
+			{
+				this.clear()
+				this.trigger('save', response.payload)
+			}
+			else
+			{
+				if (response && response.error)
+				{
+					Craft.cp.displayError(response.error)
+				}
+
+				this.setState('requested')
+			}
+		})
+
+		this.setState('saving')
 	}
 
 	setState(state)
@@ -128,8 +148,23 @@ export default class Form
 		{
 			case 'idle':
 			{
-				this._url = null
-				this._setPreview(false)
+				this._url = ''
+				this.trigger('idle')
+			}
+			break
+			case 'requesting':
+			{
+				this.trigger('requesting')
+			}
+			break
+			case 'requested':
+			{
+				this.trigger('requested')
+			}
+			break
+			case 'saving':
+			{
+				this.trigger('saving')
 			}
 			break
 		}
@@ -138,7 +173,7 @@ export default class Form
 	_setPreview(url)
 	{
 		const callback = this._callbackName
-		const previewUrl = url ? Craft.getActionUrl('embeddedassets/actions/preview-url', { url, callback }) : 'about:blank'
+		const previewUrl = url ? Craft.getActionUrl('embeddedassets/actions/preview', { url, callback }) : 'about:blank'
 		const previewWindow = this.$preview[0].contentWindow
 
 		if (previewWindow)
@@ -150,19 +185,25 @@ export default class Form
 	_getCurrentPreviewUrl()
 	{
 		const previewWindow = this.$preview[0].contentWindow
-		const url = previewWindow.location.href
+		const url = previewWindow ? previewWindow.location.href : ''
 
-		return url.indexOf('preview-url') > 0 ? url : false
+		return url.indexOf('embeddedassets') > 0 ? url : false
 	}
 
 	_monitorPreviewHeight()
 	{
 		const setHeight = () =>
 		{
-			if (this.$preview[0].contentDocument)
+			const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
+
+			if (isPreviewUrl && this.$preview[0].contentDocument)
 			{
 				const $previewBody = $(this.$preview[0].contentDocument.body)
 				this.$body.css('height', $previewBody.height() + 'px')
+			}
+			else
+			{
+				this.$body.css('height', '')
 			}
 
 			this._previewMonitor = requestAnimationFrame(setHeight)

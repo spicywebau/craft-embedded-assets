@@ -1,18 +1,16 @@
-import Craft from 'craft'
 import './main.scss'
+import Craft from 'craft'
 import EmbeddedAssets from './classes/EmbeddedAssets'
 import Button from './classes/Button'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()
-embeddedAssets.create()
 
-monkeypatch(Craft.AssetIndex, 'init', function(assetIndex)
+monkeypatch(Craft.AssetIndex, 'init', function()
 {
 	const button = new Button()
-	button.create()
 
-	const $uploadButton = assetIndex.$uploadButton
+	const $uploadButton = this.$uploadButton
 	const inHeader = $uploadButton.closest('#header').length > 0
 	const inModal = $uploadButton.closest('.modal').length > 0
 
@@ -20,16 +18,32 @@ monkeypatch(Craft.AssetIndex, 'init', function(assetIndex)
 
 	if (inHeader)
 	{
-		assetIndex.$uploadButton.before(button.$element)
+		this.$uploadButton.before(button.$element)
 		modalOrientations = ['bottom', 'left', 'right', 'top']
 	}
 	else if (inModal)
 	{
-		assetIndex.$uploadButton.after(button.$element)
+		this.$uploadButton.after(button.$element)
 		modalOrientations = ['top', 'right', 'bottom', 'left']
 	}
 
-	embeddedAssets.addButton(button, modalOrientations)
+	const getFolderId = () => this.getDefaultSourceKey().split(':')[1]|0
+
+	embeddedAssets.addButton(button, modalOrientations, getFolderId)
+
+	let idsToSelect = []
+
+	embeddedAssets.on('save', e =>
+	{
+		idsToSelect.push(e.assetId)
+		this.updateElements()
+	})
+
+	this.on('updateElements', () =>
+	{
+		idsToSelect.forEach((id) => this.view.selectElementById(id))
+		idsToSelect = []
+	})
 })
 
 window.EmbeddedAssets = embeddedAssets

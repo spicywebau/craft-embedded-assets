@@ -6,13 +6,13 @@
 	{% set previewJs = view.getAssetManager().getPublishedUrl('@benf/embeddedassets/resources/preview.js', true) %}
 	<script src="{{ previewJs }}"></script>
 	{% if callback is defined and callback %}
-		<script>EmbeddedAssetsPreview.setCallback('{{ callback|e('js') }}')</script>
+		<script>EmbeddedAssetsPreview.addCallback('{{ callback|e('js') }}')</script>
 	{% endif %}
 </head>
-<body class="embedded-assets_preview type--{{ embeddedAsset.type|default('link')|kebab }} provider--{{ embeddedAsset.providerName|default('unknown')|kebab }}">
+<body class="embedded-assets_preview">
 	{% if embeddedAsset.code %}
 
-		<div class="embedded-assets_preview_code">
+		<div id="code" class="embedded-assets_preview_code">
 			{{ embeddedAsset.code|raw }}
 		</div>
 
@@ -58,5 +58,6 @@
 			{% endif %}
 		</ul>
 	</div>
+	<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
 </body>
 </html>
