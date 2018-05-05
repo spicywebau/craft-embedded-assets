@@ -25,17 +25,26 @@ export default class Modal
 
 		this.hud.on('show', () => this._callEvent('onShow'))
 		this.hud.on('hide', () => this._callEvent('onHide'))
+
+		this.hud.on('show', () => this.form && this.form.request())
+		this.hud.on('hide', () => this.form && this.form.setState('idle'))
 	}
 
 	destroy()
 	{
-		this.form.destroy()
-		this.form = null
+		if (this.form)
+		{
+			this.form.destroy()
+			this.form = null
+		}
 
-		this.hud.hide()
-		this.hud.$hud.remove()
-		this.hud.$shade.remove()
-		this.hud = null
+		if (this.hud)
+		{
+			this.hud.hide()
+			this.hud.$hud.remove()
+			this.hud.$shade.remove()
+			this.hud = null
+		}
 
 		this._callEvent('onDestroy')
 	}

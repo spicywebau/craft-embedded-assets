@@ -51,6 +51,7 @@ class Service extends Component
 
 	private function _adapterToModel(Adapter $adapter): EmbeddedAsset
 	{
+		// TODO strip tags on everything (unless embed/embed already does it)
 		return new EmbeddedAsset([
 			'title' => $adapter->title,
 			'description' => $adapter->description,

@@ -1,7 +1,7 @@
 import Craft from 'craft'
-import './style.scss'
-import EmbeddedAssets from './EmbeddedAssets'
-import Button from './Button'
+import './main.scss'
+import EmbeddedAssets from './classes/EmbeddedAssets'
+import Button from './classes/Button'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()

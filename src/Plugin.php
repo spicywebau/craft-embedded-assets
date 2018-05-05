@@ -8,9 +8,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\web\View;
 use craft\events\TemplateEvent;
 
-use benf\embeddedassets\Service;
-use benf\embeddedassets\Controller;
-use benf\embeddedassets\Asset;
+use benf\embeddedassets\assets\Main as MainAsset;
 use benf\embeddedassets\models\Settings;
 
 class Plugin extends BasePlugin
@@ -43,8 +41,7 @@ class Plugin extends BasePlugin
 				function(TemplateEvent $event)
 				{
 					$viewService = Craft::$app->getView();
-
-					$viewService->registerAssetBundle(Asset::class);
+					$viewService->registerAssetBundle(MainAsset::class);
 				}
 			);
 		}

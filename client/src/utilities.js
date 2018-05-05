@@ -9,7 +9,12 @@ export function monkeypatch(Class, method, callback)
 	}
 }
 
-export function uniqueId()
+export function uniqueId(prefix = 'uid')
 {
-	return 'uid' + Math.random().toString(36).substr(2)
+	return prefix + Math.random().toString(36).substr(2)
+}
+
+export function isUrl(url)
+{
+	return /^https?:\/\//.test(url)
 }

@@ -20,6 +20,8 @@ class Settings extends Model
 
 	];
 
+	public $cacheDuration = 5 * 60; // 5 minutes
+
 	public function rules()
 	{
 		return [

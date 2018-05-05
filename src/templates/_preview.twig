@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{{ embeddedAsset.title }}</title>
+	{% set previewJs = view.getAssetManager().getPublishedUrl('@benf/embeddedassets/resources/preview.js', true) %}
+	<script src="{{ previewJs }}"></script>
+	{% if callback is defined and callback %}
+		<script>EmbeddedAssetsPreview.setCallback('{{ callback|e('js') }}')</script>
+	{% endif %}
+</head>
+<body class="embedded-assets_preview type--{{ embeddedAsset.type|default('link')|kebab }} provider--{{ embeddedAsset.providerName|default('unknown')|kebab }}">
+	{% if embeddedAsset.code %}
+
+		<div class="embedded-assets_preview_code">
+			{{ embeddedAsset.code|raw }}
+		</div>
+
+	{% elseif embeddedAsset.type != 'link' and embeddedAsset.image %}
+
+		<div class="embedded-assets_preview_image">
+			<img src="{{ embeddedAsset.image }}" width="{{ embeddedAsset.imageWidth }}" height="{{ embeddedAsset.imageHeight }}">
+		</div>
+
+	{% endif %}
+
+	<div class="embedded-assets_preview_content">
+		<h1>{{ embeddedAsset.title|default(embeddedAsset.url) }}</h1>
+		{% if embeddedAsset.description %}
+			<p>{{ embeddedAsset.description }}</p>
+		{% endif %}
+		<ul>
+			{% if embeddedAsset.providerName %}
+				<li>
+					{% if embeddedAsset.providerIcons is not empty %}
+						{% set providerIcon = null %}
+						{% set optimalSize = 32 %}
+						{% for icon in embeddedAsset.providerIcons %}
+							{% if not providerIcon or
+								(providerIcon.width < optimalSize and icon.width >= optimalSize) or
+								(providerIcon.width > optimalSize and providerIcon.width > icon.width) %}
+								{% set providerIcon = icon %}
+							{% endif %}
+						{% endfor %}
+						<img src="{{ providerIcon.url }}" width="{{ providerIcon.width }}" height="{{ providerIcon.height }}">
+					{% endif %}
+					{% if embeddedAsset.providerUrl %}
+						<a href="{{ embeddedAsset.providerUrl }}" target="_blank" rel="noopener">
+							{{ embeddedAsset.providerName }}
+						</a>
+					{% else %}
+						{{ embeddedAsset.providerName }}
+					{% endif %}
+				</li>
+			{% endif %}
+			{% if embeddedAsset.type %}
+				<li>{{ embeddedAsset.type|ucfirst }}</li>
+			{% endif %}
+		</ul>
+	</div>
+</body>
+</html>

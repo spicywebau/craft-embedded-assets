@@ -5,6 +5,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
 	entry: {
 		main: path.resolve(__dirname, '../src/main.js'),
+		preview: path.resolve(__dirname, '../src/preview.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../../src/resources/'),
