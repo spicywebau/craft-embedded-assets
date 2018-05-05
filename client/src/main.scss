@@ -98,7 +98,7 @@
 
 	&_hud {
 
-		&_body {
+		&_main {
 			transition: padding-bottom 0.3s;
 		}
 
@@ -111,11 +111,12 @@
 			transition: transform 0.3s;
 		}
 
-		&.show-footer &_body {
+		&.show-footer &_main {
 			padding-bottom: 46px;
 		}
 
 		&.show-footer &_footer {
+			opacity: 1;
 			transform: none;
 		}
 	}

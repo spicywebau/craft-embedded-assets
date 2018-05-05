@@ -21,7 +21,6 @@ export default class Modal extends Emitter
 		settings = Object.assign({
 			hudClass: 'hud embedded-assets_hud',
 			mainClass: 'embedded-assets_hud_main',
-			bodyClass: 'body embedded-assets_hud_body',
 			minBodyWidth: 400,
 		}, settings)
 
@@ -74,6 +73,8 @@ export default class Modal extends Emitter
 		this.form.on('requesting', () => this.setSaving(false))
 		this.form.on('requested', () => this.setSaving(false))
 		this.form.on('saving', () => this.setSaving())
+
+		this._monitorHeight()
 	}
 
 	destroy()
@@ -97,6 +98,8 @@ export default class Modal extends Emitter
 			this.hud.$shade.remove()
 			this.hud = null
 		}
+
+		cancelAnimationFrame(this._monitor)
 
 		this.trigger('destroy')
 	}
@@ -160,5 +163,16 @@ export default class Modal extends Emitter
 	isShowing()
 	{
 		return this.hud.showing
+	}
+
+	_monitorHeight()
+	{
+		const reposition = () =>
+		{
+			this.hud.updateSizeAndPosition()
+			this._monitor = requestAnimationFrame(reposition)
+		}
+
+		reposition()
 	}
 }
