@@ -131,6 +131,8 @@ class Plugin extends BasePlugin
 	{
 		$html = null;
 
+		$isSafe = $this->methods->checkWhitelist($embeddedAsset->url);
+
 		switch ($attribute)
 		{
 			case 'provider':
@@ -138,7 +140,7 @@ class Plugin extends BasePlugin
 				if ($embeddedAsset->providerName)
 				{
 					$providerUrl = $embeddedAsset->providerUrl;
-					$providerIcon = $embeddedAsset->getProviderIconToSize(32);
+					$providerIcon = $isSafe ? $embeddedAsset->getProviderIconToSize(32) : null;
 					$providerIconUrl = $providerIcon ? $providerIcon['url'] : null;
 
 					$html = "<span class='embedded-assets_label'>";
