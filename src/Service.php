@@ -1,12 +1,11 @@
 <?php
 namespace benf\embeddedassets;
 
-use Craft;
+use yii\base\Component;
+
 use craft\base\LocalVolumeInterface;
 use craft\elements\Asset;
-use craft\helpers\FileHelper;
 use craft\helpers\Json;
-use yii\base\Component;
 
 use Embed\Embed;
 use Embed\Adapters\Adapter;

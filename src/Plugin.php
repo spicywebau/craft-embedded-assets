@@ -1,18 +1,18 @@
 <?php
 namespace benf\embeddedassets;
 
-use craft\base\Element;
-use craft\elements\Asset;
-use craft\events\RegisterElementTableAttributesEvent;
-use craft\events\SetElementTableAttributeHtmlEvent;
+use benf\embeddedassets\models\EmbeddedAsset;
 use yii\base\Event;
 
 use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\services\Assets;
 use craft\web\View;
+use craft\elements\Asset;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\TemplateEvent;
+use craft\events\SetElementTableAttributeHtmlEvent;
+use craft\events\RegisterElementTableAttributesEvent;
 
 use benf\embeddedassets\assets\Main as MainAsset;
 use benf\embeddedassets\models\Settings;
@@ -95,92 +95,18 @@ class Plugin extends BasePlugin
 				Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
 				function(SetElementTableAttributeHtmlEvent $event)
 				{
-					$assetManagerService = Craft::$app->getAssetManager();
+					// Prevent new table attributes from causing server errors
+					if (in_array($event->attribute, ['provider']))
+					{
+						$event->html = '';
+					}
 
 					$embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
+					$html = $embeddedAsset ? $this->_getTableAttributeHtml($embeddedAsset, $event->attribute) : null;
 
-					switch ($event->attribute)
+					if ($html !== null)
 					{
-						case 'provider':
-						{
-							if ($embeddedAsset && $embeddedAsset->providerName)
-							{
-								$providerIcon = $embeddedAsset->getProviderIconToSize(32);
-
-								$event->html = "<span class='embedded-assets_label'>";
-
-								if ($providerIcon)
-								{
-									$providerIconUrl = $providerIcon['url'];
-									$providerIconWidth = $providerIcon['width'];
-									$providerIconHeight = $providerIcon['height'];
-
-									$event->html .= "<img src='$providerIconUrl' width='16' height='16'>";
-								}
-
-								if ($embeddedAsset->providerUrl)
-								{
-									$event->html .= "<a href='$embeddedAsset->providerUrl' target='_blank' rel='noopener'>";
-								}
-
-								$event->html .= $embeddedAsset->providerName;
-
-								if ($embeddedAsset->providerUrl)
-								{
-									$event->html .= "</a>";
-								}
-
-								$event->html .= "</span>";
-							}
-							else
-							{
-								$event->html = '';
-							}
-						}
-						break;
-						case 'kind':
-						{
-							if ($embeddedAsset && $embeddedAsset->type)
-							{
-								$event->html = Craft::t('embeddedassets', ucfirst($embeddedAsset->type));
-							}
-						}
-						break;
-						case 'width':
-						{
-							if ($embeddedAsset && $embeddedAsset->imageWidth)
-							{
-								$event->html = $embeddedAsset->imageWidth . 'px';
-							}
-						}
-						break;
-						case 'height':
-						{
-							if ($embeddedAsset && $embeddedAsset->imageHeight)
-							{
-								$event->html = $embeddedAsset->imageHeight . 'px';
-							}
-						}
-						break;
-						case 'imageSize':
-						{
-							if ($embeddedAsset && $embeddedAsset->imageWidth && $embeddedAsset->imageHeight)
-							{
-								$width = $embeddedAsset->imageWidth;
-								$height = $embeddedAsset->imageHeight;
-								$event->html = "$width × $height";
-							}
-						}
-						break;
-						case 'link':
-						{
-							if ($embeddedAsset && $embeddedAsset->url)
-							{
-								$linkTitle = Craft::t('app', 'Visit webpage');
-								$event->html = "<a href='$embeddedAsset->url' target='_blank' rel='noopener' data-icon='world' title='$linkTitle'></a>";
-							}
-						}
-						break;
+						$event->html = $html;
 					}
 				}
 			);
@@ -200,4 +126,51 @@ class Plugin extends BasePlugin
 			'settings' => $this->getSettings(),
 		]);
     }
+
+    private function _getTableAttributeHtml(EmbeddedAsset $embeddedAsset, string $attribute)
+	{
+		$html = null;
+
+		switch ($attribute)
+		{
+			case 'provider':
+			{
+				if ($embeddedAsset->providerName)
+				{
+					$providerUrl = $embeddedAsset->providerUrl;
+					$providerIcon = $embeddedAsset->getProviderIconToSize(32);
+					$providerIconUrl = $providerIcon ? $providerIcon['url'] : null;
+
+					$html = "<span class='embedded-assets_label'>";
+					$html .= $providerIconUrl ? "<img src='$providerIconUrl' width='16' height='16'>" : '';
+					$html .= $providerUrl ? "<a href='$embeddedAsset->providerUrl' target='_blank' rel='noopener'>" : '';
+					$html .= $embeddedAsset->providerName;
+					$html .= $providerUrl ? "</a>" : '';
+					$html .= "</span>";
+				}
+			}
+			break;
+			case 'kind': $html = $embeddedAsset->type ? Craft::t('embeddedassets', ucfirst($embeddedAsset->type)) : null; break;
+			case 'width': $html = $embeddedAsset->imageWidth ? $embeddedAsset->imageWidth . 'px' : null; break;
+			case 'height': $html = $embeddedAsset->imageHeight ? $embeddedAsset->imageHeight . 'px' : null; break;
+			case 'imageSize':
+			{
+				$width = $embeddedAsset->imageWidth;
+				$height = $embeddedAsset->imageHeight;
+				$html = $width && $height ? "$width × $height" : null;
+			}
+			break;
+			case 'link':
+			{
+				if ($embeddedAsset->url)
+				{
+					$linkTitle = Craft::t('app', 'Visit webpage');
+					$html = "<a href='$embeddedAsset->url' target='_blank' rel='noopener' data-icon='world' title='$linkTitle'></a>";
+				}
+			}
+			break;
+		}
+
+		return $html;
+	}
 }
