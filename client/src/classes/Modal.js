@@ -73,8 +73,7 @@ export default class Modal extends Emitter
 		this.form.on('requesting', () => this.setSaving(false))
 		this.form.on('requested', () => this.setSaving(false))
 		this.form.on('saving', () => this.setSaving())
-
-		this._monitorHeight()
+		this.form.on('resize', () => this.hud.updateSizeAndPosition())
 	}
 
 	destroy()
@@ -158,21 +157,5 @@ export default class Modal extends Emitter
 	{
 		this.$save.toggleClass('disabled', enabled)
 		this.$spinner.toggleClass('hidden', !enabled)
-	}
-
-	isShowing()
-	{
-		return this.hud.showing
-	}
-
-	_monitorHeight()
-	{
-		const reposition = () =>
-		{
-			this.hud.updateSizeAndPosition()
-			this._monitor = requestAnimationFrame(reposition)
-		}
-
-		reposition()
 	}
 }

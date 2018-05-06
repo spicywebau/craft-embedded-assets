@@ -17,18 +17,21 @@ window.EmbeddedAssetsPreview = {
 
 	applyRatio(codeEl)
 	{
-		const iframeEl = Array.from(codeEl.children).find((el) => el.tagName.toLowerCase() === 'iframe')
-
-		if (iframeEl)
+		if (codeEl)
 		{
-			codeEl.classList.add('is-ratio')
+			const iframeEl = Array.from(codeEl.children).find((el) => el.tagName.toLowerCase() === 'iframe')
 
-			const width = iframeEl.getAttribute('width')|0
-			const height = iframeEl.getAttribute('height')|0
-
-			if (width && height)
+			if (iframeEl)
 			{
-				codeEl.style.paddingTop = ((height / width) * 100) + '%'
+				codeEl.classList.add('is-ratio')
+
+				const width = iframeEl.getAttribute('width')|0
+				const height = iframeEl.getAttribute('height')|0
+
+				if (width && height)
+				{
+					codeEl.style.paddingTop = ((height / width) * 100) + '%'
+				}
 			}
 		}
 	},

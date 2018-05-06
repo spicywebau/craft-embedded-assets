@@ -192,6 +192,8 @@ export default class Form extends Emitter
 
 	_monitorPreviewHeight()
 	{
+		let previousHeight = 0
+
 		const setHeight = () =>
 		{
 			const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
@@ -204,6 +206,18 @@ export default class Form extends Emitter
 			else
 			{
 				this.$body.css('height', '')
+			}
+
+			const nextHeight = this.$body.height()
+
+			if (previousHeight !== nextHeight)
+			{
+				this.trigger('resize', {
+					previousHeight,
+					nextHeight,
+				})
+
+				previousHeight = nextHeight
 			}
 
 			this._previewMonitor = requestAnimationFrame(setHeight)
