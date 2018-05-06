@@ -64,4 +64,40 @@ class EmbeddedAsset extends Model
 
 		return $isSafe;
 	}
+
+	public function getImageToSize(int $size)
+	{
+		return is_array($this->images) ? $this->_getImageToSize($this->images, $size) : null;
+	}
+
+	public function getProviderIconToSize(int $size)
+	{
+		return is_array($this->providerIcons) ? $this->_getImageToSize($this->providerIcons, $size) : null;
+	}
+
+	private function _getImageToSize(array $images, int $size)
+	{
+		$selectedImage = null;
+		$selectedSize = 0;
+
+		foreach ($images as $image)
+		{
+			if (is_array($image))
+			{
+				$imageWidth = isset($image['width']) && is_numeric($image['width']) ? $image['width'] : 0;
+				$imageHeight = isset($image['height']) && is_numeric($image['height']) ? $image['height'] : 0;
+				$imageSize = max($imageWidth, $imageHeight);
+
+				if (!$selectedImage ||
+					($selectedSize < $size && $imageSize > $selectedSize) ||
+					($selectedSize > $size && $selectedSize > $imageSize))
+				{
+					$selectedImage = $image;
+					$selectedSize = $imageSize;
+				}
+			}
+		}
+
+		return $selectedImage;
+	}
 }

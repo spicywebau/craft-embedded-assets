@@ -120,4 +120,49 @@
 			transform: none;
 		}
 	}
+
+	&_label {
+		display: block;
+		line-height: 16px;
+		white-space: nowrap;
+
+		> img {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			margin-right: 10px;
+			vertical-align: middle;
+			object-fit: contain;
+		}
+	}
+}
+
+//
+// This is a fix for the Craft image previewer to ensure images are cropped correctly.
+//
+// The issue is that when getting thumbnails for embedded assets, the external URL directly to the image is supplied.
+// This means that thumbnails aren't actually transformed to fit the size requested by Craft.
+//
+// When double-clicking an asset to edit it's fields, a large thumbnail for that asset is shown above the fields. The
+// problem is the containing element for this thumbnail just assumes the image is the right size. This causes issues
+// when it's not by the thumbnail exceeding the boundaries and obstructing the below fields.
+//
+// To fix this, since these thumbnails are contained within a fixed box size (380x190), the maximum size can just be
+// forced.
+//
+.hud .image-preview > img {
+	max-width: 380px;
+	max-height: 190px;
+}
+
+//
+// Another fix for Craft asset thumbnails.
+//
+// The embedded asset thumbnails aren't always the right size (as explained above), and this causes some weird sizing
+// issues when switching between thumbnail views.
+//
+// The following fixes that. I don't know why.
+//
+.elementthumb > img {
+	width: 100%;
 }

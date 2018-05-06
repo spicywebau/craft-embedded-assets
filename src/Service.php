@@ -1,6 +1,11 @@
 <?php
 namespace benf\embeddedassets;
 
+use Craft;
+use craft\base\LocalVolumeInterface;
+use craft\elements\Asset;
+use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use yii\base\Component;
 
 use Embed\Embed;
@@ -45,6 +50,32 @@ class Service extends Component
 		return true;
 	}
 
+	public function getEmbeddedAsset(Asset $asset)
+	{
+		$embeddedAsset = null;
+
+		if ($asset->kind === Asset::KIND_JSON)
+		{
+			$assetVolume = $asset->getVolume();
+			$assetPath = $assetVolume instanceof LocalVolumeInterface ?
+				$assetVolume->getRootPath() . DIRECTORY_SEPARATOR . $asset->getPath() :
+				$asset->getCopyOfFile();
+
+			if (file_exists($assetPath))
+			{
+				$fileContents = file_get_contents($assetPath);
+				$decodedJson = Json::decodeIfJson($fileContents);
+
+				if (is_array($decodedJson))
+				{
+					$embeddedAsset = $this->_arrayToModel($decodedJson);
+				}
+			}
+		}
+
+		return $embeddedAsset;
+	}
+
 	private function _adapterToModel(Adapter $adapter): EmbeddedAsset
 	{
 		// TODO strip tags on everything (unless embed/embed already does it)
@@ -73,5 +104,22 @@ class Service extends Component
 			'linkedData' => $adapter->linkedData,
 			'feeds' => $adapter->feeds,
 		]);
+	}
+
+	private function _arrayToModel(array $array)
+	{
+		$embeddedAsset = new EmbeddedAsset();
+
+		foreach ($array as $key => $value)
+		{
+			if (!$embeddedAsset->hasProperty($key))
+			{
+				return null;
+			}
+
+			$embeddedAsset->$key = $value;
+		}
+
+		return $embeddedAsset->validate() ? $embeddedAsset : null;
 	}
 }

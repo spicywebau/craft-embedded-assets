@@ -1,16 +1,17 @@
 <?php
 namespace benf\embeddedassets;
 
-use craft\elements\Asset;
-use craft\helpers\Assets;
-use craft\helpers\FileHelper;
-use craft\helpers\Json;
-use craft\models\VolumeFolder;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 use Craft;
 use craft\web\Controller as BaseController;
+use craft\elements\Asset;
+use craft\helpers\Assets;
+use craft\helpers\FileHelper;
+use craft\helpers\Json;
+use craft\helpers\StringHelper;
+use craft\models\VolumeFolder;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 use benf\embeddedassets\assets\Preview as PreviewAsset;
@@ -26,6 +27,8 @@ class Controller extends BaseController
 		$assetsService = Craft::$app->getAssets();
 		$elementsService = Craft::$app->getElements();
 		$requestService = Craft::$app->getRequest();
+
+		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
 
 		$url = $requestService->getRequiredParam('url');
 		$folderId = $requestService->getRequiredParam('folderId');
@@ -45,10 +48,16 @@ class Controller extends BaseController
 
 		FileHelper::writeToFile($tempFilePath, $fileContents);
 
-		$fileName = Assets::prepareAssetName($embeddedAsset->title ?: $embeddedAsset->url) . '.json';
+		$assetTitle = $embeddedAsset->title ?: $embeddedAsset->url;
+
+		$fileName = Assets::prepareAssetName($assetTitle, false);
+		$fileName = str_replace('.', '', $fileName);
+		$fileName = $fileName ?: 'embedded-asset';
+		$fileName = StringHelper::safeTruncate($fileName, $pluginSettings->maxFileNameLength) . '.json';
 		$fileName = $assetsService->getNameReplacementInFolder($fileName, $folderId);
 
 		$asset = new Asset();
+		$asset->title = StringHelper::safeTruncate($assetTitle, $pluginSettings->maxAssetNameLength);
 		$asset->tempFilePath = $tempFilePath;
 		$asset->filename = $fileName;
 		$asset->newFolderId = $folder->id;

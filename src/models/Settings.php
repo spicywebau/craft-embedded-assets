@@ -17,9 +17,42 @@ class Settings extends Model
 	];
 
 	public $whitelist = [
-
+		'23hq.com',
+		'app.net',
+		'animoto.com',
+		'aol.com',
+		'collegehumor.com',
+		'dailymotion.com',
+		'deviantart.com',
+		'embed.ly',
+		'fav.me',
+		'flic.kr',
+		'flickr.com',
+		'funnyordie.com',
+		'hulu.com',
+		'imgur.com',
+		'instagr.am',
+		'instagram.com',
+		'kickstarter.com',
+		'meetup.com',
+		'meetup.ps',
+		'nfb.ca',
+		'official.fm',
+		'rdio.com',
+		'soundcloud.com',
+		'twitter.com',
+		'vimeo.com',
+		'vine.co',
+		'wikipedia.org',
+		'wikimedia.org',
+		'wordpress.com',
+		'youtu.be',
+		'youtube.com',
+		'youtube-nocookie.com',
 	];
 
+	public $maxAssetNameLength = 50;
+	public $maxFileNameLength = 50;
 	public $cacheDuration = 5 * 60; // 5 minutes
 
 	public function rules()
@@ -59,6 +92,10 @@ class Settings extends Model
 					}
 				}
 			}],
+			['whitelist', 'each', 'rule' => ['string']],
+			['maxAssetNameLength', 'integer', 'min' => 10],
+			['maxFileNameLength', 'integer', 'min' => 10],
+			['cacheDuration', 'integer', 'min' => 0],
 		];
 	}
 }

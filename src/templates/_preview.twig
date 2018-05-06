@@ -32,16 +32,8 @@
 		<ul>
 			{% if embeddedAsset.providerName %}
 				<li>
-					{% if embeddedAsset.providerIcons is not empty %}
-						{% set providerIcon = null %}
-						{% set optimalSize = 32 %}
-						{% for icon in embeddedAsset.providerIcons %}
-							{% if not providerIcon or
-								(providerIcon.width < optimalSize and icon.width >= optimalSize) or
-								(providerIcon.width > optimalSize and providerIcon.width > icon.width) %}
-								{% set providerIcon = icon %}
-							{% endif %}
-						{% endfor %}
+					{% set providerIcon = embeddedAsset.getProviderIconToSize(32) %}
+					{% if providerIcon %}
 						<img src="{{ providerIcon.url }}" width="{{ providerIcon.width }}" height="{{ providerIcon.height }}">
 					{% endif %}
 					{% if embeddedAsset.providerUrl %}
