@@ -62,6 +62,7 @@ export default class Modal extends Emitter
 		this.form.on('clear', () => this.hide())
 		this.form.on('save', () => this.hide())
 		this.hud.on('show', () => this.form.request())
+		this.hud.on('show', () => this.form.focus())
 		this.hud.on('hide', () => this.form.setState('idle'))
 
 		this.hideFooter()

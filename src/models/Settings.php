@@ -2,6 +2,9 @@
 namespace benf\embeddedassets\models;
 
 use craft\base\Model;
+use craft\validators\StringValidator;
+
+use benf\embeddedassets\validators\Parameter as ParameterValidator;
 
 class Settings extends Model
 {
@@ -17,40 +20,101 @@ class Settings extends Model
 	];
 
 	public $whitelist = [
-		'23hq.com',
-		'app.net',
-		'animoto.com',
-		'aol.com',
+		// Amazon
+		'amazon.*',
+		'amazon.co.*',
+
+		// Baidu
+		'baidu.com',
+
+		// CollegeHumor
 		'collegehumor.com',
+
+		// Dailymotion
 		'dailymotion.com',
+
+		// DeviantART
 		'deviantart.com',
+
+		// embed.ly
 		'embed.ly',
-		'fav.me',
+
+		// Facebook
+		'facebook.*',
+		'facebook.co.*',
+		'facebook.com.*',
+		'fb.com',
+
+		// Flickr
 		'flic.kr',
 		'flickr.com',
-		'funnyordie.com',
+
+		// Google
+		'google.*',
+		'google.co.*',
+		'google.com.*',
+
+		// Hulu
 		'hulu.com',
+
+		// Iframely
+
+		// Imgur
 		'imgur.com',
+
+		// Instagram
 		'instagr.am',
 		'instagram.com',
+
+		// Kickstarter
 		'kickstarter.com',
+
+		// Meetup
 		'meetup.com',
 		'meetup.ps',
+
 		'nfb.ca',
+
 		'official.fm',
+
 		'rdio.com',
+
+		// Reddit
+		'reddit.com',
+
+		// SoundCloud
 		'soundcloud.com',
-		'twitter.com',
+
+		// Twitter
+		't.co',
+		'twitter.*',
+		'twitter.co.*',
+		'twitter.com.*',
+		'twimg.com',
+
+		// Vimeo
 		'vimeo.com',
+
+		// Vine
 		'vine.co',
+
+		// Wikipedia
 		'wikipedia.org',
 		'wikimedia.org',
+
+		// WordPress
 		'wordpress.com',
+
+		// Yahoo!
+		'yahoo.com',
+
+		// YouTube
 		'youtu.be',
 		'youtube.com',
 		'youtube-nocookie.com',
 	];
 
+	public $minImageSize = 16;
 	public $maxAssetNameLength = 50;
 	public $maxFileNameLength = 50;
 	public $cacheDuration = 5 * 60; // 5 minutes
@@ -58,41 +122,13 @@ class Settings extends Model
 	public function rules()
 	{
 		return [
-			['embedlyKey', 'string'],
-			['iframelyKey', 'string'],
-			['googleKey', 'string'],
-			['soundcloudKey', 'string'],
-			['facebookKey', 'string'],
-			['parameters', function($attributeName, $ruleParameters, $validator)
-			{
-				$parameters = $this->$attributeName;
-
-				if (!is_array($parameters))
-				{
-					$this->addError($attributeName, "Parameters must be an array.");
-				}
-				else
-				{
-					foreach ($parameters as $parameter)
-					{
-						if (!is_array($parameter))
-						{
-							$this->addError($attributeName, "Parameter must be an array.");
-						}
-						else
-						{
-							if (!isset($parameter['param'])) $this->addError($attributeName, "Parameter must contain a `param` key.");
-							elseif (!is_string($parameter['param'])) $this->addError($attributeName, "Parameter name must be a string.");
-							elseif (empty($parameter['param'])) $this->addError($attributeName, "Parameter name is required.");
-
-							if (!isset($parameter['value'])) $this->addError($attributeName, "Parameter must contain a `value` key.");
-							elseif (!is_string($parameter['value'])) $this->addError($attributeName, "Parameter value must be a string.");
-							elseif (empty($parameter['value'])) $this->addError($attributeName, "Parameter value is required.");
-						}
-					}
-				}
-			}],
-			['whitelist', 'each', 'rule' => ['string']],
+			['embedlyKey', StringValidator::class],
+			['iframelyKey', StringValidator::class],
+			['googleKey', StringValidator::class],
+			['soundcloudKey', StringValidator::class],
+			['facebookKey', StringValidator::class],
+			['parameters', 'each', 'rule' => [ParameterValidator::class]],
+			['whitelist', 'each', 'rule' => [StringValidator::class]],
 			['maxAssetNameLength', 'integer', 'min' => 10],
 			['maxFileNameLength', 'integer', 'min' => 10],
 			['cacheDuration', 'integer', 'min' => 0],

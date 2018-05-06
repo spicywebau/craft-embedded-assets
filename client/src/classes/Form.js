@@ -21,7 +21,7 @@ export default class Form extends Emitter
 			<form class="embedded-assets_form" action="${formAction}" method="post">
 				<div class="embedded-assets_form_field">
 					<label for="${inputId}">URL</label>
-					<input type="text" placeholder="http://" id="${inputId}" name="url" autocomplete="off">
+					<input type="text" placeholder="http://" id="${inputId}" name="url" autocomplete="off" spellcheck="false">
 				</div>
 				<div id="${bodyId}" class="embedded-assets_form_body">
 					<iframe id="${previewId}" src="about:blank"></iframe>
@@ -106,6 +106,12 @@ export default class Form extends Emitter
 				this.setState('idle')
 			}
 		}
+	}
+
+	focus()
+	{
+		this.$input[0].select()
+		this.$input[0].focus()
 	}
 
 	clear()

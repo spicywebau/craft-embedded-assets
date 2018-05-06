@@ -2,8 +2,11 @@
 namespace benf\embeddedassets\models;
 
 use craft\base\Model;
+use craft\validators\StringValidator;
+use craft\validators\UrlValidator;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
+use benf\embeddedassets\validators\Image as ImageValidator;
 
 class EmbeddedAsset extends Model
 {
@@ -29,7 +32,21 @@ class EmbeddedAsset extends Model
 	public $providerUrl;
 	public $publishedTime;
 	public $license;
-	public $linkedData;
+
+	public function rules()
+	{
+		return [
+			[['title', 'url', 'type'], 'required'],
+			[['title', 'description', 'authorName', 'code', 'providerName', 'publishedTime', 'license'], StringValidator::class],
+			[['url', 'image', 'authorUrl', 'providerIcon', 'providerUrl'], UrlValidator::class, 'defaultScheme' => 'https'],
+			['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
+			['type', 'default', 'value' => 'link'],
+			['tags', 'each', 'rule' => [StringValidator::class]],
+			[['feeds'], 'each', 'rule' => [UrlValidator::class]],
+			[['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
+			[['images', 'providerIcons'], 'each', 'rule' => [ImageValidator::class]],
+		];
+	}
 
 	public function isSafe(): bool
 	{
@@ -90,7 +107,7 @@ class EmbeddedAsset extends Model
 
 				if (!$selectedImage ||
 					($selectedSize < $size && $imageSize > $selectedSize) ||
-					($selectedSize > $size && $selectedSize > $imageSize))
+					($selectedSize > $imageSize && $imageSize > $size))
 				{
 					$selectedImage = $image;
 					$selectedSize = $imageSize;

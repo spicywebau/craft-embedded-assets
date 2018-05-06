@@ -17,13 +17,13 @@ class Service extends Component
 {
 	public function requestUrl(string $url): EmbeddedAsset
 	{
-		$options = [
-			'oembed' => [
-				'parameters' => [],
-			],
-		];
-
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+
+		$options = [
+			'min_image_width' => $pluginSettings->minImageSize,
+			'min_image_height' => $pluginSettings->minImageSize,
+			'oembed' => ['parameters' => []],
+		];
 
 		foreach ($pluginSettings->parameters as $parameter)
 		{
@@ -45,8 +45,27 @@ class Service extends Component
 
 	public function checkWhitelist(string $url): bool
 	{
-		// TODO
-		return true;
+		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+
+		foreach ($pluginSettings->whitelist as $whitelistUrl)
+		{
+			$pattern = explode('*', $whitelistUrl);
+			$pattern = array_map('preg_quote', $pattern);
+			$pattern = implode('[a-z][a-z0-9]*', $pattern);
+			$pattern = "%^(https:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
+
+			if (preg_match($pattern, $url))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function isSecureUrl(string $url): bool
+	{
+		return strpos($url, 'https://') === 0;
 	}
 
 	public function getEmbeddedAsset(Asset $asset)
@@ -77,14 +96,13 @@ class Service extends Component
 
 	private function _adapterToModel(Adapter $adapter): EmbeddedAsset
 	{
-		// TODO strip tags on everything (unless embed/embed already does it)
 		return new EmbeddedAsset([
 			'title' => $adapter->title,
 			'description' => $adapter->description,
 			'url' => $adapter->url,
 			'type' => $adapter->type,
 			'tags' => $adapter->tags,
-			'images' => $adapter->images,
+			'images' => array_filter($adapter->images, [$this, '_isImageLargeEnough']),
 			'image' => $adapter->image,
 			'imageWidth' => $adapter->imageWidth,
 			'imageHeight' => $adapter->imageHeight,
@@ -96,11 +114,10 @@ class Service extends Component
 			'authorUrl' => $adapter->authorUrl,
 			'providerName' => $adapter->providerName,
 			'providerUrl' => $adapter->providerUrl,
-			'providerIcons' => $adapter->providerIcons,
+			'providerIcons' => array_filter($adapter->providerIcons, [$this, '_isImageLargeEnough']),
 			'providerIcon' => $adapter->providerIcon,
 			'publishedTime' => $adapter->publishedTime,
 			'license' => $adapter->license,
-			'linkedData' => $adapter->linkedData,
 			'feeds' => $adapter->feeds,
 		]);
 	}
@@ -120,5 +137,13 @@ class Service extends Component
 		}
 
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
+	}
+
+	private function _isImageLargeEnough(array $image)
+	{
+		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+		$minImageSize = $pluginSettings->minImageSize;
+
+		return $image['width'] >= $minImageSize && $image['height'] >= $minImageSize;
 	}
 }

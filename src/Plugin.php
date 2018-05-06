@@ -1,7 +1,6 @@
 <?php
 namespace benf\embeddedassets;
 
-use benf\embeddedassets\models\EmbeddedAsset;
 use yii\base\Event;
 
 use Craft;
@@ -16,6 +15,7 @@ use craft\events\RegisterElementTableAttributesEvent;
 
 use benf\embeddedassets\assets\Main as MainAsset;
 use benf\embeddedassets\models\Settings;
+use benf\embeddedassets\models\EmbeddedAsset;
 
 class Plugin extends BasePlugin
 {
@@ -63,18 +63,19 @@ class Plugin extends BasePlugin
 					if ($embeddedAsset)
 					{
 						$thumbSize = max($event->width, $event->height);
-						$isSafe = $this->methods->checkWhitelist($embeddedAsset->url);
-						$image = $isSafe ? $embeddedAsset->getImageToSize($thumbSize) : null;
+						$image = $embeddedAsset->getImageToSize($thumbSize);
+						$isImageSafe = $image && $this->methods->isSecureUrl($image['url']);
 
-						if ($image)
+						if ($isImageSafe)
 						{
 							$event->url = $image['url'];
 						}
 						// Check to avoid showing the default thumbnail or provider icon in the asset editor HUD.
 						else if ($thumbSize <= 200)
 						{
-							$providerIcon = $isSafe ? $embeddedAsset->getProviderIconToSize($thumbSize) : null;
-							$event->url = $providerIcon ? $providerIcon['url'] :
+							$providerIcon = $embeddedAsset->getProviderIconToSize($thumbSize);
+							$isProviderIconSafe = $providerIcon && $this->methods->isSecureUrl($providerIcon['url']);
+							$event->url = $isProviderIconSafe ? $providerIcon['url'] :
 								$assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
 						}
 					}
@@ -131,8 +132,6 @@ class Plugin extends BasePlugin
 	{
 		$html = null;
 
-		$isSafe = $this->methods->checkWhitelist($embeddedAsset->url);
-
 		switch ($attribute)
 		{
 			case 'provider':
@@ -140,11 +139,12 @@ class Plugin extends BasePlugin
 				if ($embeddedAsset->providerName)
 				{
 					$providerUrl = $embeddedAsset->providerUrl;
-					$providerIcon = $isSafe ? $embeddedAsset->getProviderIconToSize(32) : null;
+					$providerIcon = $embeddedAsset->getProviderIconToSize(32);
 					$providerIconUrl = $providerIcon ? $providerIcon['url'] : null;
+					$isProviderIconSafe = $providerIconUrl && $this->methods->isSecureUrl($providerIconUrl);
 
 					$html = "<span class='embedded-assets_label'>";
-					$html .= $providerIconUrl ? "<img src='$providerIconUrl' width='16' height='16'>" : '';
+					$html .= $isProviderIconSafe ? "<img src='$providerIconUrl' width='16' height='16'>" : '';
 					$html .= $providerUrl ? "<a href='$embeddedAsset->providerUrl' target='_blank' rel='noopener'>" : '';
 					$html .= $embeddedAsset->providerName;
 					$html .= $providerUrl ? "</a>" : '';

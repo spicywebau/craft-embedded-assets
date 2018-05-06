@@ -44,7 +44,7 @@ class Controller extends BaseController
 		$this->_requirePermissionByFolder('saveAssetInVolume', $folder);
 
 		$tempFilePath = Assets::tempFilePath();
-		$fileContents = Json::encode($embeddedAsset);
+		$fileContents = Json::encode($embeddedAsset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
 		FileHelper::writeToFile($tempFilePath, $fileContents);
 
