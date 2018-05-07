@@ -1,7 +1,6 @@
 <?php
 namespace benf\embeddedassets;
 
-use craft\helpers\UrlHelper;
 use yii\base\Event;
 
 use Craft;
