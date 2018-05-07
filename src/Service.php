@@ -3,6 +3,7 @@ namespace benf\embeddedassets;
 
 use yii\base\Component;
 
+use Craft;
 use craft\base\LocalVolumeInterface;
 use craft\elements\Asset;
 use craft\helpers\Json;
@@ -17,30 +18,41 @@ class Service extends Component
 {
 	public function requestUrl(string $url): EmbeddedAsset
 	{
-		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+		$cacheService = Craft::$app->getCache();
 
-		$options = [
-			'min_image_width' => $pluginSettings->minImageSize,
-			'min_image_height' => $pluginSettings->minImageSize,
-			'oembed' => ['parameters' => []],
-		];
+		$cacheKey = 'embeddedassets:' . $url;
+		$embeddedAsset = $cacheService->get($cacheKey);
 
-		foreach ($pluginSettings->parameters as $parameter)
+		if (!$embeddedAsset)
 		{
-			$param = $parameter['param'];
-			$value = $parameter['value'];
-			$options['oembed']['parameters'][$param] = $value;
+			$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+
+			$options = [
+				'min_image_width' => $pluginSettings->minImageSize,
+				'min_image_height' => $pluginSettings->minImageSize,
+				'oembed' => ['parameters' => []],
+			];
+
+			foreach($pluginSettings->parameters as $parameter)
+			{
+				$param = $parameter['param'];
+				$value = $parameter['value'];
+				$options['oembed']['parameters'][$param] = $value;
+			}
+
+			if($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
+			if($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = $pluginSettings->iframelyKey;
+			if($pluginSettings->googleKey) $options['google'] = ['key' => $pluginSettings->googleKey];
+			if($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => $pluginSettings->soundcloudKey];
+			if($pluginSettings->facebookKey) $options['facebook'] = ['key' => $pluginSettings->facebookKey];
+
+			$adapter = Embed::create($url, $options);
+			$embeddedAsset = $this->_adapterToModel($adapter);
+
+			$cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
 		}
 
-		if ($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
-		if ($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = $pluginSettings->iframelyKey;
-		if ($pluginSettings->googleKey) $options['google'] = ['key' => $pluginSettings->googleKey];
-		if ($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => $pluginSettings->soundcloudKey];
-		if ($pluginSettings->facebookKey) $options['facebook'] = ['key' => $pluginSettings->facebookKey];
-
-		$adapter = Embed::create($url, $options);
-
-		return $this->_adapterToModel($adapter);
+		return $embeddedAsset;
 	}
 
 	public function checkWhitelist(string $url): bool
