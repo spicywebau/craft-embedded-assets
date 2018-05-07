@@ -42,56 +42,7 @@ class Plugin extends BasePlugin
 
 		if ($requestService->getIsCpRequest())
 		{
-			Event::on(
-				View::class,
-				View::EVENT_BEFORE_RENDER_TEMPLATE,
-				function(TemplateEvent $event)
-				{
-					$viewService = Craft::$app->getView();
-					$viewService->registerAssetBundle(MainAsset::class);
-				}
-			);
-
-			Event::on(
-				Assets::class,
-				Assets::EVENT_GET_ASSET_THUMB_URL,
-				function(GetAssetThumbUrlEvent $event)
-				{
-					$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
-					$thumbSize = max($event->width, $event->height);
-					$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
-				}
-			);
-
-			Event::on(
-				Asset::class,
-				Asset::EVENT_REGISTER_TABLE_ATTRIBUTES,
-				function(RegisterElementTableAttributesEvent $event)
-				{
-					$event->tableAttributes['provider'] = ['label' => Craft::t('embeddedassets', "Provider")];
-				}
-			);
-
-			Event::on(
-				Asset::class,
-				Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
-				function(SetElementTableAttributeHtmlEvent $event)
-				{
-					// Prevent new table attributes from causing server errors
-					if (in_array($event->attribute, ['provider']))
-					{
-						$event->html = '';
-					}
-
-					$embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
-					$html = $embeddedAsset ? $this->_getTableAttributeHtml($embeddedAsset, $event->attribute) : null;
-
-					if ($html !== null)
-					{
-						$event->html = $html;
-					}
-				}
-			);
+			$this->_bindEvents();
 		}
 	}
 
@@ -108,6 +59,60 @@ class Plugin extends BasePlugin
 			'settings' => $this->getSettings(),
 		]);
     }
+
+    private function _bindEvents()
+	{
+		Event::on(
+			View::class,
+			View::EVENT_BEFORE_RENDER_TEMPLATE,
+			function(TemplateEvent $event)
+			{
+				$viewService = Craft::$app->getView();
+				$viewService->registerAssetBundle(MainAsset::class);
+			}
+		);
+
+		Event::on(
+			Assets::class,
+			Assets::EVENT_GET_ASSET_THUMB_URL,
+			function(GetAssetThumbUrlEvent $event)
+			{
+				$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
+				$thumbSize = max($event->width, $event->height);
+				$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+			}
+		);
+
+		Event::on(
+			Asset::class,
+			Asset::EVENT_REGISTER_TABLE_ATTRIBUTES,
+			function(RegisterElementTableAttributesEvent $event)
+			{
+				$event->tableAttributes['provider'] = ['label' => Craft::t('embeddedassets', "Provider")];
+			}
+		);
+
+		Event::on(
+			Asset::class,
+			Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
+			function(SetElementTableAttributeHtmlEvent $event)
+			{
+				// Prevent new table attributes from causing server errors
+				if (in_array($event->attribute, ['provider']))
+				{
+					$event->html = '';
+				}
+
+				$embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
+				$html = $embeddedAsset ? $this->_getTableAttributeHtml($embeddedAsset, $event->attribute) : null;
+
+				if ($html !== null)
+				{
+					$event->html = $html;
+				}
+			}
+		);
+	}
 
     private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
 	{

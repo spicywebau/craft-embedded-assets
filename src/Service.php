@@ -6,7 +6,11 @@ use yii\base\Component;
 use Craft;
 use craft\base\LocalVolumeInterface;
 use craft\elements\Asset;
+use craft\models\VolumeFolder;
+use craft\helpers\StringHelper;
 use craft\helpers\Json;
+use craft\helpers\Assets;
+use craft\helpers\FileHelper;
 
 use Embed\Embed;
 use Embed\Adapters\Adapter;
@@ -20,7 +24,7 @@ class Service extends Component
 	{
 		$cacheService = Craft::$app->getCache();
 
-		$cacheKey = 'embeddedassets:' . $url;
+		$cacheKey = 'embeddedasset:' . $url;
 		$embeddedAsset = $cacheService->get($cacheKey);
 
 		if (!$embeddedAsset)
@@ -33,21 +37,22 @@ class Service extends Component
 				'oembed' => ['parameters' => []],
 			];
 
-			foreach($pluginSettings->parameters as $parameter)
+			foreach ($pluginSettings->parameters as $parameter)
 			{
 				$param = $parameter['param'];
 				$value = $parameter['value'];
 				$options['oembed']['parameters'][$param] = $value;
 			}
 
-			if($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
-			if($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = $pluginSettings->iframelyKey;
-			if($pluginSettings->googleKey) $options['google'] = ['key' => $pluginSettings->googleKey];
-			if($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => $pluginSettings->soundcloudKey];
-			if($pluginSettings->facebookKey) $options['facebook'] = ['key' => $pluginSettings->facebookKey];
+			if ($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
+			if ($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = $pluginSettings->iframelyKey;
+			if ($pluginSettings->googleKey) $options['google'] = ['key' => $pluginSettings->googleKey];
+			if ($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => $pluginSettings->soundcloudKey];
+			if ($pluginSettings->facebookKey) $options['facebook'] = ['key' => $pluginSettings->facebookKey];
 
 			$adapter = Embed::create($url, $options);
-			$embeddedAsset = $this->_adapterToModel($adapter);
+			$array = $this->_convertFromAdapter($adapter);
+			$embeddedAsset = $this->createEmbeddedAsset($array);
 
 			$cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
 		}
@@ -93,13 +98,7 @@ class Service extends Component
 
 				if (is_array($decodedJson))
 				{
-					$isLegacyFile = isset($decodedJson['__embeddedasset__']);
-					if ($isLegacyFile)
-					{
-						$decodedJson = $this->_convertFromLegacy($decodedJson);
-					}
-
-					$embeddedAsset = $this->_arrayToModel($decodedJson);
+					$embeddedAsset = $this->createEmbeddedAsset($decodedJson);
 				}
 			}
 		}
@@ -107,9 +106,142 @@ class Service extends Component
 		return $embeddedAsset;
 	}
 
-	private function _adapterToModel(Adapter $adapter): EmbeddedAsset
+	private function createEmbeddedAsset(array $array)
 	{
-		return new EmbeddedAsset([
+		$embeddedAsset = new EmbeddedAsset();
+
+		$isLegacy = isset($array['__embeddedasset__']);
+		if ($isLegacy)
+		{
+			$array = $this->_convertFromLegacy($array);
+		}
+
+		foreach ($array as $key => $value)
+		{
+			if (!$embeddedAsset->hasProperty($key))
+			{
+				return null;
+			}
+
+			$embeddedAsset->$key = $value;
+		}
+
+		return $embeddedAsset->validate() ? $embeddedAsset : null;
+	}
+
+	public function createAsset(EmbeddedAsset $embeddedAsset, VolumeFolder $folder): Asset
+	{
+		$assetsService = Craft::$app->getAssets();
+		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+
+		$tempFilePath = Assets::tempFilePath();
+		$fileContents = Json::encode($embeddedAsset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+		FileHelper::writeToFile($tempFilePath, $fileContents);
+
+		$assetTitle = $embeddedAsset->title ?: $embeddedAsset->url;
+
+		$fileName = Assets::prepareAssetName($assetTitle, false);
+		$fileName = str_replace('.', '', $fileName);
+		$fileName = $fileName ?: 'embedded-asset';
+		$fileName = StringHelper::safeTruncate($fileName, $pluginSettings->maxFileNameLength) . '.json';
+		$fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
+
+		$asset = new Asset();
+		$asset->title = StringHelper::safeTruncate($assetTitle, $pluginSettings->maxAssetNameLength);
+		$asset->tempFilePath = $tempFilePath;
+		$asset->filename = $fileName;
+		$asset->newFolderId = $folder->id;
+		$asset->volumeId = $folder->volumeId;
+		$asset->avoidFilenameConflicts = true;
+		$asset->setScenario(Asset::SCENARIO_CREATE);
+
+		return $asset;
+	}
+
+	public function isEmbedSafe(EmbeddedAsset $embeddedAsset): bool
+	{
+		$isSafe = $this->checkWhitelist($embeddedAsset->url);
+
+		if ($embeddedAsset->code)
+		{
+			$errors = libxml_use_internal_errors(true);
+			$entities = libxml_disable_entity_loader(true);
+
+			$dom = new \DOMDocument();
+			$dom->loadHTML($embeddedAsset->code);
+
+			libxml_use_internal_errors($errors);
+			libxml_disable_entity_loader($entities);
+
+			foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
+			{
+				$href = $iframeElement->getAttribute('href');
+				$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
+			}
+
+			foreach ($dom->getElementsByTagName('script') as $scriptElement)
+			{
+				$src = $scriptElement->getAttribute('src');
+				$content = $scriptElement->textContent;
+
+				// Inline scripts are impossible to analyse for safety, so just assume they're all evil
+				$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
+			}
+		}
+
+		return $isSafe;
+	}
+
+	public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size)
+	{
+		return is_array($embeddedAsset->images) ?
+			$this->_getImageToSize($embeddedAsset->images, $size) : null;
+	}
+
+	public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size)
+	{
+		return is_array($embeddedAsset->providerIcons) ?
+			$this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
+	}
+
+	private function _getImageToSize(array $images, int $size)
+	{
+		$selectedImage = null;
+		$selectedSize = 0;
+
+		foreach ($images as $image)
+		{
+			if (is_array($image))
+			{
+				$imageWidth = isset($image['width']) && is_numeric($image['width']) ? $image['width'] : 0;
+				$imageHeight = isset($image['height']) && is_numeric($image['height']) ? $image['height'] : 0;
+				$imageSize = max($imageWidth, $imageHeight);
+
+				if (!$selectedImage ||
+					($selectedSize < $size && $imageSize > $selectedSize) ||
+					($selectedSize > $imageSize && $imageSize > $size))
+				{
+					$selectedImage = $image;
+					$selectedSize = $imageSize;
+				}
+			}
+		}
+
+		return $selectedImage;
+	}
+
+	private function _isImageLargeEnough(array $image)
+	{
+		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+		$minImageSize = $pluginSettings->minImageSize;
+
+		return $image['width'] >= $minImageSize && $image['height'] >= $minImageSize;
+	}
+
+	private function _convertFromAdapter(Adapter $adapter): array
+	{
+		return [
 			'title' => $adapter->title,
 			'description' => $adapter->description,
 			'url' => $adapter->url,
@@ -132,24 +264,7 @@ class Service extends Component
 			'publishedTime' => $adapter->publishedTime,
 			'license' => $adapter->license,
 			'feeds' => $adapter->feeds,
-		]);
-	}
-
-	private function _arrayToModel(array $array)
-	{
-		$embeddedAsset = new EmbeddedAsset();
-
-		foreach ($array as $key => $value)
-		{
-			if (!$embeddedAsset->hasProperty($key))
-			{
-				return null;
-			}
-
-			$embeddedAsset->$key = $value;
-		}
-
-		return $embeddedAsset->validate() ? $embeddedAsset : null;
+		];
 	}
 
 	private function _convertFromLegacy(array $legacy): array
@@ -165,15 +280,13 @@ class Service extends Component
 			'description' => $legacy['description'] ?? null,
 			'url' => $legacy['url'] ?? null,
 			'type' => $legacy['type'] ?? null,
-			'images' => $imageUrl ? [
-				[
-					'url' => $imageUrl,
-					'width' => $imageWidth,
-					'height' => $imageHeight,
-					'size' => $imageWidth * $imageHeight,
-					'mime' => null,
-				]
-			] : [],
+			'images' => $imageUrl ? [[
+				'url' => $imageUrl,
+				'width' => $imageWidth,
+				'height' => $imageHeight,
+				'size' => $imageWidth * $imageHeight,
+				'mime' => null,
+			]] : [],
 			'image' => $imageUrl,
 			'imageWidth' => $imageWidth,
 			'imageHeight' => $imageHeight,
@@ -186,13 +299,5 @@ class Service extends Component
 			'providerName' => $legacy['providerName'] ?? null,
 			'providerUrl' => $legacy['providerUrl'] ?? null,
 		];
-	}
-
-	private function _isImageLargeEnough(array $image)
-	{
-		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
-		$minImageSize = $pluginSettings->minImageSize;
-
-		return $image['width'] >= $minImageSize && $image['height'] >= $minImageSize;
 	}
 }
