@@ -109,7 +109,7 @@ class Plugin extends BasePlugin
 		]);
     }
 
-    private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size)
+    private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
 	{
 		$assetManagerService = Craft::$app->getAssetManager();
 
@@ -118,14 +118,26 @@ class Plugin extends BasePlugin
 
 		if ($image && UrlHelper::isAbsoluteUrl($image['url']))
 		{
-			$url = $image['url'];
+			$imageSize = max($image['width'], $image['height']);
+
+			if ($size <= $maxSize || $imageSize > $maxSize)
+			{
+				$url = $image['url'];
+			}
 		}
 		// Check to avoid showing the default thumbnail or provider icon in the asset editor HUD.
-		else if ($size <= 200)
+		else if ($size <= $maxSize)
 		{
 			$providerIcon = $embeddedAsset->getProviderIconToSize($size);
-			$url = $providerIcon && UrlHelper::isAbsoluteUrl($providerIcon['url']) ? $providerIcon['url'] :
-				$assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
+
+			if ($providerIcon && UrlHelper::isAbsoluteUrl($providerIcon['url']))
+			{
+				$url = $providerIcon['url'];
+			}
+			else
+			{
+				$url = $assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
+			}
 		}
 
 		return $url;
