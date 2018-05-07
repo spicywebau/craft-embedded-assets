@@ -24,6 +24,7 @@ class Settings extends Model
 		'amazon.*',
 		'amazon.co.*',
 
+		// amCharts
 		'amcharts.com',
 
 		// Baidu
@@ -47,10 +48,6 @@ class Settings extends Model
 		'facebook.com.*',
 		'fb.com',
 
-		// Flickr
-		'flic.kr',
-		'flickr.com',
-
 		// Google
 		'google.*',
 		'google.co.*',
@@ -60,6 +57,7 @@ class Settings extends Model
 		'hulu.com',
 
 		// Iframely
+		'iframely.com',
 
 		// Imgur
 		'imgur.com',
@@ -73,13 +71,10 @@ class Settings extends Model
 
 		// Meetup
 		'meetup.com',
-		'meetup.ps',
+		'meetupstatic.com',
 
-		'nfb.ca',
-
-		'official.fm',
-
-		'rdio.com',
+		// Netflix
+		'netfix.com',
 
 		// Reddit
 		'reddit.com',
