@@ -1,6 +1,7 @@
 <?php
 namespace benf\embeddedassets;
 
+use craft\helpers\UrlHelper;
 use yii\base\Event;
 
 use Craft;
@@ -56,29 +57,9 @@ class Plugin extends BasePlugin
 				Assets::EVENT_GET_ASSET_THUMB_URL,
 				function(GetAssetThumbUrlEvent $event)
 				{
-					$assetManagerService = Craft::$app->getAssetManager();
-
 					$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
-
-					if ($embeddedAsset)
-					{
-						$thumbSize = max($event->width, $event->height);
-						$image = $embeddedAsset->getImageToSize($thumbSize);
-						$isImageSafe = $image && $this->methods->isSecureUrl($image['url']);
-
-						if ($isImageSafe)
-						{
-							$event->url = $image['url'];
-						}
-						// Check to avoid showing the default thumbnail or provider icon in the asset editor HUD.
-						else if ($thumbSize <= 200)
-						{
-							$providerIcon = $embeddedAsset->getProviderIconToSize($thumbSize);
-							$isProviderIconSafe = $providerIcon && $this->methods->isSecureUrl($providerIcon['url']);
-							$event->url = $isProviderIconSafe ? $providerIcon['url'] :
-								$assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
-						}
-					}
+					$thumbSize = max($event->width, $event->height);
+					$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
 				}
 			);
 
@@ -127,6 +108,28 @@ class Plugin extends BasePlugin
 			'settings' => $this->getSettings(),
 		]);
     }
+
+    private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size)
+	{
+		$assetManagerService = Craft::$app->getAssetManager();
+
+		$url = null;
+		$image = $embeddedAsset->getImageToSize($size);
+
+		if ($image && $this->methods->isSecureUrl($image['url']))
+		{
+			$url = $image['url'];
+		}
+		// Check to avoid showing the default thumbnail or provider icon in the asset editor HUD.
+		else if ($size <= 200)
+		{
+			$providerIcon = $embeddedAsset->getProviderIconToSize($size);
+			$url = $providerIcon && $this->methods->isSecureUrl($providerIcon['url']) ? $providerIcon['url'] :
+				$assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
+		}
+
+		return $url;
+	}
 
     private function _getTableAttributeHtml(EmbeddedAsset $embeddedAsset, string $attribute)
 	{
