@@ -43,7 +43,10 @@ class Plugin extends BasePlugin
 
 		if ($requestService->getIsCpRequest())
 		{
-			$this->_bindEvents();
+			$this->_configureCpResources();
+			$this->_configureTemplateVariable();
+			$this->_configureAssetThumbnails();
+			$this->_configureAssetIndexAttributes();
 		}
 	}
 
@@ -61,19 +64,8 @@ class Plugin extends BasePlugin
 		]);
     }
 
-    private function _bindEvents()
+	private function _configureCpResources()
 	{
-		Event::on(
-			CraftVariable::class,
-			CraftVariable::EVENT_INIT,
-			function(Event $event)
-			{
-				$event->sender->attachBehaviors([
-					Variable::class,
-				]);
-			}
-		);
-
 		Event::on(
 			View::class,
 			View::EVENT_BEFORE_RENDER_TEMPLATE,
@@ -83,7 +75,22 @@ class Plugin extends BasePlugin
 				$viewService->registerAssetBundle(MainAsset::class);
 			}
 		);
+	}
 
+    private function _configureTemplateVariable()
+	{
+		Event::on(
+			CraftVariable::class,
+			CraftVariable::EVENT_INIT,
+			function(Event $event)
+			{
+				$event->sender->set('embeddedAssets', Variable::class);
+			}
+		);
+	}
+
+	private function _configureAssetThumbnails()
+	{
 		Event::on(
 			Assets::class,
 			Assets::EVENT_GET_ASSET_THUMB_URL,
@@ -94,23 +101,35 @@ class Plugin extends BasePlugin
 				$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
 			}
 		);
+	}
+
+    private function _configureAssetIndexAttributes()
+	{
+		$newAttributes = [
+			'provider' => "Provider",
+		];
 
 		Event::on(
 			Asset::class,
 			Asset::EVENT_REGISTER_TABLE_ATTRIBUTES,
-			function(RegisterElementTableAttributesEvent $event)
+			function(RegisterElementTableAttributesEvent $event) use($newAttributes)
 			{
-				$event->tableAttributes['provider'] = ['label' => Craft::t('embeddedassets', "Provider")];
+				foreach ($newAttributes as $attributeHandle => $attributeLabel)
+				{
+					$event->tableAttributes[$attributeHandle] = [
+						'label' => Craft::t('embeddedassets', $attributeLabel),
+					];
+				}
 			}
 		);
 
 		Event::on(
 			Asset::class,
 			Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
-			function(SetElementTableAttributeHtmlEvent $event)
+			function(SetElementTableAttributeHtmlEvent $event) use($newAttributes)
 			{
 				// Prevent new table attributes from causing server errors
-				if (in_array($event->attribute, ['provider']))
+				if (array_key_exists($event->attribute, $newAttributes))
 				{
 					$event->html = '';
 				}
