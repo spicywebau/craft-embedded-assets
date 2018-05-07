@@ -15,6 +15,7 @@
 		<div id="code" class="embedded-assets_preview_code">
 			{{ embeddedAsset.code|raw }}
 		</div>
+		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
 
 	{% elseif embeddedAsset.type != 'link' and embeddedAsset.image %}
 
@@ -50,6 +51,5 @@
 			{% endif %}
 		</ul>
 	</div>
-	<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
 </body>
 </html>

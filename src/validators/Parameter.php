@@ -3,8 +3,16 @@ namespace benf\embeddedassets\validators;
 
 use yii\validators\Validator;
 
+/**
+ * Class Parameter
+ * @package benf\embeddedassets\validators
+ */
 class Parameter extends Validator
 {
+	/**
+	 * @param \yii\base\Model $model
+	 * @param string $attribute
+	 */
 	public function validateAttribute($model, $attribute)
 	{
 		$parameter = $model->$attribute;
@@ -25,6 +33,13 @@ class Parameter extends Validator
 		}
 	}
 
+	/**
+	 * @param $model
+	 * @param $attribute
+	 * @param string $key
+	 * @param bool $required
+	 * @return bool
+	 */
 	protected function validateKeyExists($model, $attribute, string $key, bool $required = false): bool
 	{
 		$array = $model->$attribute;

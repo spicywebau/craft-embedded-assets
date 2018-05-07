@@ -1,20 +1,32 @@
 <?php
 namespace benf\embeddedassets;
 
+use benf\embeddedassets\models\EmbeddedAsset;
 use craft\elements\Asset;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 
+/**
+ * Class Variable
+ * @package benf\embeddedassets
+ */
 class Variable
 {
+	/**
+	 * Retrieves the embedded asset model from an asset, if one exists.
+	 *
+	 * @param Asset $asset
+	 * @return EmbeddedAsset|null
+	 */
 	public function get(Asset $asset)
 	{
 		return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
 	}
 
 	/**
+	 * Determines if an asset is an embedded asset or not.
 	 *
-	 * @deprecated Will be removed in next major version.
+	 * @deprecated Will be removed in next major version. Use the `get` method instead.
 	 *
 	 * @param Asset $asset
 	 * @return bool
@@ -25,8 +37,9 @@ class Variable
 	}
 
 	/**
+	 * Retrieves the embedded asset model from an asset, if one exists.
 	 *
-	 * @deprecated Will be removed in next major version.
+	 * @deprecated Will be removed in next major version. Use the `get` method instead.
 	 *
 	 * @param Asset $asset
 	 * @return mixed
@@ -37,11 +50,12 @@ class Variable
 	}
 
 	/**
+	 * Retrieves the embedded asset models from an array of assets.
 	 *
-	 * @deprecated Will be removed in next major version.
+	 * @deprecated Will be removed in next major version. Use the `get` method instead.
 	 *
-	 * @param $assets
-	 * @param null $indexBy
+	 * @param mixed $assets An iterable object of asset models.
+	 * @param null $indexBy Whether to index the resulting array by a property of the asset.
 	 * @return array
 	 */
 	public function fromAssets($assets, $indexBy = null): array

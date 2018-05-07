@@ -5,8 +5,16 @@ use yii\validators\Validator;
 
 use craft\helpers\UrlHelper;
 
+/**
+ * Class Image
+ * @package benf\embeddedassets\validators
+ */
 class Image extends Validator
 {
+	/**
+	 * @param \yii\base\Model $model
+	 * @param string $attribute
+	 */
 	public function validateAttribute($model, $attribute)
 	{
 		$image = $model->$attribute;
@@ -37,6 +45,13 @@ class Image extends Validator
 		}
 	}
 
+	/**
+	 * @param $model
+	 * @param $attribute
+	 * @param string $key
+	 * @param bool $required
+	 * @return bool
+	 */
 	protected function validateKeyExists($model, $attribute, string $key, bool $required = false): bool
 	{
 		$array = $model->$attribute;

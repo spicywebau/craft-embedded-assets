@@ -18,8 +18,16 @@ use Embed\Adapters\Adapter;
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 use benf\embeddedassets\models\EmbeddedAsset;
 
+/**
+ * Class Service
+ * @package benf\embeddedassets
+ */
 class Service extends Component
 {
+	/**
+	 * @param string $url
+	 * @return EmbeddedAsset
+	 */
 	public function requestUrl(string $url): EmbeddedAsset
 	{
 		$cacheService = Craft::$app->getCache();
@@ -60,6 +68,10 @@ class Service extends Component
 		return $embeddedAsset;
 	}
 
+	/**
+	 * @param string $url
+	 * @return bool
+	 */
 	public function checkWhitelist(string $url): bool
 	{
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
@@ -80,6 +92,11 @@ class Service extends Component
 		return false;
 	}
 
+	/**
+	 * @param Asset $asset
+	 * @return EmbeddedAsset|null
+	 * @throws \yii\base\InvalidConfigException
+	 */
 	public function getEmbeddedAsset(Asset $asset)
 	{
 		$embeddedAsset = null;
@@ -106,6 +123,10 @@ class Service extends Component
 		return $embeddedAsset;
 	}
 
+	/**
+	 * @param array $array
+	 * @return EmbeddedAsset|null
+	 */
 	private function createEmbeddedAsset(array $array)
 	{
 		$embeddedAsset = new EmbeddedAsset();
@@ -129,6 +150,14 @@ class Service extends Component
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
 	}
 
+	/**
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @param VolumeFolder $folder
+	 * @return Asset
+	 * @throws \craft\errors\AssetLogicException
+	 * @throws \yii\base\ErrorException
+	 * @throws \yii\base\Exception
+	 */
 	public function createAsset(EmbeddedAsset $embeddedAsset, VolumeFolder $folder): Asset
 	{
 		$assetsService = Craft::$app->getAssets();
@@ -159,6 +188,10 @@ class Service extends Component
 		return $asset;
 	}
 
+	/**
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return bool
+	 */
 	public function isEmbedSafe(EmbeddedAsset $embeddedAsset): bool
 	{
 		$isSafe = $this->checkWhitelist($embeddedAsset->url);
@@ -193,18 +226,33 @@ class Service extends Component
 		return $isSafe;
 	}
 
+	/**
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @param int $size
+	 * @return array|null
+	 */
 	public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size)
 	{
 		return is_array($embeddedAsset->images) ?
 			$this->_getImageToSize($embeddedAsset->images, $size) : null;
 	}
 
+	/**
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @param int $size
+	 * @return array|null
+	 */
 	public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size)
 	{
 		return is_array($embeddedAsset->providerIcons) ?
 			$this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
 	}
 
+	/**
+	 * @param array $images
+	 * @param int $size
+	 * @return array|null
+	 */
 	private function _getImageToSize(array $images, int $size)
 	{
 		$selectedImage = null;
@@ -231,6 +279,10 @@ class Service extends Component
 		return $selectedImage;
 	}
 
+	/**
+	 * @param array $image
+	 * @return bool
+	 */
 	private function _isImageLargeEnough(array $image)
 	{
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
@@ -239,6 +291,10 @@ class Service extends Component
 		return $image['width'] >= $minImageSize && $image['height'] >= $minImageSize;
 	}
 
+	/**
+	 * @param Adapter $adapter
+	 * @return array
+	 */
 	private function _convertFromAdapter(Adapter $adapter): array
 	{
 		return [
@@ -267,6 +323,10 @@ class Service extends Component
 		];
 	}
 
+	/**
+	 * @param array $legacy
+	 * @return array
+	 */
 	private function _convertFromLegacy(array $legacy): array
 	{
 		$width = intval($legacy['width'] ?? 0);

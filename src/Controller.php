@@ -10,8 +10,26 @@ use craft\web\Controller as BaseController;
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 use benf\embeddedassets\assets\Preview as PreviewAsset;
 
+/**
+ * Class Controller
+ * @package benf\embeddedassets
+ */
 class Controller extends BaseController
 {
+	/**
+	 * Saves an embedded asset as a Craft asset.
+	 *
+	 * @query string url The URL to create an embedded asset from (required).
+	 * @query int folderId The volume folder ID to save the asset to (required).
+	 * @response JSON
+	 *
+	 * @return Response
+	 * @throws BadRequestHttpException
+	 * @throws \Throwable
+	 * @throws \craft\errors\ElementNotFoundException
+	 * @throws \yii\base\Exception
+	 * @throws \yii\web\ForbiddenHttpException
+	 */
 	public function actionSave(): Response
 	{
 		$this->requireAcceptsJson();
@@ -42,11 +60,11 @@ class Controller extends BaseController
 		$asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
 		$result = $elementsService->saveElement($asset);
 
-		// In case of error, let user know about it.
 		if (!$result)
 		{
 			$errors = $asset->getFirstErrors();
-			$response = $this->asErrorJson(Craft::t('app', "Failed to save the Asset:") . implode(";\n", $errors));
+			$errorLabel = Craft::t('app', "Failed to save the Asset:");
+			$response = $this->asErrorJson($errorLabel . implode(";\n", $errors));
 		}
 		else
 		{
@@ -62,6 +80,19 @@ class Controller extends BaseController
 		return $response;
 	}
 
+	/**
+	 * Renders a preview of the embedded asset.
+	 *
+	 * @query string url The URL to create an embedded asset from (required).
+	 * @query string callback The name of a global Javascript function to be called when the preview is loaded.
+	 * @response HTML
+	 *
+	 * @return Response
+	 * @throws BadRequestHttpException
+	 * @throws \Twig_Error_Loader
+	 * @throws \yii\base\Exception
+	 * @throws \yii\base\InvalidConfigException
+	 */
 	public function actionPreview(): Response
 	{
 		$requestService = Craft::$app->getRequest();

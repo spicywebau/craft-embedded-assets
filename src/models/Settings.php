@@ -6,19 +6,48 @@ use craft\validators\StringValidator;
 
 use benf\embeddedassets\validators\Parameter as ParameterValidator;
 
+/**
+ * Class Settings
+ * @package benf\embeddedassets\models
+ */
 class Settings extends Model
 {
+	/**
+	 * @var string
+	 */
 	public $embedlyKey = '';
+
+	/**
+	 * @var string
+	 */
 	public $iframelyKey = '';
+
+	/**
+	 * @var string
+	 */
 	public $googleKey = '';
+
+	/**
+	 * @var string
+	 */
 	public $soundcloudKey = '';
+
+	/**
+	 * @var string
+	 */
 	public $facebookKey = '';
 
+	/**
+	 * @var array
+	 */
 	public $parameters = [
 		['param' => 'maxwidth', 'value' => '1920'],
 		['param' => 'maxheight', 'value' => '1080'],
 	];
 
+	/**
+	 * @var array
+	 */
 	public $whitelist = [
 		// Amazon
 		'amazon.*',
@@ -111,11 +140,29 @@ class Settings extends Model
 		'youtube-nocookie.com',
 	];
 
+	/**
+	 * @var int
+	 */
 	public $minImageSize = 16;
+
+	/**
+	 * @var int
+	 */
 	public $maxAssetNameLength = 50;
+
+	/**
+	 * @var int
+	 */
 	public $maxFileNameLength = 50;
+
+	/**
+	 * @var int
+	 */
 	public $cacheDuration = 5 * 60; // 5 minutes
 
+	/**
+	 * @return array
+	 */
 	public function rules()
 	{
 		return [

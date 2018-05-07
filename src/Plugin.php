@@ -19,16 +19,32 @@ use benf\embeddedassets\assets\Main as MainAsset;
 use benf\embeddedassets\models\Settings;
 use benf\embeddedassets\models\EmbeddedAsset;
 
+/**
+ * Class Plugin
+ * @package benf\embeddedassets
+ */
 class Plugin extends BasePlugin
 {
+	/**
+	 * @var Plugin The instance of this plugin (alias for Plugin::getPlugin()).
+	 */
 	public static $plugin;
 
+	/**
+	 * @var bool
+	 */
 	public $hasCpSettings = true;
 
+	/**
+	 * @var array
+	 */
 	public $controllerMap = [
 		'actions' => Controller::class,
 	];
 
+	/**
+	 * Plugin initializer.
+	 */
 	public function init()
 	{
 		parent::init();
@@ -50,11 +66,19 @@ class Plugin extends BasePlugin
 		}
 	}
 
+	/**
+	 * @return Settings
+	 */
 	protected function createSettingsModel()
 	{
 		return new Settings();
 	}
 
+	/**
+	 * @return null|string
+	 * @throws \Twig_Error_Loader
+	 * @throws \yii\base\Exception
+	 */
 	protected function settingsHtml()
     {
 		$viewService = Craft::$app->getView();
@@ -64,6 +88,9 @@ class Plugin extends BasePlugin
 		]);
     }
 
+	/**
+	 * Includes the control panel front end resources (resources/main.js).
+	 */
 	private function _configureCpResources()
 	{
 		Event::on(
@@ -77,6 +104,9 @@ class Plugin extends BasePlugin
 		);
 	}
 
+	/**
+	 * Assigns the template variable so it can be accessed in the templates at `craft.embeddedAssets`.
+	 */
     private function _configureTemplateVariable()
 	{
 		Event::on(
@@ -89,6 +119,9 @@ class Plugin extends BasePlugin
 		);
 	}
 
+	/**
+	 * Sets the embedded asset thumbnails on asset elements in the control panel.
+	 */
 	private function _configureAssetThumbnails()
 	{
 		Event::on(
@@ -103,6 +136,9 @@ class Plugin extends BasePlugin
 		);
 	}
 
+	/**
+	 * Adds new and modifies existing asset table attributes in the control panel.
+	 */
     private function _configureAssetIndexAttributes()
 	{
 		$newAttributes = [
@@ -145,11 +181,19 @@ class Plugin extends BasePlugin
 		);
 	}
 
+	/**
+	 * Helper method for retrieving an appropriately sized thumbnail from an embedded asset.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @param int $size The preferred size of the thumbnail.
+	 * @param int $maxSize The largest size to bother getting a thumbnail for.
+	 * @return false|string The URL to the thumbnail.
+	 */
     private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
 	{
 		$assetManagerService = Craft::$app->getAssetManager();
 
-		$url = null;
+		$url = false;
 		$image = $embeddedAsset->getImageToSize($size);
 
 		if ($image && UrlHelper::isAbsoluteUrl($image['url']))
@@ -179,6 +223,13 @@ class Plugin extends BasePlugin
 		return $url;
 	}
 
+	/**
+	 * Outputs the HTML for each asset table attribute for the control panel.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @param string $attribute
+	 * @return null|string
+	 */
     private function _getTableAttributeHtml(EmbeddedAsset $embeddedAsset, string $attribute)
 	{
 		$html = null;
