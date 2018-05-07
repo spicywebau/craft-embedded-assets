@@ -8,6 +8,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\services\Assets;
 use craft\web\View;
 use craft\elements\Asset;
+use craft\helpers\UrlHelper;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\TemplateEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
@@ -115,7 +116,7 @@ class Plugin extends BasePlugin
 		$url = null;
 		$image = $embeddedAsset->getImageToSize($size);
 
-		if ($image && $this->methods->isSecureUrl($image['url']))
+		if ($image && UrlHelper::isAbsoluteUrl($image['url']))
 		{
 			$url = $image['url'];
 		}
@@ -123,7 +124,7 @@ class Plugin extends BasePlugin
 		else if ($size <= 200)
 		{
 			$providerIcon = $embeddedAsset->getProviderIconToSize($size);
-			$url = $providerIcon && $this->methods->isSecureUrl($providerIcon['url']) ? $providerIcon['url'] :
+			$url = $providerIcon && UrlHelper::isAbsoluteUrl($providerIcon['url']) ? $providerIcon['url'] :
 				$assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
 		}
 

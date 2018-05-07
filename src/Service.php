@@ -64,7 +64,7 @@ class Service extends Component
 			$pattern = explode('*', $whitelistUrl);
 			$pattern = array_map('preg_quote', $pattern);
 			$pattern = implode('[a-z][a-z0-9]*', $pattern);
-			$pattern = "%^(https:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
+			$pattern = "%^(https?:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
 
 			if (preg_match($pattern, $url))
 			{
@@ -73,11 +73,6 @@ class Service extends Component
 		}
 
 		return false;
-	}
-
-	public function isSecureUrl(string $url): bool
-	{
-		return strpos($url, 'https://') === 0;
 	}
 
 	public function getEmbeddedAsset(Asset $asset)

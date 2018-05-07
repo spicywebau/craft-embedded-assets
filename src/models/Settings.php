@@ -24,6 +24,8 @@ class Settings extends Model
 		'amazon.*',
 		'amazon.co.*',
 
+		'amcharts.com',
+
 		// Baidu
 		'baidu.com',
 

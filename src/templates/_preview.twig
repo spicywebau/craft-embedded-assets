@@ -10,7 +10,7 @@
 	{% endif %}
 </head>
 <body class="embedded-assets_preview">
-	{% if embeddedAsset.code %}
+	{% if embeddedAsset.code and embeddedAsset.isSafe() %}
 
 		<div id="code" class="embedded-assets_preview_code">
 			{{ embeddedAsset.code|raw }}
