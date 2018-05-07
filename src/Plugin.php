@@ -7,6 +7,7 @@ use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\services\Assets;
 use craft\web\View;
+use craft\web\twig\variables\CraftVariable;
 use craft\elements\Asset;
 use craft\helpers\UrlHelper;
 use craft\events\GetAssetThumbUrlEvent;
@@ -62,6 +63,17 @@ class Plugin extends BasePlugin
 
     private function _bindEvents()
 	{
+		Event::on(
+			CraftVariable::class,
+			CraftVariable::EVENT_INIT,
+			function(Event $event)
+			{
+				$event->sender->attachBehaviors([
+					Variable::class,
+				]);
+			}
+		);
+
 		Event::on(
 			View::class,
 			View::EVENT_BEFORE_RENDER_TEMPLATE,
