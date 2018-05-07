@@ -93,6 +93,12 @@ class Service extends Component
 
 				if (is_array($decodedJson))
 				{
+					$isLegacyFile = isset($decodedJson['__embeddedasset__']);
+					if ($isLegacyFile)
+					{
+						$decodedJson = $this->_convertFromLegacy($decodedJson);
+					}
+
 					$embeddedAsset = $this->_arrayToModel($decodedJson);
 				}
 			}
@@ -144,6 +150,42 @@ class Service extends Component
 		}
 
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
+	}
+
+	private function _convertFromLegacy(array $legacy): array
+	{
+		$width = intval($legacy['width'] ?? 0);
+		$height = intval($legacy['height'] ?? 0);
+		$imageUrl = $legacy['thumbnailUrl'] ?? null;
+		$imageWidth = intval($legacy['thumbnailWidth'] ?? 0);
+		$imageHeight = intval($legacy['thumbnailHeight'] ?? 0);
+
+		return [
+			'title' => $legacy['title'] ?? null,
+			'description' => $legacy['description'] ?? null,
+			'url' => $legacy['url'] ?? null,
+			'type' => $legacy['type'] ?? null,
+			'images' => $imageUrl ? [
+				[
+					'url' => $imageUrl,
+					'width' => $imageWidth,
+					'height' => $imageHeight,
+					'size' => $imageWidth * $imageHeight,
+					'mime' => null,
+				]
+			] : [],
+			'image' => $imageUrl,
+			'imageWidth' => $imageWidth,
+			'imageHeight' => $imageHeight,
+			'code' => $legacy['html'] ?? $legacy['safeHtml'] ?? null,
+			'width' => $width,
+			'height' => $height,
+			'aspectRatio' => $width > 0 ? $height / $width * 100 : 0,
+			'authorName' => $legacy['authorName'] ?? null,
+			'authorUrl' => $legacy['authorUrl'] ?? null,
+			'providerName' => $legacy['providerName'] ?? null,
+			'providerUrl' => $legacy['providerUrl'] ?? null,
+		];
 	}
 
 	private function _isImageLargeEnough(array $image)
