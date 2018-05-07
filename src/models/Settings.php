@@ -119,15 +119,10 @@ class Settings extends Model
 	public function rules()
 	{
 		return [
-			['embedlyKey', StringValidator::class],
-			['iframelyKey', StringValidator::class],
-			['googleKey', StringValidator::class],
-			['soundcloudKey', StringValidator::class],
-			['facebookKey', StringValidator::class],
+			[['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey'], StringValidator::class],
 			['parameters', 'each', 'rule' => [ParameterValidator::class]],
 			['whitelist', 'each', 'rule' => [StringValidator::class]],
-			['maxAssetNameLength', 'integer', 'min' => 10],
-			['maxFileNameLength', 'integer', 'min' => 10],
+			[['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
 			['cacheDuration', 'integer', 'min' => 0],
 		];
 	}
