@@ -144,7 +144,7 @@ class Plugin extends BasePlugin
 					$providerUrl = $embeddedAsset->providerUrl;
 					$providerIcon = $embeddedAsset->getProviderIconToSize(32);
 					$providerIconUrl = $providerIcon ? $providerIcon['url'] : null;
-					$isProviderIconSafe = $providerIconUrl && $this->methods->isSecureUrl($providerIconUrl);
+					$isProviderIconSafe = $providerIconUrl && UrlHelper::isAbsoluteUrl($providerIconUrl);
 
 					$html = "<span class='embedded-assets_label'>";
 					$html .= $isProviderIconSafe ? "<img src='$providerIconUrl' width='16' height='16'>" : '';
