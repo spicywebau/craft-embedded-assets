@@ -123,6 +123,7 @@ export default class Modal extends Emitter
 		else
 		{
 			this.create($target, settings)
+			this.form.focus()
 		}
 
 		this.trigger('show')
