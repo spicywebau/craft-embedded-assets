@@ -25,6 +25,8 @@ use benf\embeddedassets\models\EmbeddedAsset;
 class Service extends Component
 {
 	/**
+	 * Requests embed data from a URL.
+	 *
 	 * @param string $url
 	 * @return EmbeddedAsset
 	 */
@@ -69,8 +71,10 @@ class Service extends Component
 	}
 
 	/**
+	 * Checks a URL against the whitelist set on the plugin settings model.
+	 *
 	 * @param string $url
-	 * @return bool
+	 * @return bool Whether the URL is in the whitelist.
 	 */
 	public function checkWhitelist(string $url): bool
 	{
@@ -93,6 +97,8 @@ class Service extends Component
 	}
 
 	/**
+	 * Retrieves an embedded asset model from an asset element, if one exists.
+	 *
 	 * @param Asset $asset
 	 * @return EmbeddedAsset|null
 	 * @throws \yii\base\InvalidConfigException
@@ -124,6 +130,9 @@ class Service extends Component
 	}
 
 	/**
+	 * Creates an embedded asset model from an array of property/value pairs.
+	 * Returns the model unless the array included any properties that aren't defined on the model.
+	 *
 	 * @param array $array
 	 * @return EmbeddedAsset|null
 	 */
@@ -151,8 +160,10 @@ class Service extends Component
 	}
 
 	/**
+	 * Creates an asset element ready to be saved from an embedded asset model.
+	 *
 	 * @param EmbeddedAsset $embeddedAsset
-	 * @param VolumeFolder $folder
+	 * @param VolumeFolder $folder The folder to save the asset to.
 	 * @return Asset
 	 * @throws \craft\errors\AssetLogicException
 	 * @throws \yii\base\ErrorException
@@ -189,6 +200,8 @@ class Service extends Component
 	}
 
 	/**
+	 * Checks an embedded asset embed code for URL's that are safe (or in other words, are whitelisted).
+	 *
 	 * @param EmbeddedAsset $embeddedAsset
 	 * @return bool
 	 */
@@ -227,6 +240,9 @@ class Service extends Component
 	}
 
 	/**
+	 * Returns the image from an embedded asset closest to some size.
+	 * It favours images that most minimally exceed the supplied size.
+	 *
 	 * @param EmbeddedAsset $embeddedAsset
 	 * @param int $size
 	 * @return array|null
@@ -238,6 +254,9 @@ class Service extends Component
 	}
 
 	/**
+	 * Returns the provider icon from an embedded asset closest to some size.
+	 * It favours icons that most minimally exceed the supplied size.
+	 *
 	 * @param EmbeddedAsset $embeddedAsset
 	 * @param int $size
 	 * @return array|null
@@ -249,6 +268,8 @@ class Service extends Component
 	}
 
 	/**
+	 * Helper method for retrieving an image closest to some size.
+	 *
 	 * @param array $images
 	 * @param int $size
 	 * @return array|null
@@ -280,6 +301,9 @@ class Service extends Component
 	}
 
 	/**
+	 * Helper method for filtering images to some minimum size.
+	 * Used to filter out small images that likely are absolutely useless.
+	 *
 	 * @param array $image
 	 * @return bool
 	 */
@@ -292,6 +316,8 @@ class Service extends Component
 	}
 
 	/**
+	 * Creates an "embedded asset ready" array from an adapter.
+	 *
 	 * @param Adapter $adapter
 	 * @return array
 	 */
@@ -324,6 +350,8 @@ class Service extends Component
 	}
 
 	/**
+	 * Creates an "embedded asset ready" array from an array matching the Craft 2 version of the plugin.
+	 *
 	 * @param array $legacy
 	 * @return array
 	 */

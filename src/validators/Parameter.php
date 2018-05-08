@@ -6,6 +6,12 @@ use yii\validators\Validator;
 /**
  * Class Parameter
  * @package benf\embeddedassets\validators
+ *
+ * Validates an array matching the following signature (*required):
+ * [
+ *     'param' -> string *
+ *     'value' -> string *
+ * ]
  */
 class Parameter extends Validator
 {

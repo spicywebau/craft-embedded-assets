@@ -38,7 +38,7 @@ class Settings extends Model
 	public $facebookKey = '';
 
 	/**
-	 * @var array
+	 * @var array of parameters
 	 */
 	public $parameters = [
 		['param' => 'maxwidth', 'value' => '1920'],
@@ -46,7 +46,7 @@ class Settings extends Model
 	];
 
 	/**
-	 * @var array
+	 * @var array of strings
 	 */
 	public $whitelist = [
 		// Amazon

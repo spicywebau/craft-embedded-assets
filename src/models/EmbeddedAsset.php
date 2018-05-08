@@ -15,112 +15,112 @@ use benf\embeddedassets\validators\Image as ImageValidator;
 class EmbeddedAsset extends Model
 {
 	/**
-	 * @var
+	 * @var string required
 	 */
 	public $title;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	public $description;
 
 	/**
-	 * @var
+	 * @var string URL required
 	 */
 	public $url;
 
 	/**
-	 * @var
+	 * @var string link|image|video\rich required
 	 */
 	public $type;
 
 	/**
-	 * @var
+	 * @var array of strings
 	 */
 	public $tags;
 
 	/**
-	 * @var
+	 * @var array of URLs
 	 */
 	public $feeds;
 
 	/**
-	 * @var
+	 * @var array of images
 	 */
 	public $images;
 
 	/**
-	 * @var
+	 * @var string URL
 	 */
 	public $image;
 
 	/**
-	 * @var
+	 * @var number
 	 */
 	public $imageWidth;
 
 	/**
-	 * @var
+	 * @var number
 	 */
 	public $imageHeight;
 
 	/**
-	 * @var
+	 * @var string HTML
 	 */
 	public $code;
 
 	/**
-	 * @var
+	 * @var number
 	 */
 	public $width;
 
 	/**
-	 * @var
+	 * @var number
 	 */
 	public $height;
 
 	/**
-	 * @var
+	 * @var number
 	 */
 	public $aspectRatio;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	public $authorName;
 
 	/**
-	 * @var
+	 * @var string URL
 	 */
 	public $authorUrl;
 
 	/**
-	 * @var
+	 * @var array of images
 	 */
 	public $providerIcons;
 
 	/**
-	 * @var
+	 * @var string URL
 	 */
 	public $providerIcon;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	public $providerName;
 
 	/**
-	 * @var
+	 * @var string URL
 	 */
 	public $providerUrl;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	public $publishedTime;
 
 	/**
-	 * @var
+	 * @var string
 	 */
 	public $license;
 
@@ -143,6 +143,8 @@ class EmbeddedAsset extends Model
 	}
 
 	/**
+	 * Method wrapper for Service::isEmbedSafe
+	 *
 	 * @return bool
 	 */
 	public function isSafe(): bool
@@ -151,6 +153,8 @@ class EmbeddedAsset extends Model
 	}
 
 	/**
+	 * Method wrapper for Service::getImageToSize
+	 *
 	 * @param int $size
 	 * @return mixed
 	 */
@@ -160,6 +164,8 @@ class EmbeddedAsset extends Model
 	}
 
 	/**
+	 * Method wrapper for Service::getProviderIconToSize
+	 *
 	 * @param int $size
 	 * @return mixed
 	 */

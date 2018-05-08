@@ -8,6 +8,15 @@ use craft\helpers\UrlHelper;
 /**
  * Class Image
  * @package benf\embeddedassets\validators
+ *
+ * Validates an array matching the following signature (*required):
+ * [
+ *     'url' -> string *
+ *     'width' -> number *
+ *     'height' -> number *
+ *     'size' -> number *
+ *     'mime' -> string
+ * ]
  */
 class Image extends Validator
 {
