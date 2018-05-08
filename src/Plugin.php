@@ -33,7 +33,7 @@ class Plugin extends BasePlugin
 	/**
 	 * @var string
 	 */
-	public $changelogUrl = 'https://raw.githubusercontent.com/benjamminf/craft-embedded-assets/master/changelog.md';
+	public $changelogUrl = 'https://raw.githubusercontent.com/benjamminf/craft-embedded-assets/master/CHANGELOG.md';
 
 	/**
 	 * @var string
