@@ -5,7 +5,7 @@
 
 Embedded Assets is a [Craft CMS](https://craftcms.com) plugin that lets you add YouTube videos, Instagram photos, Twitter posts and more to Craft's asset manager, and treat them as first class assets. Just open up your asset manager, paste in a URL and watch the magic happen.
 
-<br>
+<img src="docs/assets/input@2x.png" width="560">
 
 ### Embed anything
 
