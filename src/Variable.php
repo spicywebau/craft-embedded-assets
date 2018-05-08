@@ -1,10 +1,11 @@
 <?php
 namespace benf\embeddedassets;
 
-use benf\embeddedassets\models\EmbeddedAsset;
+use Craft;
 use craft\elements\Asset;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
+use benf\embeddedassets\models\EmbeddedAsset;
 
 /**
  * Class Variable
@@ -33,6 +34,8 @@ class Variable
 	 */
 	public function isEmbedded(Asset $asset): bool
 	{
+		Craft::$app->getDeprecator()->log('craft.embeddedAssets.isEmbedded', "The template method `craft.embeddedAssets.isEmbedded` is now deprecated. Use `craft.embeddedAssets.get` instead.");
+
 		return (bool)EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
 	}
 
@@ -46,6 +49,8 @@ class Variable
 	 */
 	public function fromAsset(Asset $asset)
 	{
+		Craft::$app->getDeprecator()->log('craft.embeddedAssets.fromAsset', "The template method `craft.embeddedAssets.fromAsset` is now deprecated. Use `craft.embeddedAssets.get` instead.");
+
 		return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
 	}
 
@@ -60,6 +65,8 @@ class Variable
 	 */
 	public function fromAssets($assets, $indexBy = null): array
 	{
+		Craft::$app->getDeprecator()->log('craft.embeddedAssets.fromAssets', "The template method `craft.embeddedAssets.fromAssets` is now deprecated. Use `craft.embeddedAssets.get` instead.");
+
 		$embeddedAssets = [];
 
 		if (is_iterable($assets))

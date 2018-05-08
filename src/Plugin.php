@@ -31,6 +31,16 @@ class Plugin extends BasePlugin
 	public static $plugin;
 
 	/**
+	 * @var string
+	 */
+	public $changelogUrl = 'https://raw.githubusercontent.com/benjamminf/craft-embedded-assets/master/CHANGELOG.md';
+
+	/**
+	 * @var string
+	 */
+	public $downloadUrl = 'https://github.com/benjamminf/craft-embedded-assets/archive/master.zip';
+
+	/**
 	 * @var bool
 	 */
 	public $hasCpSettings = true;
@@ -57,10 +67,11 @@ class Plugin extends BasePlugin
             'methods' => Service::class,
         ]);
 
+		$this->_configureTemplateVariable();
+
 		if ($requestService->getIsCpRequest())
 		{
 			$this->_configureCpResources();
-			$this->_configureTemplateVariable();
 			$this->_configureAssetThumbnails();
 			$this->_configureAssetIndexAttributes();
 		}

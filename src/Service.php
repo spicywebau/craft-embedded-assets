@@ -3,10 +3,13 @@ namespace benf\embeddedassets;
 
 use yii\base\Component;
 
+use Twig_Markup;
+
 use Craft;
 use craft\base\LocalVolumeInterface;
 use craft\elements\Asset;
 use craft\models\VolumeFolder;
+use craft\helpers\Template;
 use craft\helpers\StringHelper;
 use craft\helpers\Json;
 use craft\helpers\Assets;
@@ -153,7 +156,20 @@ class Service extends Component
 				return null;
 			}
 
-			$embeddedAsset->$key = $value;
+			switch ($key)
+			{
+				case 'code':
+				{
+					$embeddedAsset->$key =
+						$value instanceof Twig_Markup ? $value :
+						is_string($value) ? Template::raw($value) : null;
+				}
+				break;
+				default:
+				{
+					$embeddedAsset->$key = $value;
+				}
+			}
 		}
 
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
@@ -333,7 +349,7 @@ class Service extends Component
 			'image' => $adapter->image,
 			'imageWidth' => $adapter->imageWidth,
 			'imageHeight' => $adapter->imageHeight,
-			'code' => $adapter->code,
+			'code' => Template::raw($adapter->code ?: ''),
 			'width' => $adapter->width,
 			'height' => $adapter->height,
 			'aspectRatio' => $adapter->aspectRatio,
@@ -378,7 +394,7 @@ class Service extends Component
 			'image' => $imageUrl,
 			'imageWidth' => $imageWidth,
 			'imageHeight' => $imageHeight,
-			'code' => $legacy['html'] ?? $legacy['safeHtml'] ?? null,
+			'code' => Template::raw($legacy['html'] ?? $legacy['safeHtml'] ?? ''),
 			'width' => $width,
 			'height' => $height,
 			'aspectRatio' => $width > 0 ? $height / $width * 100 : 0,

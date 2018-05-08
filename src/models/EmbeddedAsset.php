@@ -1,18 +1,21 @@
 <?php
 namespace benf\embeddedassets\models;
 
+use JsonSerializable;
+
 use craft\base\Model;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 use benf\embeddedassets\validators\Image as ImageValidator;
+use benf\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
 
 /**
  * Class EmbeddedAsset
  * @package benf\embeddedassets\models
  */
-class EmbeddedAsset extends Model
+class EmbeddedAsset extends Model implements JsonSerializable
 {
 	/**
 	 * @var string required
@@ -65,7 +68,7 @@ class EmbeddedAsset extends Model
 	public $imageHeight;
 
 	/**
-	 * @var string HTML
+	 * @var \Twig_Markup
 	 */
 	public $code;
 
@@ -131,7 +134,7 @@ class EmbeddedAsset extends Model
 	{
 		return [
 			[['title', 'url', 'type'], 'required'],
-			[['title', 'description', 'authorName', 'code', 'providerName', 'publishedTime', 'license'], StringValidator::class],
+			[['title', 'description', 'authorName', 'providerName', 'publishedTime', 'license'], StringValidator::class],
 			[['url', 'image', 'authorUrl', 'providerIcon', 'providerUrl'], UrlValidator::class, 'defaultScheme' => 'https'],
 			['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
 			['type', 'default', 'value' => 'link'],
@@ -139,7 +142,20 @@ class EmbeddedAsset extends Model
 			[['feeds'], 'each', 'rule' => [UrlValidator::class]],
 			[['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
 			[['images', 'providerIcons'], 'each', 'rule' => [ImageValidator::class]],
+			['code', TwigMarkupValidator::class],
 		];
+	}
+
+	/**
+	 * A JSON serializable copy of this model.
+	 * Used when saving to file.
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize()
+	{
+		// Disable recursion since it interferes with Twig_Markup instances and causes `code` values to be lost.
+		return $this->toArray([], [], false);
 	}
 
 	/**
