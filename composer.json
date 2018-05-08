@@ -45,7 +45,7 @@
   "extra": {
     "handle": "embeddedassets",
     "name": "Embedded Assets",
-    "schemaVersion": "2.0.0",
+    "schemaVersion": "1.0.0",
     "class": "benf\\embeddedassets\\Plugin",
     "changelogUrl": "https://github.com/benjamminf/craft-embedded-assets/blob/master/CHANGELOG.md",
     "downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/master.zip"
