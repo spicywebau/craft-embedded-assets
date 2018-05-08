@@ -1,9 +1,0 @@
-filter:
-  paths: [lib/*]
-
-checks:
-  php:
-    duplication: false
-
-tools:
-  external_code_coverage: true

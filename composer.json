@@ -1,9 +1,53 @@
 {
-	"config": {
-		"vendor-dir": "embeddedassets/vendor"
-	},
-	"require": {
-		"essence/essence": "3.1.0",
-		"euskadi31/opengraph": "^1.0"
-	}
+  "name": "benjamminf/craft-embedded-assets",
+  "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
+  "version": "1.0.0",
+  "type": "craft-plugin",
+  "keywords": [
+    "cms",
+    "craftcms",
+    "plugin",
+    "embed",
+    "assets",
+    "youtube",
+    "vimeo",
+    "instagram",
+    "twitter"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Benjamin Fleming",
+      "homepage": "https://github.com/benjamminf"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/benjamminf/craft-embedded-assets/issues",
+    "source": "https://github.com/benjamminf/craft-embedded-assets",
+    "docs": "https://github.com/benjamminf/craft-embedded-assets/wiki",
+    "rss": "https://github.com/benjamminf/craft-embedded-assets/commits/master.atom"
+  },
+  "require": {
+    "craftcms/cms": "^3.0.0",
+    "embed/embed": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "benf\\embeddedassets\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "extra": {
+    "handle": "embeddedassets",
+    "name": "Embedded Assets",
+    "schemaVersion": "2.0.0",
+    "class": "benf\\embeddedassets\\Plugin",
+    "changelogUrl": "https://github.com/benjamminf/craft-embedded-assets/blob/master/CHANGELOG.md",
+    "downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/master.zip"
+  }
 }

@@ -1,0 +1,43 @@
+{
+  "name": "craft-embedded-assets",
+  "version": "1.0.0",
+  "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
+  "main": "src/resources/main.js",
+  "scripts": {
+    "build-dev": "./node_modules/.bin/webpack --config ./client/build/webpack.js --mode development",
+    "build": "./node_modules/.bin/webpack --config ./client/build/webpack.js --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benjamminf/craft-embedded-assets.git"
+  },
+  "keywords": [
+    "cms",
+    "craftcms",
+    "plugin",
+    "embed",
+    "assets",
+    "youtube",
+    "vimeo",
+    "instagram",
+    "twitter"
+  ],
+  "author": "Benjamin Fleming",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benjamminf/craft-embedded-assets/issues"
+  },
+  "homepage": "https://github.com/benjamminf/craft-embedded-assets#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.11",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.1.2"
+  }
+}
