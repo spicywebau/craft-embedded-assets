@@ -4,12 +4,12 @@ namespace benf\embeddedassets;
 use DOMDocument;
 
 use yii\base\Component;
+use yii\base\Exception;
 use yii\base\ErrorException;
 
 use Twig_Markup;
 
 use Craft;
-use craft\base\LocalVolumeInterface;
 use craft\elements\Asset;
 use craft\models\VolumeFolder;
 use craft\helpers\Template;
@@ -108,6 +108,7 @@ class Service extends Component
 	 * @param Asset $asset
 	 * @return EmbeddedAsset|null
 	 * @throws \yii\base\InvalidConfigException
+	 * @throws \craft\errors\AssetException
 	 */
 	public function getEmbeddedAsset(Asset $asset)
 	{
@@ -115,20 +116,23 @@ class Service extends Component
 
 		if ($asset->kind === Asset::KIND_JSON)
 		{
-			$assetVolume = $asset->getVolume();
-			$assetPath = $assetVolume instanceof LocalVolumeInterface ?
-				$assetVolume->getRootPath() . DIRECTORY_SEPARATOR . $asset->getPath() :
-				$asset->getCopyOfFile();
-
-			if (file_exists($assetPath))
+			try
 			{
-				$fileContents = file_get_contents($assetPath);
+				// Note - 2018-05-09
+				// As of Craft 3.0.6 this can be replaced with $asset->getContents()
+				// This version was released on 2018-05-08 so need to wait for majority adoption
+				$fileContents = stream_get_contents($asset->getStream());
 				$decodedJson = Json::decodeIfJson($fileContents);
 
 				if (is_array($decodedJson))
 				{
 					$embeddedAsset = $this->createEmbeddedAsset($decodedJson);
 				}
+			}
+			catch (Exception $e)
+			{
+				// Ignore errors and assume it's not an embedded asset
+				$embeddedAsset = null;
 			}
 		}
 
