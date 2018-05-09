@@ -9,9 +9,10 @@ export function monkeypatch(Class, method, callback)
 	}
 }
 
+let uidCounter = 0
 export function uniqueId(prefix = 'uid')
 {
-	return prefix + Math.random().toString(36).substr(2)
+	return prefix + Math.random().toString(36).substr(2) + (uidCounter++)
 }
 
 export function isUrl(url)

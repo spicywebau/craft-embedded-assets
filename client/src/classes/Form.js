@@ -60,17 +60,6 @@ export default class Form extends Emitter
 			this.request(url)
 		})
 
-		this._callbackName = uniqueId('embeddedAssets_')
-		window[this._callbackName] = () =>
-		{
-			const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
-
-			if (isPreviewUrl)
-			{
-				this.setState('requested')
-			}
-		}
-
 		this._monitorPreviewHeight()
 		this.setState('idle')
 	}
@@ -92,14 +81,30 @@ export default class Form extends Emitter
 
 	request(url = this.$input.val())
 	{
-		if (this._url !== url)
+		if (this._state !== 'saving' && this._url !== url)
 		{
 			this._url = url
 
 			if (isUrl(url))
 			{
-				this._setPreview(url)
+				const isRequesting = () => this._url === url && this._state === 'requesting'
 				this.setState('requesting')
+				this._setPreview(url)
+					.then(() =>
+					{
+						if (isRequesting())
+						{
+							this.setState('requested')
+						}
+					})
+					.catch(() =>
+					{
+						if (isRequesting())
+						{
+							Craft.cp.displayError(Craft.t('embeddedassets', `Could not retrieve embed information.`))
+							this.setState('idle')
+						}
+					})
 			}
 			else
 			{
@@ -126,7 +131,7 @@ export default class Form extends Emitter
 	{
 		Craft.queueActionRequest('embeddedassets/actions/save', { url, folderId }, (response, status) =>
 		{
-			if (status === 'success' && response.success)
+			if (this._state === 'saving' && status === 'success' && response.success)
 			{
 				this.clear()
 				this.trigger('save', response.payload)
@@ -176,16 +181,43 @@ export default class Form extends Emitter
 		}
 	}
 
-	_setPreview(url)
+	_setPreview(url, timeout = 15000)
 	{
-		const callback = this._callbackName
-		const previewUrl = url ? Craft.getActionUrl('embeddedassets/actions/preview', { url, callback }) : 'about:blank'
-		const previewWindow = this.$preview[0].contentWindow
-
-		if (previewWindow)
+		return new Promise((resolve, reject) =>
 		{
-			previewWindow.location.replace(previewUrl)
-		}
+			const previewWindow = this.$preview[0].contentWindow
+
+			if (previewWindow)
+			{
+				const isPreviewUrl = Boolean(url)
+				let previewUrl = 'about:blank'
+
+				if (isPreviewUrl)
+				{
+					const callback = uniqueId('embeddedAssets_')
+					const cleanup = () => delete window[callback]
+
+					previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', { url, callback })
+
+					// On load
+					window[callback] = () => { resolve(); cleanup() }
+
+					// On timeout
+					setTimeout(() => { reject(); cleanup() }, timeout)
+				}
+
+				previewWindow.location.replace(previewUrl)
+
+				if (!isPreviewUrl)
+				{
+					resolve()
+				}
+			}
+			else
+			{
+				reject()
+			}
+		})
 	}
 
 	_getCurrentPreviewUrl()
