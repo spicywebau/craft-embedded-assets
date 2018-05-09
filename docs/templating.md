@@ -13,7 +13,23 @@
 {{ embeddedAsset ? embeddedAsset.html }}
 ```
 
+## Functions
+Embedded asset Twig functions that are globally available.
+
+### get
+`craft.embeddedAssets.get(asset)`
+
+Gets the embedded asset model from an asset element. If the asset isn't actually an embedded asset, `null` is returned.
+
+Parameters (\*required) | Description
+-|-
+\*`asset` Asset | The asset element linked to the embedded asset JSON file.
+**Returns** |
+EmbeddedAsset&#124;null | The embedded asset, or `null` if it doesn't exist for the asset.
+
+
 ## Properties
+The properties of the embedded asset model returned from the [get](#get) function.
 
 Property (\*required) | Description
 -|-
@@ -55,6 +71,7 @@ Key (\*required) | Description
 
 
 ## Methods
+The methods of the embedded asset model returned from the [get](#get) function.
 
 ### isSafe
 `isSafe()`
@@ -90,4 +107,17 @@ Parameters (\*required) | Description
 
 ## Upgrading from Craft 2
 
-Embedded assets from the Craft 2 version of the plugin are fully compatible with the Craft 3 version.
+Embedded assets from the Craft 2 version of the plugin are fully compatible with the Craft 3 version. However, most functions, properties and methods have been deprecated in favour of the above API. Your templates will continue to work but you will receive deprecation notices until you decide to change them. See the table below for all the changes:
+
+Type | Craft 2 | Craft 3 equivalent
+-|-|-
+Function | `craft.embeddedAssets.isEmbedded(asset)` | `craft.embeddedAssets.get(asset)` then test whether the value is `null`
+Function | `craft.embeddedAssets.fromAsset(asset)` | `craft.embeddedAssets.get(asset)`
+Function | `craft.embeddedAssets.fromAssets(asset)` | Iterate your assets manually and call `craft.embeddedAssets.get(asset)` on each
+Property | `embeddedAsset.requestUrl` | `embeddedAsset.url`
+Property | `embeddedAsset.cacheAge` | *There is no equivalent*
+Property | `embeddedAsset.thumbnailUrl` | `embeddedAsset.image`
+Property | `embeddedAsset.thumbnailWidth` | `embeddedAsset.imageWidth`
+Property | `embeddedAsset.thumbnailHeight` | `embeddedAsset.imageHeight`
+Property | `embeddedAsset.html` | `embeddedAsset.code` as `embeddedAssets.html` has been slightly repurposed
+Property | `embeddedAsset.safeHtml` | `embeddedAsset.code` within an `embeddedAsset.isSafe()` check, but `embeddedAsset.html` is preferred
