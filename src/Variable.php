@@ -24,6 +24,9 @@ class Variable
 		return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
 	}
 
+	//
+	// Deprecated methods
+
 	/**
 	 * Determines if an asset is an embedded asset or not.
 	 *

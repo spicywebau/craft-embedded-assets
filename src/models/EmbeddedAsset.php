@@ -3,6 +3,7 @@ namespace benf\embeddedassets\models;
 
 use JsonSerializable;
 
+use Craft;
 use craft\base\Model;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
@@ -188,5 +189,85 @@ class EmbeddedAsset extends Model implements JsonSerializable
 	public function getProviderIconToSize(int $size)
 	{
 		return EmbeddedAssets::$plugin->methods->getProviderIconToSize($this, $size);
+	}
+
+	//
+	// Deprecated properties
+
+	/**
+	 * @deprecated
+	 * @return string
+	 */
+	public function getRequestUrl()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getRequestUrl', "The embedded asset property `requestUrl` is now deprecated. Use the `url` property instead.");
+
+		return $this->url;
+	}
+
+	/**
+	 * @deprecated
+	 * @return null
+	 */
+	public function getCacheAge()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getCacheAge', "The embedded asset property `cacheAge` is now deprecated.");
+
+		return null;
+	}
+
+	/**
+	 * @deprecated
+	 * @return string
+	 */
+	public function getThumbnailUrl()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailUrl', "The embedded asset property `thumbnailUrl` is now deprecated. Use the `image` property instead.");
+
+		return $this->image;
+	}
+
+	/**
+	 * @deprecated
+	 * @return number
+	 */
+	public function getThumbnailWidth()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailWidth', "The embedded asset property `thumbnailWidth` is now deprecated. Use the `imageWidth` property instead.");
+
+		return $this->imageWidth;
+	}
+
+	/**
+	 * @deprecated
+	 * @return number
+	 */
+	public function getThumbnailHeight()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailHeight', "The embedded asset property `thumbnailHeight` is now deprecated. Use the `imageHeight` property instead.");
+
+		return $this->imageHeight;
+	}
+
+	/**
+	 * @deprecated
+	 * @return \Twig_Markup
+	 */
+	public function getHtml()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getHtml', "The embedded asset property `html` is now deprecated. Use the `code` property instead.");
+
+		return $this->code;
+	}
+
+	/**
+	 * @deprecated
+	 * @return null|\Twig_Markup
+	 */
+	public function getSafeHtml()
+	{
+		Craft::$app->getDeprecator()->log('EmbeddedAsset::getSafeHtml', "The embedded asset property `safeHtml` is now deprecated. Use a combination of the `isSafe()` method and the `code` property instead.");
+
+		return $this->isSafe() ? $this->code : null;
 	}
 }
