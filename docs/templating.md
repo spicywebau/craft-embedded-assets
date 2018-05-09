@@ -10,9 +10,7 @@
 
 ```twig
 {% set embeddedAsset = craft.embeddedAssets.get(asset) %}
-{% if embeddedAsset and embeddedAsset.isSafe() %}
-    {{ embeddedAsset.code }}
-{% endif %}
+{{ embeddedAsset ? embeddedAsset.html }}
 ```
 
 ## Properties
