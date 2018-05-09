@@ -28,7 +28,8 @@ Property (\*required) | Description
 `image` String | The URL of the main image for the embedded asset.
 `imageWidth` Number | The width of the main image.
 `imageHeight` Number | The height of the main image.
-`code` Twig_Markup | The embed code for the embedded asset.
+`code` HTML | The embed code for the embedded asset.
+\*`html` HTML | Usable HTML for the embedded asset. Automatically checks if the embed code is safe to use. If it is, then the code is returned. Otherwise, if the embedded asset is not a `'link'` type and it has an image, an `<img>` tag is returned. Else an `<a>` link tag is returned.
 `width` Number | The width of the embed code.
 `height` Number | The height of the embed code.
 `aspectRatio` Number | The aspect ratio of the embed code.
