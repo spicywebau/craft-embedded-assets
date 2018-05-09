@@ -1,7 +1,10 @@
 <?php
 namespace benf\embeddedassets;
 
+use DOMDocument;
+
 use yii\base\Component;
+use yii\base\ErrorException;
 
 use Twig_Markup;
 
@@ -160,9 +163,10 @@ class Service extends Component
 			{
 				case 'code':
 				{
-					$embeddedAsset->$key =
-						$value instanceof Twig_Markup ? $value :
-						is_string($value) ? Template::raw($value) : null;
+					$code = $value instanceof Twig_Markup ? (string)$value :
+						is_string($value) ? $value : '';
+
+					$embeddedAsset->$key = empty($code) ? null : Template::raw($code);
 				}
 				break;
 				default:
@@ -230,25 +234,40 @@ class Service extends Component
 			$errors = libxml_use_internal_errors(true);
 			$entities = libxml_disable_entity_loader(true);
 
-			$dom = new \DOMDocument();
-			$dom->loadHTML($embeddedAsset->code);
-
-			libxml_use_internal_errors($errors);
-			libxml_disable_entity_loader($entities);
-
-			foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
+			try
 			{
-				$href = $iframeElement->getAttribute('href');
-				$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
+				$dom = new DOMDocument();
+				$isHtml = $dom->loadHTML((string)$embeddedAsset->code);
+
+				if ($isHtml)
+				{
+					libxml_use_internal_errors($errors);
+					libxml_disable_entity_loader($entities);
+
+					foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
+					{
+						$href = $iframeElement->getAttribute('href');
+						$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
+					}
+
+					foreach ($dom->getElementsByTagName('script') as $scriptElement)
+					{
+						$src = $scriptElement->getAttribute('src');
+						$content = $scriptElement->textContent;
+
+						// Inline scripts are impossible to analyse for safety, so just assume they're all evil
+						$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
+					}
+				}
+				else
+				{
+					throw new ErrorException();
+				}
 			}
-
-			foreach ($dom->getElementsByTagName('script') as $scriptElement)
+			catch (ErrorException $e)
 			{
-				$src = $scriptElement->getAttribute('src');
-				$content = $scriptElement->textContent;
-
-				// Inline scripts are impossible to analyse for safety, so just assume they're all evil
-				$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
+				// Corrupted code property, like due to invalid HTML.
+				$isSafe = false;
 			}
 		}
 
