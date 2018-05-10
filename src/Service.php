@@ -85,17 +85,21 @@ class Service extends Component
 	public function checkWhitelist(string $url): bool
 	{
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+		$whitelist = array_merge($pluginSettings->whitelist, $pluginSettings->extraWhitelist);
 
-		foreach ($pluginSettings->whitelist as $whitelistUrl)
+		foreach ($whitelist as $whitelistUrl)
 		{
-			$pattern = explode('*', $whitelistUrl);
-			$pattern = array_map('preg_quote', $pattern);
-			$pattern = implode('[a-z][a-z0-9]*', $pattern);
-			$pattern = "%^(https?:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
-
-			if (preg_match($pattern, $url))
+			if ($whitelistUrl)
 			{
-				return true;
+				$pattern = explode('*', $whitelistUrl);
+				$pattern = array_map('preg_quote', $pattern);
+				$pattern = implode('[a-z][a-z0-9]*', $pattern);
+				$pattern = "%^(https?:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
+
+				if (preg_match($pattern, $url))
+				{
+					return true;
+				}
 			}
 		}
 
