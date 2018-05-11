@@ -28,7 +28,12 @@ window.EmbeddedAssetsPreview = {
 
 			if (width && height)
 			{
-				codeEl.style.paddingTop = ((height / width) * 100) + '%'
+				const ratio = height / width
+
+				if (ratio < 0.75)
+				{
+					codeEl.style.paddingTop = (ratio * 100) + '%'
+				}
 			}
 		}
 	},

@@ -17,7 +17,7 @@
 			{{ embeddedAsset.code|raw }}
 		</div>
 
-	{% elseif embeddedAsset.type != 'link' and embeddedAsset.image %}
+	{% elseif embeddedAsset.image and (embeddedAsset.imageWidth >= 400 or embeddedAsset.imageHeight >= 200) %}
 
 		<div class="embedded-assets_preview_image">
 			<img src="{{ embeddedAsset.image }}" width="{{ embeddedAsset.imageWidth }}" height="{{ embeddedAsset.imageHeight }}">

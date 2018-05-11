@@ -25,13 +25,8 @@ body {
 
 .embedded-assets_preview {
 
-	&_image,
-	&_code {
-		padding: 24px;
-		background-color: #f2f5f8;
-	}
-
 	&_image {
+		background-color: #222222;
 
 		> img {
 			display: block;
@@ -40,7 +35,7 @@ body {
 			margin: auto;
 
 			@supports (object-fit: contain) {
-				max-height: 280px;
+				max-height: 200px;
 				object-fit: contain;
 			}
 		}
@@ -48,8 +43,10 @@ body {
 
 	&_code {
 		position: relative;
-		max-height: 400px;
 		overflow: auto;
+		max-height: 300px;
+		padding: 24px;
+		background-color: #f2f5f8;
 
 		> iframe,
 		> twitterwidget {
@@ -57,7 +54,7 @@ body {
 		}
 
 		&.is-ratio {
-			padding: 100% 0 0 0;
+			padding: 75% 0 0 0;
 
 			> iframe {
 				position: absolute;
