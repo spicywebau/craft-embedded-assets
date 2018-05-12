@@ -10,11 +10,10 @@
 	{% endif %}
 </head>
 <body class="embedded-assets_preview">
-	{% set showCode = embeddedAsset.code and embeddedAsset.isSafe() %}
-	{% if showCode %}
+	{% if embedCode %}
 
 		<div id="code" class="embedded-assets_preview_code">
-			{{ embeddedAsset.code|raw }}
+			{{ embedCode }}
 		</div>
 
 	{% elseif embeddedAsset.image and (embeddedAsset.imageWidth >= 400 or embeddedAsset.imageHeight >= 200) %}
@@ -52,7 +51,7 @@
 		</ul>
 	</div>
 
-	{% if showCode %}
+	{% if embedCode %}
 		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
 	{% endif %}
 </body>

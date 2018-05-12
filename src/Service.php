@@ -237,6 +237,42 @@ class Service extends Component
 	{
 		$isSafe = $this->checkWhitelist($embeddedAsset->url);
 
+		if ($isSafe)
+		{
+			$dom = $this->getEmbedCode($embeddedAsset);
+
+			if ($dom)
+			{
+				foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
+				{
+					$href = $iframeElement->getAttribute('href');
+					$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
+				}
+
+				foreach ($dom->getElementsByTagName('script') as $scriptElement)
+				{
+					$src = $scriptElement->getAttribute('src');
+					$content = $scriptElement->textContent;
+
+					// Inline scripts are impossible to analyse for safety, so just assume they're all evil
+					$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
+				}
+			}
+		}
+
+		return $isSafe;
+	}
+
+	/**
+	 * Gets the embed code as DOM, if one exists and is valid.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return DOMDocument|null
+	 */
+	public function getEmbedCode(EmbeddedAsset $embeddedAsset)
+	{
+		$dom = null;
+
 		if ($embeddedAsset->code)
 		{
 			$errors = libxml_use_internal_errors(true);
@@ -245,29 +281,9 @@ class Service extends Component
 			try
 			{
 				$dom = new DOMDocument();
-				$isHtml = $dom->loadHTML((string)$embeddedAsset->code);
+				$isHtml = $dom->loadHTML((string)$embeddedAsset->code, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-				if ($isHtml)
-				{
-					libxml_use_internal_errors($errors);
-					libxml_disable_entity_loader($entities);
-
-					foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
-					{
-						$href = $iframeElement->getAttribute('href');
-						$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
-					}
-
-					foreach ($dom->getElementsByTagName('script') as $scriptElement)
-					{
-						$src = $scriptElement->getAttribute('src');
-						$content = $scriptElement->textContent;
-
-						// Inline scripts are impossible to analyse for safety, so just assume they're all evil
-						$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
-					}
-				}
-				else
+				if (!$isHtml)
 				{
 					throw new ErrorException();
 				}
@@ -275,11 +291,43 @@ class Service extends Component
 			catch (ErrorException $e)
 			{
 				// Corrupted code property, like due to invalid HTML.
-				$isSafe = false;
+				$dom = null;
+			}
+			finally
+			{
+				libxml_use_internal_errors($errors);
+				libxml_disable_entity_loader($entities);
 			}
 		}
 
-		return $isSafe;
+		return $dom;
+	}
+
+	/**
+	 * Gets the HTML for the embedded asset.
+	 * This method automatically checks if the embed code is safe to use. If it is, then the embed code is returned.
+	 * Otherwise, if the embedded asset is not a "link" type and it has an image, an <img> tag is returned. Otherwise,
+	 * an <a> link tag is returned.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return Twig_Markup
+	 */
+	public function getEmbedHtml(EmbeddedAsset $embeddedAsset): Twig_Markup
+	{
+		if ($embeddedAsset->code && $embeddedAsset->isSafe())
+		{
+			$html = $embeddedAsset->code;
+		}
+		else if ($embeddedAsset->type !== 'link' && $embeddedAsset->image)
+		{
+			$html = Template::raw("<img src=\"$embeddedAsset->image\" alt=\"$embeddedAsset->title\" width=\"$embeddedAsset->imageWidth\" height=\"$embeddedAsset->imageHeight\">");
+		}
+		else
+		{
+			$html = Template::raw("<a href=\"$embeddedAsset->url\" target=\"_blank\" rel=\"noopener\">$embeddedAsset->title</a>");
+		}
+
+		return $html;
 	}
 
 	/**

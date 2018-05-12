@@ -6,6 +6,7 @@ use yii\web\Response;
 
 use Craft;
 use craft\web\Controller as BaseController;
+use craft\helpers\Template;
 
 use benf\embeddedassets\Plugin as EmbeddedAssets;
 use benf\embeddedassets\assets\Preview as PreviewAsset;
@@ -102,9 +103,23 @@ class Controller extends BaseController
 		$url = $requestService->getRequiredParam('url');
 		$callback = $requestService->getParam('callback');
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+		$embedCodeDom = $embeddedAsset->isSafe() ? EmbeddedAssets::$plugin->methods->getEmbedCode($embeddedAsset) : null;
+		$embedCode = null;
+
+		if ($embedCodeDom)
+		{
+			foreach ($embedCodeDom->getElementsByTagName('script') as $scriptElement)
+			{
+				$scriptElement->removeAttribute('async');
+				$scriptElement->removeAttribute('defer');
+			}
+
+			$embedCode = Template::raw($embedCodeDom->saveHTML());
+		}
 
 		$template = $viewService->renderTemplate('embeddedassets/_preview', [
 			'embeddedAsset' => $embeddedAsset,
+			'embedCode' => $embedCode,
 			'callback' => $callback,
 		]);
 
