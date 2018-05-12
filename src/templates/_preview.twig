@@ -10,11 +10,18 @@
 	{% endif %}
 </head>
 <body class="embedded-assets_preview">
+
 	{% if embedCode %}
 
-		<div id="code" class="embedded-assets_preview_code">
-			{{ embedCode }}
-		</div>
+		{% if embeddedAsset.aspectRatio %}
+			<div id="code" class="embedded-assets_preview_code is-ratio" style="padding-top: {{ min(embeddedAsset.aspectRatio, 75) }}%">
+				{{ embedCode }}
+			</div>
+		{% else %}
+			<div id="code" class="embedded-assets_preview_code">
+				{{ embedCode }}
+			</div>
+		{% endif %}
 
 	{% elseif embeddedAsset.image and (embeddedAsset.imageWidth >= 400 or embeddedAsset.imageHeight >= 200) %}
 
@@ -54,8 +61,5 @@
 		</ul>
 	</div>
 
-	{% if embedCode %}
-		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
-	{% endif %}
 </body>
 </html>

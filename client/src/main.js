@@ -46,4 +46,9 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 	})
 })
 
+monkeypatch(Craft.AssetEditor, 'updateForm', function()
+{
+
+})
+
 window.EmbeddedAssets = embeddedAssets

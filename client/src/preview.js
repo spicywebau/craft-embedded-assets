@@ -14,27 +14,4 @@ window.EmbeddedAssetsPreview = {
 			}
 		})
 	},
-
-	applyRatio(codeEl)
-	{
-		const iframeEl = Array.from(codeEl.children).find((el) => el.tagName.toLowerCase() === 'iframe')
-
-		if (iframeEl)
-		{
-			codeEl.classList.add('is-ratio')
-
-			const width = iframeEl.getAttribute('width')|0
-			const height = iframeEl.getAttribute('height')|0
-
-			if (width && height)
-			{
-				const ratio = height / width
-
-				if (ratio < 0.75)
-				{
-					codeEl.style.paddingTop = (ratio * 100) + '%'
-				}
-			}
-		}
-	},
 }
