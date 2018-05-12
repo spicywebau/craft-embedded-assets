@@ -142,7 +142,12 @@ class Plugin extends BasePlugin
 			{
 				$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
 				$thumbSize = max($event->width, $event->height);
-				$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+				$thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+
+				if ($thumbnailUrl)
+				{
+					$event->url = $thumbnailUrl;
+				}
 			}
 		);
 	}
