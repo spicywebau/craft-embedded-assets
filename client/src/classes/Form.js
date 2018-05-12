@@ -72,9 +72,21 @@ export default class Form extends Emitter
 		this.$body = null
 		this.$preview = null
 
-		cancelAnimationFrame(this._previewMonitor)
+		if (this._$warningTrigger)
+		{
+			this._$warningTrigger.remove()
+			this._$warningTrigger = null
+		}
 
-		delete window[this._callbackName]
+		if (this._warningHud)
+		{
+			this._warningHud.hide()
+			this._warningHud.$hud.remove()
+			this._warningHud.$shade.remove()
+			this._warningHud = null
+		}
+
+		cancelAnimationFrame(this._previewMonitor)
 
 		this.trigger('destroy')
 	}
