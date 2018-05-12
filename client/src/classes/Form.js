@@ -96,6 +96,8 @@ export default class Form extends Emitter
 						{
 							this.setState('requested')
 						}
+
+						this._setupWarning()
 					})
 					.catch(() =>
 					{
@@ -262,5 +264,71 @@ export default class Form extends Emitter
 		}
 
 		setHeight()
+	}
+
+	_setupWarning()
+	{
+		const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
+
+		if (isPreviewUrl && this.$preview[0].contentDocument)
+		{
+			const $previewWindow = $(this.$preview[0].contentWindow)
+			const $previewHtml = $(this.$preview[0].contentDocument)
+			const $previewWarning = $previewHtml.find('#warning')
+
+			// Just in case
+			$previewWarning.off('.embeddedassets')
+
+			$previewWarning.on('click.embeddedassets', () =>
+			{
+				const { top: frameTop, left: frameLeft } = this.$preview.offset()
+				const frameScroll = $previewWindow.scrollTop()
+
+				const { top: iconTop, left: iconLeft } = $previewWarning.offset()
+
+				const top = frameTop - frameScroll + iconTop
+				const left = frameLeft + iconLeft
+				const width = $previewWarning.outerWidth()
+				const height = $previewWarning.outerHeight()
+
+				if (!this._$warningTrigger)
+				{
+					this._$warningTrigger = $('<div>').css({
+						position: 'absolute',
+						display: 'none',
+					})
+
+					Garnish.$bod.append(this._$warningTrigger)
+				}
+
+				this._$warningTrigger.css({
+					display: 'block',
+					top: top + 'px',
+					left: left + 'px',
+					width: width + 'px',
+					height: height + 'px',
+				})
+
+				if (!this._warningHud)
+				{
+					const untrustedSource = Craft.t('embeddedassets', "This information is coming from an untrusted source.")
+					const securityMeasure = Craft.t('embeddedassets', "As a security measure embed codes will not be shown.")
+					const $message = $(`
+						<p><strong>${untrustedSource}</strong></p>
+						<p>${securityMeasure}</p>
+					`)
+
+					this._warningHud = new Garnish.HUD(this._$warningTrigger, $message, {
+						hudClass: 'hud info-hud',
+						closeOtherHUDs: false,
+						onHide: () => this._$warningTrigger.css('display', 'none')
+					})
+				}
+				else
+				{
+					this._warningHud.show()
+				}
+			})
+		}
 	}
 }

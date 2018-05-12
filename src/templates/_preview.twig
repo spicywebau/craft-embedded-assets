@@ -48,6 +48,9 @@
 			{% if embeddedAsset.type %}
 				<li>{{ embeddedAsset.type|ucfirst }}</li>
 			{% endif %}
+			{% if not embeddedAsset.isSafe() %}
+				<li><i id="warning" class="embedded-assets_preview_warning"></i></li>
+			{% endif %}
 		</ul>
 	</div>
 

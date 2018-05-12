@@ -126,4 +126,20 @@ body {
 		position: relative;
 		box-shadow: 0 -1px rgba(0, 0, 20, 0.1);
 	}
+
+	&_warning {
+		cursor: pointer;
+		display: block;
+		width: 1em;
+		height: 1em;
+		font-size: 16px;
+		background-image: url('./assets/warning.svg');
+		filter: brightness(0%);
+		opacity: 0.2;
+
+		&:hover {
+			filter: none;
+			opacity: 1;
+		}
+	}
 }
