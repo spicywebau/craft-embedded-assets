@@ -81,6 +81,8 @@ export default class Form extends Emitter
 			this.request(url)
 		})
 
+		this._setupHeightMonitor()
+
 		this.setState('idle')
 	}
 
@@ -92,6 +94,8 @@ export default class Form extends Emitter
 		this.$element = null
 		this.$input = null
 		this.$body = null
+
+		cancelAnimationFrame(this._heightMonitor)
 
 		this.trigger('destroy')
 	}
@@ -180,5 +184,25 @@ export default class Form extends Emitter
 			}
 			break
 		}
+	}
+
+	_setupHeightMonitor()
+	{
+		this._height = 0
+
+		const monitorHeight = () =>
+		{
+			const height = this.$element.height()
+
+			if (this._height !== height)
+			{
+				this.trigger('resize', { prevHeight: this._height, height })
+				this._height = height
+			}
+
+			this._heightMonitor = requestAnimationFrame(monitorHeight)
+		}
+
+		monitorHeight()
 	}
 }

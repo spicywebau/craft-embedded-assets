@@ -76,11 +76,6 @@ export default class Preview extends Emitter
 		return previewDocument ? previewDocument.body : null
 	}
 
-	getHeight()
-	{
-		return this._height
-	}
-
 	showWarning()
 	{
 		const $previewWindow = $(this.getWindow())
