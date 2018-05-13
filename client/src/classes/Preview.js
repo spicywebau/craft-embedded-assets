@@ -47,16 +47,6 @@ export default class Preview extends Emitter
 		this.trigger('destroy')
 	}
 
-	setUrl(url, timeout)
-	{
-		this._request({ url }, timeout)
-	}
-	
-	setAssetId(assetId, timeout)
-	{
-		this._request({ assetId }, timeout)
-	}
-
 	getWindow()
 	{
 		return this.$iframe[0].contentWindow
@@ -134,35 +124,54 @@ export default class Preview extends Emitter
 		}
 	}
 	
-	_request(parameters, timeout = 15000)
+	request(settings = {}, timeout = 15000)
 	{
+		settings = Object.assign({
+			url: null,
+			assetId: null,
+			showContent: true,
+			callback: uniqueId('embeddedassets'),
+		}, settings)
+
 		const previewWindow = this.getWindow()
 
 		if (previewWindow)
 		{
 			clearTimeout(this._requestTimeout)
 
-			const showPreview = Boolean(parameters)
+			const showPreview = Boolean(settings.url || settings.assetId)
 			let previewUrl = 'about:blank'
 
 			if (showPreview)
 			{
-				parameters = Object.assign({ callback: uniqueId('embeddedassets') }, parameters)
-
 				const complete = trigger =>
 				{
 					clearTimeout(this._requestTimeout)
-					delete window[parameters.callback]
+					delete window[settings.callback]
 					this.trigger(trigger, parameters)
 				}
 
-				window[parameters.callback] = () =>
+				window[settings.callback] = () =>
 				{
 					this._setupWarning()
 					complete('load')
 				}
 
 				this._requestTimeout = setTimeout(() => complete('timeout'), timeout)
+
+				const parameters = {
+					showContent: settings.showContent ? 1 : 0,
+					callback: settings.callback,
+				}
+
+				if (settings.url)
+				{
+					parameters.url = settings.url
+				}
+				else if (settings.assetId)
+				{
+					parameters.assetId = settings.assetId
+				}
 
 				previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', parameters)
 			}

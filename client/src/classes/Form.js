@@ -109,7 +109,7 @@ export default class Form extends Emitter
 			if (isUrl(url))
 			{
 				this.setState('requesting')
-				this.preview.setUrl(url)
+				this.preview.request({ url })
 			}
 			else
 			{

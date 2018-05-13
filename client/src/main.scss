@@ -105,8 +105,25 @@
 			position: absolute;
 			top: 0;
 			left: 0;
-			width: 100%;
-			height: 100%;
+			width: 100% !important;
+			height: 100% !important;
+		}
+
+		.elementeditor & {
+			margin-top: -8px;
+			margin-bottom: 8px;
+			background-color: #f2f5f8;
+
+			&::after {
+				content: '';
+				display: block;
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 1px;
+				background-color: rgba(0, 0, 20, 0.1);
+			}
 		}
 	}
 
@@ -164,7 +181,7 @@
 // To fix this, since these thumbnails are contained within a fixed box size (380x190), the maximum size can just be
 // forced.
 //
-.hud .image-preview > img {
+.elementeditor .image-preview > img {
 	max-width: 380px;
 	max-height: 190px;
 }
