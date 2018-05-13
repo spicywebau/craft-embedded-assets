@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import Craft from 'craft'
 import Emitter from './Emitter'
+import Preview from './Preview'
 import { uniqueId, isUrl } from '../utilities'
 
 export default class Form extends Emitter
@@ -13,7 +14,6 @@ export default class Form extends Emitter
 
 		const inputId = uniqueId()
 		const bodyId = uniqueId()
-		const previewId = uniqueId()
 
 		const formAction = Craft.getActionUrl('embeddedassets/actions/save')
 
@@ -24,7 +24,6 @@ export default class Form extends Emitter
 					<input type="text" placeholder="http://" id="${inputId}" name="url" autocomplete="off" spellcheck="false">
 				</div>
 				<div id="${bodyId}" class="embedded-assets_form_body">
-					<iframe id="${previewId}" src="about:blank"></iframe>
 					<div class="spinner"></div>
 				</div>
 			</form>
@@ -32,9 +31,31 @@ export default class Form extends Emitter
 
 		this.$input = this.$element.find(`#${inputId}`)
 		this.$body = this.$element.find(`#${bodyId}`)
-		this.$preview = this.$element.find(`#${previewId}`)
 
-		this.$element.on('submit', (e) =>
+		this.preview = new Preview()
+		this.$body.prepend(this.preview.$element)
+
+		this.preview.on('load', e =>
+		{
+			if (e.url === this._url && this._state === 'requesting')
+			{
+				this.setState('requested')
+			}
+		})
+
+		this.preview.on('timeout', e =>
+		{
+			if (e.url === this._url && this._state === 'requesting')
+			{
+				Craft.cp.displayError(Craft.t('embeddedassets', `Could not retrieve embed information.`))
+
+				this.setState('idle')
+			}
+		})
+
+		this.preview.on('resize', e => this.$body.css('height', e.height + 'px'))
+
+		this.$element.on('submit', e =>
 		{
 			e.preventDefault()
 
@@ -52,7 +73,7 @@ export default class Form extends Emitter
 
 		this.$input.on('change blur', () => this.request())
 
-		this.$input.on('paste', (e) =>
+		this.$input.on('paste', e =>
 		{
 			const clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData
 			const url = clipboardData.getData('text')
@@ -60,33 +81,17 @@ export default class Form extends Emitter
 			this.request(url)
 		})
 
-		this._monitorPreviewHeight()
 		this.setState('idle')
 	}
 
 	destroy()
 	{
+		this.preview.destroy()
+
 		this.$element.remove()
 		this.$element = null
 		this.$input = null
 		this.$body = null
-		this.$preview = null
-
-		if (this._$warningTrigger)
-		{
-			this._$warningTrigger.remove()
-			this._$warningTrigger = null
-		}
-
-		if (this._warningHud)
-		{
-			this._warningHud.hide()
-			this._warningHud.$hud.remove()
-			this._warningHud.$shade.remove()
-			this._warningHud = null
-		}
-
-		cancelAnimationFrame(this._previewMonitor)
 
 		this.trigger('destroy')
 	}
@@ -99,26 +104,8 @@ export default class Form extends Emitter
 
 			if (isUrl(url))
 			{
-				const isRequesting = () => this._url === url && this._state === 'requesting'
 				this.setState('requesting')
-				this._setPreview(url)
-					.then(() =>
-					{
-						if (isRequesting())
-						{
-							this.setState('requested')
-						}
-
-						this._setupWarning()
-					})
-					.catch(() =>
-					{
-						if (isRequesting())
-						{
-							Craft.cp.displayError(Craft.t('embeddedassets', `Could not retrieve embed information.`))
-							this.setState('idle')
-						}
-					})
+				this.preview.setUrl(url)
 			}
 			else
 			{
@@ -192,155 +179,6 @@ export default class Form extends Emitter
 				this.trigger('saving')
 			}
 			break
-		}
-	}
-
-	_setPreview(url, timeout = 15000)
-	{
-		return new Promise((resolve, reject) =>
-		{
-			const previewWindow = this.$preview[0].contentWindow
-
-			if (previewWindow)
-			{
-				const isPreviewUrl = Boolean(url)
-				let previewUrl = 'about:blank'
-
-				if (isPreviewUrl)
-				{
-					const callback = uniqueId('embeddedAssets_')
-					const cleanup = () => delete window[callback]
-
-					previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', { url, callback })
-
-					// On load
-					window[callback] = () => { resolve(); cleanup() }
-
-					// On timeout
-					setTimeout(() => { reject(); cleanup() }, timeout)
-				}
-
-				previewWindow.location.replace(previewUrl)
-
-				if (!isPreviewUrl)
-				{
-					resolve()
-				}
-			}
-			else
-			{
-				reject()
-			}
-		})
-	}
-
-	_getCurrentPreviewUrl()
-	{
-		const previewWindow = this.$preview[0].contentWindow
-		const url = previewWindow ? previewWindow.location.href : ''
-
-		return url.indexOf('embeddedassets') > 0 ? url : false
-	}
-
-	_monitorPreviewHeight()
-	{
-		let previousHeight = 0
-
-		const setHeight = () =>
-		{
-			const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
-
-			if (isPreviewUrl && this.$preview[0].contentDocument)
-			{
-				const $previewBody = $(this.$preview[0].contentDocument.body)
-				this.$body.css('height', $previewBody.height() + 'px')
-			}
-			else
-			{
-				this.$body.css('height', '')
-			}
-
-			const nextHeight = this.$body.height()
-
-			if (previousHeight !== nextHeight)
-			{
-				this.trigger('resize', {
-					previousHeight,
-					nextHeight,
-				})
-
-				previousHeight = nextHeight
-			}
-
-			this._previewMonitor = requestAnimationFrame(setHeight)
-		}
-
-		setHeight()
-	}
-
-	_setupWarning()
-	{
-		const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
-
-		if (isPreviewUrl && this.$preview[0].contentDocument)
-		{
-			const $previewWindow = $(this.$preview[0].contentWindow)
-			const $previewHtml = $(this.$preview[0].contentDocument)
-			const $previewWarning = $previewHtml.find('#warning')
-
-			// Just in case
-			$previewWarning.off('.embeddedassets')
-
-			$previewWarning.on('click.embeddedassets', () =>
-			{
-				const { top: frameTop, left: frameLeft } = this.$preview.offset()
-				const frameScroll = $previewWindow.scrollTop()
-
-				const { top: iconTop, left: iconLeft } = $previewWarning.offset()
-
-				const top = frameTop - frameScroll + iconTop
-				const left = frameLeft + iconLeft
-				const width = $previewWarning.outerWidth()
-				const height = $previewWarning.outerHeight()
-
-				if (!this._$warningTrigger)
-				{
-					this._$warningTrigger = $('<div>').css({
-						position: 'absolute',
-						display: 'none',
-					})
-
-					Garnish.$bod.append(this._$warningTrigger)
-				}
-
-				this._$warningTrigger.css({
-					display: 'block',
-					top: top + 'px',
-					left: left + 'px',
-					width: width + 'px',
-					height: height + 'px',
-				})
-
-				if (!this._warningHud)
-				{
-					const untrustedSource = Craft.t('embeddedassets', "This information is coming from an untrusted source.")
-					const securityMeasure = Craft.t('embeddedassets', "As a security measure embed codes will not be shown.")
-					const $message = $(`
-						<p><strong>${untrustedSource}</strong></p>
-						<p>${securityMeasure}</p>
-					`)
-
-					this._warningHud = new Garnish.HUD(this._$warningTrigger, $message, {
-						hudClass: 'hud info-hud',
-						closeOtherHUDs: false,
-						onHide: () => this._$warningTrigger.css('display', 'none')
-					})
-				}
-				else
-				{
-					this._warningHud.show()
-				}
-			})
 		}
 	}
 }

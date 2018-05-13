@@ -9,57 +9,61 @@
 		<script>EmbeddedAssetsPreview.addCallback('{{ callback|e('js') }}')</script>
 	{% endif %}
 </head>
-<body class="embedded-assets_preview">
+<body>
 
 	{% if embedCode %}
 
 		{% if embeddedAsset.aspectRatio %}
-			<div id="code" class="embedded-assets_preview_code is-ratio" style="padding-top: {{ min(embeddedAsset.aspectRatio, 75) }}%">
+			<div id="code" class="code is-ratio" style="padding-top: {{ min(embeddedAsset.aspectRatio, 75) }}%">
 				{{ embedCode }}
 			</div>
 		{% else %}
-			<div id="code" class="embedded-assets_preview_code">
+			<div id="code" class="code">
 				{{ embedCode }}
 			</div>
 		{% endif %}
 
 	{% elseif embeddedAsset.image and (embeddedAsset.imageWidth >= 400 or embeddedAsset.imageHeight >= 200) %}
 
-		<div class="embedded-assets_preview_image">
+		<div class="image">
 			<img src="{{ embeddedAsset.image }}" width="{{ embeddedAsset.imageWidth }}" height="{{ embeddedAsset.imageHeight }}">
 		</div>
 
 	{% endif %}
 
-	<div class="embedded-assets_preview_content">
-		<h1>{{ embeddedAsset.title|default(embeddedAsset.url) }}</h1>
-		{% if embeddedAsset.description %}
-			<p>{{ embeddedAsset.description }}</p>
-		{% endif %}
-		<ul>
-			{% if embeddedAsset.providerName %}
-				<li>
-					{% set providerIcon = embeddedAsset.getProviderIconToSize(32) %}
-					{% if providerIcon %}
-						<img src="{{ providerIcon.url }}" width="{{ providerIcon.width }}" height="{{ providerIcon.height }}">
-					{% endif %}
-					{% if embeddedAsset.providerUrl %}
-						<a href="{{ embeddedAsset.providerUrl }}" target="_blank" rel="noopener">
+	{% if showContent %}
+
+		<div class="content">
+			<h1>{{ embeddedAsset.title|default(embeddedAsset.url) }}</h1>
+			{% if embeddedAsset.description %}
+				<p>{{ embeddedAsset.description }}</p>
+			{% endif %}
+			<ul>
+				{% if embeddedAsset.providerName %}
+					<li>
+						{% set providerIcon = embeddedAsset.getProviderIconToSize(32) %}
+						{% if providerIcon %}
+							<img src="{{ providerIcon.url }}" width="{{ providerIcon.width }}" height="{{ providerIcon.height }}">
+						{% endif %}
+						{% if embeddedAsset.providerUrl %}
+							<a href="{{ embeddedAsset.providerUrl }}" target="_blank" rel="noopener">
+								{{ embeddedAsset.providerName }}
+							</a>
+						{% else %}
 							{{ embeddedAsset.providerName }}
-						</a>
-					{% else %}
-						{{ embeddedAsset.providerName }}
-					{% endif %}
-				</li>
-			{% endif %}
-			{% if embeddedAsset.type %}
-				<li>{{ embeddedAsset.type|ucfirst }}</li>
-			{% endif %}
-			{% if not embeddedAsset.isSafe() %}
-				<li><i id="warning" class="embedded-assets_preview_warning"></i></li>
-			{% endif %}
-		</ul>
-	</div>
+						{% endif %}
+					</li>
+				{% endif %}
+				{% if embeddedAsset.type %}
+					<li>{{ embeddedAsset.type|ucfirst }}</li>
+				{% endif %}
+				{% if not embeddedAsset.isSafe() %}
+					<li><i id="warning" class="warning"></i></li>
+				{% endif %}
+			</ul>
+		</div>
+
+	{% endif %}
 
 </body>
 </html>
