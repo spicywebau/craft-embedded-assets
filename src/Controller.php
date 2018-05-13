@@ -84,7 +84,8 @@ class Controller extends BaseController
 	/**
 	 * Renders a preview of the embedded asset.
 	 *
-	 * @query string url The URL to create an embedded asset from (required).
+	 * @query string url The URL to create an embedded asset from.
+	 * @query string assetId The asset ID to load the embedded asset from.
 	 * @query string callback The name of a global Javascript function to be called when the preview is loaded.
 	 * @response HTML
 	 *
@@ -96,13 +97,41 @@ class Controller extends BaseController
 	 */
 	public function actionPreview(): Response
 	{
+		$assetsService = Craft::$app->getAssets();
 		$requestService = Craft::$app->getRequest();
 		$viewService = Craft::$app->getView();
 		$viewService->registerAssetBundle(PreviewAsset::class);
 
-		$url = $requestService->getRequiredParam('url');
+		$url = $requestService->getParam('url');
+		$assetId = $requestService->getParam('assetId');
 		$callback = $requestService->getParam('callback');
-		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+		$showContent = (bool)$requestService->getParam('showContent', true);
+
+		if ($url)
+		{
+			$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+		}
+		else if ($assetId)
+		{
+			$asset = $assetsService->getAssetById($assetId);
+
+			if (!$asset)
+			{
+				throw new BadRequestHttpException("Could not find asset with ID: $assetId");
+			}
+
+			$embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
+
+			if (!$embeddedAsset)
+			{
+				throw new BadRequestHttpException("Could not find embedded asset from asset $assetId ($asset->filename)");
+			}
+		}
+		else
+		{
+			throw new BadRequestHttpException("URL or asset ID are missing from the request");
+		}
+
 		$embedCodeDom = $embeddedAsset->isSafe() ? EmbeddedAssets::$plugin->methods->getEmbedCode($embeddedAsset) : null;
 		$embedCode = null;
 
@@ -121,6 +150,7 @@ class Controller extends BaseController
 			'embeddedAsset' => $embeddedAsset,
 			'embedCode' => $embedCode,
 			'callback' => $callback,
+			'showContent' => $showContent,
 		]);
 
 		$response = $this->asRaw($template);
