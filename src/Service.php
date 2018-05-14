@@ -184,6 +184,47 @@ class Service extends Component
 			}
 		}
 
+		// Attempts to extracts missing dimensional properties from the embed code
+		if (!$embeddedAsset->width || !$embeddedAsset->height)
+		{
+			$dom = $this->getEmbedCode($embeddedAsset);
+
+			if ($dom)
+			{
+				$iframeElement = $dom->getElementsByTagName('iframe')->item(0);
+
+				if ($iframeElement)
+				{
+					$width = $iframeElement->getAttribute('width');
+					$height = $iframeElement->getAttribute('height');
+					$style = $iframeElement->getAttribute('style');
+
+					$matches = [];
+					$matchCount = preg_match_all('/(width|height):\s*([0-9]+(\.[0-9]+)?)px/i', $style, $matches);
+
+					for ($i = 0; $i < $matchCount; $i++)
+					{
+						$styleProperty = strtolower($matches[1][$i]);
+						$styleValue = $matches[2][$i];
+
+						switch ($styleProperty)
+						{
+							case 'width': $width = $styleValue; break;
+							case 'height': $height = $styleValue; break;
+						}
+					}
+
+					if ($width) $embeddedAsset->width = floatval($width);
+					if ($height) $embeddedAsset->height = floatval($height);
+				}
+			}
+		}
+
+		if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height)
+		{
+			$embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
+		}
+
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
 	}
 

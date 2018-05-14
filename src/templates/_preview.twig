@@ -65,5 +65,9 @@
 
 	{% endif %}
 
+	{% if embedCode and not embeddedAsset.aspectRatio %}
+		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
+	{% endif %}
+
 </body>
 </html>
