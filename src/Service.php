@@ -184,42 +184,12 @@ class Service extends Component
 			}
 		}
 
-		// Attempts to extracts missing dimensional properties from the embed code
-		if (!$embeddedAsset->width || !$embeddedAsset->height)
-		{
-			$dom = $this->getEmbedCode($embeddedAsset);
+		// Attempts to extract missing dimensional properties from the embed code
+		$dimensions = $this->_getDimensions($embeddedAsset);
+		$embeddedAsset->width = $dimensions[0];
+		$embeddedAsset->height = $dimensions[1];
 
-			if ($dom)
-			{
-				$iframeElement = $dom->getElementsByTagName('iframe')->item(0);
-
-				if ($iframeElement)
-				{
-					$width = $iframeElement->getAttribute('width');
-					$height = $iframeElement->getAttribute('height');
-					$style = $iframeElement->getAttribute('style');
-
-					$matches = [];
-					$matchCount = preg_match_all('/(width|height):\s*([0-9]+(\.[0-9]+)?)px/i', $style, $matches);
-
-					for ($i = 0; $i < $matchCount; $i++)
-					{
-						$styleProperty = strtolower($matches[1][$i]);
-						$styleValue = $matches[2][$i];
-
-						switch ($styleProperty)
-						{
-							case 'width': $width = $styleValue; break;
-							case 'height': $height = $styleValue; break;
-						}
-					}
-
-					if ($width) $embeddedAsset->width = floatval($width);
-					if ($height) $embeddedAsset->height = floatval($height);
-				}
-			}
-		}
-
+		// Sets aspect ratio is missing
 		if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height)
 		{
 			$embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
@@ -322,7 +292,8 @@ class Service extends Component
 			try
 			{
 				$dom = new DOMDocument();
-				$isHtml = $dom->loadHTML((string)$embeddedAsset->code, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+				$code = "<div>$embeddedAsset->code</div>";
+				$isHtml = $dom->loadHTML($code, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
 				if (!$isHtml)
 				{
@@ -397,6 +368,56 @@ class Service extends Component
 	{
 		return is_array($embeddedAsset->providerIcons) ?
 			$this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
+	}
+
+	/**
+	 * Gets the width/height of an embedded asset.
+	 * Attempts to extract missing dimensional properties from the embed code.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return array
+	 */
+	private function _getDimensions(EmbeddedAsset $embeddedAsset): array
+	{
+		$width = $embeddedAsset->width;
+		$height = $embeddedAsset->height;
+
+		if (!$width || !$height)
+		{
+			$dom = $this->getEmbedCode($embeddedAsset);
+
+			if ($dom)
+			{
+				$iframeElement = $dom->getElementsByTagName('iframe')->item(0);
+
+				if ($iframeElement)
+				{
+					$width = $iframeElement->getAttribute('width');
+					$height = $iframeElement->getAttribute('height');
+					$style = $iframeElement->getAttribute('style');
+
+					$matches = [];
+					$matchCount = preg_match_all('/(width|height):\s*([0-9]+(\.[0-9]+)?)px/i', $style, $matches);
+
+					for ($i = 0; $i < $matchCount; $i++)
+					{
+						$styleProperty = strtolower($matches[1][$i]);
+						$styleValue = $matches[2][$i];
+
+						switch ($styleProperty)
+						{
+							case 'width': $width = $styleValue; break;
+							case 'height': $height = $styleValue; break;
+						}
+					}
+
+					$width = $width ? floatval($width) : null;
+					$height = $height ? floatval($height) : null;
+				}
+			}
+		}
+
+		return [ $width, $height ];
 	}
 
 	/**

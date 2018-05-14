@@ -11,15 +11,15 @@
 </head>
 <body>
 
-	{% if embedCode %}
+	{% if embeddedAsset.isSafe() and embeddedAsset.code %}
 
 		{% if embeddedAsset.aspectRatio %}
 			<div id="code" class="code is-ratio" style="padding-top: {{ min(embeddedAsset.aspectRatio, 75) }}%">
-				{{ embedCode }}
+				{{ embeddedAsset.code }}
 			</div>
 		{% else %}
 			<div id="code" class="code">
-				{{ embedCode }}
+				{{ embeddedAsset.code }}
 			</div>
 		{% endif %}
 
@@ -65,9 +65,7 @@
 
 	{% endif %}
 
-	{% if embedCode and not embeddedAsset.aspectRatio %}
-		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
-	{% endif %}
+	<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
 
 </body>
 </html>

@@ -27,5 +27,10 @@ window.EmbeddedAssetsPreview = {
 			codeEl.classList.add('is-ratio')
 			codeEl.style.paddingTop = ((height / width) * 100) + '%'
 		}
+		else
+		{
+			codeEl.classList.remove('is-ratio')
+			codeEl.style.paddingTop = ''
+		}
 	},
 }

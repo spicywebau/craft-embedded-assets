@@ -54,8 +54,7 @@ body {
 	&.is-ratio {
 		padding: 75% 0 0 0;
 
-		> iframe,
-		> a > img {
+		> iframe {
 			display: block;
 			position: absolute;
 			top: 0;

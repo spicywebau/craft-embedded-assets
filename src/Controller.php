@@ -132,23 +132,8 @@ class Controller extends BaseController
 			throw new BadRequestHttpException("URL or asset ID are missing from the request");
 		}
 
-		$embedCodeDom = $embeddedAsset->isSafe() ? EmbeddedAssets::$plugin->methods->getEmbedCode($embeddedAsset) : null;
-		$embedCode = null;
-
-		if ($embedCodeDom)
-		{
-			foreach ($embedCodeDom->getElementsByTagName('script') as $scriptElement)
-			{
-				$scriptElement->removeAttribute('async');
-				$scriptElement->removeAttribute('defer');
-			}
-
-			$embedCode = Template::raw($embedCodeDom->saveHTML());
-		}
-
 		$template = $viewService->renderTemplate('embeddedassets/_preview', [
 			'embeddedAsset' => $embeddedAsset,
-			'embedCode' => $embedCode,
 			'callback' => $callback,
 			'showContent' => $showContent,
 		]);
