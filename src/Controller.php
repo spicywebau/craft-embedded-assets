@@ -44,7 +44,7 @@ class Controller extends BaseController
 		$folderId = $requestService->getRequiredParam('folderId');
 
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-		$folder = $assetsService->findFolder(['id' => $folderId]);
+		$folder = $assetsService->findFolder(['uid' => $folderId]);
 
 		if (!$folder)
 		{
