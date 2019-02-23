@@ -44,7 +44,7 @@ class Controller extends BaseController
 		$folderId = $requestService->getRequiredParam('folderId');
 
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-		$folder = $assetsService->findFolder(['id' => $folderId]);
+		$folder = $assetsService->findFolder(['uid' => $folderId]);
 
 		if (!$folder)
 		{
@@ -54,7 +54,8 @@ class Controller extends BaseController
 		$userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
 		if (!$userTempFolder || $folder->id != $userTempFolder->id)
 		{
-			$this->requirePermission("saveAssetInVolume:$folder->volumeId");
+			$volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId); 
+			$this->requirePermission('saveAssetInVolume:'. $volume->uid);
 		}
 
 		$asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
