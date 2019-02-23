@@ -1,51 +1,58 @@
-import './main.scss';
-import Craft from 'craft';
-import EmbeddedAssets from './classes/EmbeddedAssets';
-import Button from './classes/Button';
-import { monkeypatch } from './utilities';
+import './main.scss'
+import Craft from 'craft'
+import EmbeddedAssets from './classes/EmbeddedAssets'
+import Button from './classes/Button'
+import { monkeypatch } from './utilities'
 
-const embeddedAssets = new EmbeddedAssets();
+const embeddedAssets = new EmbeddedAssets()
 
-monkeypatch(Craft.AssetIndex, 'init', function () {
-    const button = new Button();
+monkeypatch(Craft.AssetIndex, 'init', function()
+{
+	const button = new Button()
 
-    const $uploadButton = this.$uploadButton;
-    const inHeader = $uploadButton.closest('#header').length > 0;
-    const inModal = $uploadButton.closest('.modal').length > 0;
+	const $uploadButton = this.$uploadButton
+	const inHeader = $uploadButton.closest('#header').length > 0
+	const inModal = $uploadButton.closest('.modal').length > 0
 
-    let modalOrientations;
+	let modalOrientations
 
-    if (inHeader) {
-        this.$uploadButton.before(button.$element);
-        modalOrientations = ['bottom', 'left', 'right', 'top'];
-    } else if (inModal) {
-        this.$uploadButton.after(button.$element);
-        modalOrientations = ['top', 'right', 'bottom', 'left'];
-    }
+	if (inHeader)
+	{
+		this.$uploadButton.before(button.$element)
+		modalOrientations = ['bottom', 'left', 'right', 'top']
+	}
+	else if (inModal)
+	{
+		this.$uploadButton.after(button.$element)
+		modalOrientations = ['top', 'right', 'bottom', 'left']
+	}
 
-    const getFolderId = () => {
-        const split = this.getDefaultSourceKey().split(':');
+	const getFolderId = () => {
+		const split = this.getDefaultSourceKey().split(':');
 
-        if (split[split.length - 1]) {
+        if (split[split.length - 1])
+        {
             return split[split.length - 1];
         }
 
         return 0;
-    };
+	};
 
-    embeddedAssets.addButton(button, modalOrientations, getFolderId);
+	embeddedAssets.addButton(button, modalOrientations, getFolderId)
 
-    let idsToSelect = [];
+	let idsToSelect = []
 
-    embeddedAssets.on('save', (e) => {
-        idsToSelect.push(e.assetId);
-        this.updateElements();
-    });
+	embeddedAssets.on('save', e =>
+	{
+		idsToSelect.push(e.assetId)
+		this.updateElements()
+	})
 
-    this.on('updateElements', () => {
-        idsToSelect.forEach(id => this.view.selectElementById(id));
-        idsToSelect = [];
-    });
-});
+	this.on('updateElements', () =>
+	{
+		idsToSelect.forEach((id) => this.view.selectElementById(id))
+		idsToSelect = []
+	})
+})
 
-window.EmbeddedAssets = embeddedAssets;
+window.EmbeddedAssets = embeddedAssets
