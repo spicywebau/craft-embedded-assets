@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/benjamminf/craft-embedded-assets.git"
+    "url": "git+https://github.com/spicywebau/craft-embedded-assets.git"
   },
   "keywords": [
     "cms",
@@ -22,12 +22,15 @@
     "instagram",
     "twitter"
   ],
-  "author": "Benjamin Fleming",
+  "author": "Spicy Web",
+  "contributors": [
+    "Benjamin Fleming"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/benjamminf/craft-embedded-assets/issues"
+    "url": "https://github.com/spicywebau/craft-embedded-assets/issues"
   },
-  "homepage": "https://github.com/benjamminf/craft-embedded-assets#readme",
+  "homepage": "https://github.com/spicywebau/craft-embedded-assets#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",

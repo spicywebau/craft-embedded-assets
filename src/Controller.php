@@ -1,5 +1,5 @@
 <?php
-namespace benf\embeddedassets;
+namespace spicyweb\embeddedassets;
 
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
@@ -8,12 +8,16 @@ use Craft;
 use craft\web\Controller as BaseController;
 use craft\helpers\Template;
 
-use benf\embeddedassets\Plugin as EmbeddedAssets;
-use benf\embeddedassets\assets\Preview as PreviewAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
+use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
 
 /**
  * Class Controller
- * @package benf\embeddedassets
+ *
+ * @package spicyweb\embeddedassets
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Controller extends BaseController
 {

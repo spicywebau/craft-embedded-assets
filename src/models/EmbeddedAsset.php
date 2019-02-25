@@ -1,5 +1,5 @@
 <?php
-namespace benf\embeddedassets\models;
+namespace spicyweb\embeddedassets\models;
 
 use JsonSerializable;
 
@@ -10,13 +10,17 @@ use craft\base\Model;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
 
-use benf\embeddedassets\Plugin as EmbeddedAssets;
-use benf\embeddedassets\validators\Image as ImageValidator;
-use benf\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
+use spicyweb\embeddedassets\validators\Image as ImageValidator;
+use spicyweb\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
 
 /**
  * Class EmbeddedAsset
- * @package benf\embeddedassets\models
+ *
+ * @package spicyweb\embeddedassets\models
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class EmbeddedAsset extends Model implements JsonSerializable
 {

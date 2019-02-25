@@ -1,17 +1,21 @@
 <?php
-namespace benf\embeddedassets\validators;
+namespace spicyweb\embeddedassets\validators;
 
 use yii\validators\Validator;
 
 /**
  * Class Parameter
- * @package benf\embeddedassets\validators
  *
  * Validates an array matching the following signature (*required):
  * [
  *     'param' -> string *
  *     'value' -> string *
  * ]
+ *
+ * @package spicyweb\embeddedassets\validators
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Parameter extends Validator
 {

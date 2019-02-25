@@ -1,5 +1,5 @@
 <?php
-namespace benf\embeddedassets\validators;
+namespace spicyweb\embeddedassets\validators;
 
 use yii\validators\Validator;
 
@@ -7,7 +7,6 @@ use craft\helpers\UrlHelper;
 
 /**
  * Class Image
- * @package benf\embeddedassets\validators
  *
  * Validates an array matching the following signature (*required):
  * [
@@ -17,6 +16,11 @@ use craft\helpers\UrlHelper;
  *     'size' -> number *
  *     'mime' -> string
  * ]
+ * 
+ * @package spicyweb\embeddedassets\validators
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Image extends Validator
 {

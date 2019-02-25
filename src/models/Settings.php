@@ -1,14 +1,18 @@
 <?php
-namespace benf\embeddedassets\models;
+namespace spicyweb\embeddedassets\models;
 
 use craft\base\Model;
 use craft\validators\StringValidator;
 
-use benf\embeddedassets\validators\Parameter as ParameterValidator;
+use spicyweb\embeddedassets\validators\Parameter as ParameterValidator;
 
 /**
  * Class Settings
- * @package benf\embeddedassets\models
+ *
+ * @package spicyweb\embeddedassets\models
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Settings extends Model
 {

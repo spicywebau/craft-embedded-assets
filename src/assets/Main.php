@@ -1,18 +1,22 @@
 <?php
-namespace benf\embeddedassets\assets;
+namespace spicyweb\embeddedassets\assets;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
  * Class Main
- * @package benf\embeddedassets\assets
+ *
+ * @package spicyweb\embeddedassets\assets
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Main extends AssetBundle
 {
 	public function init()
 	{
-		$this->sourcePath = '@benf/embeddedassets/resources';
+		$this->sourcePath = '@spicyweb/embeddedassets/resources';
 		$this->depends = [ CpAsset::class ];
 		$this->js = ['main.js'];
 

@@ -8,7 +8,7 @@ Open the control panel for your website. Navigate to **Settings &rarr; Plugins**
 ### Composer
 Run the following command in the root directory of your Craft project:
 ```
-composer require benjamminf/craft-embedded-assets
+composer require spicyweb/craft-embedded-assets
 ```
 
 ## Allow JSON filetype

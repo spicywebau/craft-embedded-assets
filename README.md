@@ -33,3 +33,9 @@ Embedded assets are just JSON files. This means they can exist as real assets wi
 - [Templating](docs/templating.md)
 - [Configuration](docs/configuration.md)
 - [Changelog](CHANGELOG.md)
+
+---
+
+*Created by [Benjamin Fleming](https://github.com/benjamminf)*
+<br>
+*Maintained by [Spicy Web](https://spicyweb.com.au)*

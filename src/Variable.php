@@ -1,15 +1,19 @@
 <?php
-namespace benf\embeddedassets;
+namespace spicyweb\embeddedassets;
 
 use Craft;
 use craft\elements\Asset;
 
-use benf\embeddedassets\Plugin as EmbeddedAssets;
-use benf\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
+use spicyweb\embeddedassets\models\EmbeddedAsset;
 
 /**
  * Class Variable
- * @package benf\embeddedassets
+ *
+ * @package spicyweb\embeddedassets
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Variable
 {

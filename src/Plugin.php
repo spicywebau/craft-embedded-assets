@@ -1,5 +1,5 @@
 <?php
-namespace benf\embeddedassets;
+namespace spicyweb\embeddedassets;
 
 use yii\base\Event;
 
@@ -16,13 +16,17 @@ use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 
-use benf\embeddedassets\assets\Main as MainAsset;
-use benf\embeddedassets\models\Settings;
-use benf\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\assets\Main as MainAsset;
+use spicyweb\embeddedassets\models\Settings;
+use spicyweb\embeddedassets\models\EmbeddedAsset;
 
 /**
  * Class Plugin
- * @package benf\embeddedassets
+ *
+ * @package spicyweb\embeddedassets
+ * @author Spicy Web <craft@spicyweb.com.au>
+ * @author Benjamin Fleming
+ * @since 1.0.0
  */
 class Plugin extends BasePlugin
 {
@@ -34,12 +38,12 @@ class Plugin extends BasePlugin
 	/**
 	 * @var string
 	 */
-	public $changelogUrl = 'https://raw.githubusercontent.com/benjamminf/craft-embedded-assets/master/CHANGELOG.md';
+	public $changelogUrl = 'https://raw.githubusercontent.com/spicywebau/craft-embedded-assets/master/CHANGELOG.md';
 
 	/**
 	 * @var string
 	 */
-	public $downloadUrl = 'https://github.com/benjamminf/craft-embedded-assets/archive/master.zip';
+	public $downloadUrl = 'https://github.com/spicywebau/craft-embedded-assets/archive/master.zip';
 
 	/**
 	 * @var bool
@@ -248,7 +252,7 @@ class Plugin extends BasePlugin
 			}
 			else
 			{
-				$url = $assetManagerService->getPublishedUrl('@benf/embeddedassets/resources/default-thumb.svg', true);
+				$url = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
 			}
 		}
 

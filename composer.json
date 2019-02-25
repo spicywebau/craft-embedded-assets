@@ -1,5 +1,5 @@
 {
-  "name": "benjamminf/craft-embedded-assets",
+  "name": "spicyweb/craft-embedded-assets",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
   "version": "1.0.2",
   "type": "craft-plugin",
@@ -17,15 +17,15 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Benjamin Fleming",
-      "homepage": "https://github.com/benjamminf"
+      "name": "Spicy Web",
+      "homepage": "https://spicyweb.com.au"
     }
   ],
   "support": {
-    "issues": "https://github.com/benjamminf/craft-embedded-assets/issues",
-    "source": "https://github.com/benjamminf/craft-embedded-assets",
-    "docs": "https://github.com/benjamminf/craft-embedded-assets/wiki",
-    "rss": "https://github.com/benjamminf/craft-embedded-assets/commits/master.atom"
+    "issues": "https://github.com/spicywebau/craft-embedded-assets/issues",
+    "source": "https://github.com/spicywebau/craft-embedded-assets",
+    "docs": "https://github.com/spicywebau/craft-embedded-assets/wiki",
+    "rss": "https://github.com/spicywebau/craft-embedded-assets/commits/master.atom"
   },
   "require": {
     "craftcms/cms": "^3.0.0",
@@ -33,7 +33,7 @@
   },
   "autoload": {
     "psr-4": {
-      "benf\\embeddedassets\\": "src/"
+      "spicyweb\\embeddedassets\\": "src/"
     }
   },
   "repositories": [
@@ -46,8 +46,8 @@
     "handle": "embeddedassets",
     "name": "Embedded Assets",
     "schemaVersion": "1.0.0",
-    "class": "benf\\embeddedassets\\Plugin",
-    "changelogUrl": "https://github.com/benjamminf/craft-embedded-assets/blob/master/CHANGELOG.md",
-    "downloadUrl": "https://github.com/benjamminf/craft-embedded-assets/archive/master.zip"
+    "class": "spicyweb\\embeddedassets\\Plugin",
+    "changelogUrl": "https://github.com/spicywebau/craft-embedded-assets/blob/master/CHANGELOG.md",
+    "downloadUrl": "https://github.com/spicywebau/craft-embedded-assets/archive/master.zip"
   }
 }

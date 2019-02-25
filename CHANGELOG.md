@@ -9,8 +9,8 @@
 - If a URL can't be loaded, the UI will now [timeout and show an error notice][#64]
 - Improved stability of the [method of reading JSON files][#63]
 
-[#63]: https://github.com/benjamminf/craft-embedded-assets/issues/63
-[#64]: https://github.com/benjamminf/craft-embedded-assets/issues/64
+[#63]: https://github.com/spicywebau/craft-embedded-assets/issues/63
+[#64]: https://github.com/spicywebau/craft-embedded-assets/issues/64
 
 ## 1.0.1 - 2018-05-09
 ### Fixed
