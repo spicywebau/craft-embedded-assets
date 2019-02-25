@@ -85,17 +85,21 @@ class Service extends Component
 	public function checkWhitelist(string $url): bool
 	{
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
+		$whitelist = array_merge($pluginSettings->whitelist, $pluginSettings->extraWhitelist);
 
-		foreach ($pluginSettings->whitelist as $whitelistUrl)
+		foreach ($whitelist as $whitelistUrl)
 		{
-			$pattern = explode('*', $whitelistUrl);
-			$pattern = array_map('preg_quote', $pattern);
-			$pattern = implode('[a-z][a-z0-9]*', $pattern);
-			$pattern = "%^(https?:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
-
-			if (preg_match($pattern, $url))
+			if ($whitelistUrl)
 			{
-				return true;
+				$pattern = explode('*', $whitelistUrl);
+				$pattern = array_map('preg_quote', $pattern);
+				$pattern = implode('[a-z][a-z0-9]*', $pattern);
+				$pattern = "%^(https?:)?//([a-z0-9\-]+\\.)?$pattern([:/].*)?$%";
+
+				if (preg_match($pattern, $url))
+				{
+					return true;
+				}
 			}
 		}
 
@@ -180,6 +184,17 @@ class Service extends Component
 			}
 		}
 
+		// Attempts to extract missing dimensional properties from the embed code
+		$dimensions = $this->_getDimensions($embeddedAsset);
+		$embeddedAsset->width = $dimensions[0];
+		$embeddedAsset->height = $dimensions[1];
+
+		// Sets aspect ratio is missing
+		if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height)
+		{
+			$embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
+		}
+
 		return $embeddedAsset->validate() ? $embeddedAsset : null;
 	}
 
@@ -233,6 +248,42 @@ class Service extends Component
 	{
 		$isSafe = $this->checkWhitelist($embeddedAsset->url);
 
+		if ($isSafe)
+		{
+			$dom = $this->getEmbedCode($embeddedAsset);
+
+			if ($dom)
+			{
+				foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
+				{
+					$href = $iframeElement->getAttribute('href');
+					$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
+				}
+
+				foreach ($dom->getElementsByTagName('script') as $scriptElement)
+				{
+					$src = $scriptElement->getAttribute('src');
+					$content = $scriptElement->textContent;
+
+					// Inline scripts are impossible to analyse for safety, so just assume they're all evil
+					$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
+				}
+			}
+		}
+
+		return $isSafe;
+	}
+
+	/**
+	 * Gets the embed code as DOM, if one exists and is valid.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return DOMDocument|null
+	 */
+	public function getEmbedCode(EmbeddedAsset $embeddedAsset)
+	{
+		$dom = null;
+
 		if ($embeddedAsset->code)
 		{
 			$errors = libxml_use_internal_errors(true);
@@ -241,29 +292,10 @@ class Service extends Component
 			try
 			{
 				$dom = new DOMDocument();
-				$isHtml = $dom->loadHTML((string)$embeddedAsset->code);
+				$code = "<div>$embeddedAsset->code</div>";
+				$isHtml = $dom->loadHTML($code, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-				if ($isHtml)
-				{
-					libxml_use_internal_errors($errors);
-					libxml_disable_entity_loader($entities);
-
-					foreach ($dom->getElementsByTagName('iframe') as $iframeElement)
-					{
-						$href = $iframeElement->getAttribute('href');
-						$isSafe = $isSafe && (!$href || $this->checkWhitelist($href));
-					}
-
-					foreach ($dom->getElementsByTagName('script') as $scriptElement)
-					{
-						$src = $scriptElement->getAttribute('src');
-						$content = $scriptElement->textContent;
-
-						// Inline scripts are impossible to analyse for safety, so just assume they're all evil
-						$isSafe = $isSafe && !$content && (!$src || $this->checkWhitelist($src));
-					}
-				}
-				else
+				if (!$isHtml)
 				{
 					throw new ErrorException();
 				}
@@ -271,11 +303,43 @@ class Service extends Component
 			catch (ErrorException $e)
 			{
 				// Corrupted code property, like due to invalid HTML.
-				$isSafe = false;
+				$dom = null;
+			}
+			finally
+			{
+				libxml_use_internal_errors($errors);
+				libxml_disable_entity_loader($entities);
 			}
 		}
 
-		return $isSafe;
+		return $dom;
+	}
+
+	/**
+	 * Gets the HTML for the embedded asset.
+	 * This method automatically checks if the embed code is safe to use. If it is, then the embed code is returned.
+	 * Otherwise, if the embedded asset is not a "link" type and it has an image, an <img> tag is returned. Otherwise,
+	 * an <a> link tag is returned.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return Twig_Markup
+	 */
+	public function getEmbedHtml(EmbeddedAsset $embeddedAsset): Twig_Markup
+	{
+		if ($embeddedAsset->code && $embeddedAsset->isSafe())
+		{
+			$html = $embeddedAsset->code;
+		}
+		else if ($embeddedAsset->type !== 'link' && $embeddedAsset->image)
+		{
+			$html = Template::raw("<img src=\"$embeddedAsset->image\" alt=\"$embeddedAsset->title\" width=\"$embeddedAsset->imageWidth\" height=\"$embeddedAsset->imageHeight\">");
+		}
+		else
+		{
+			$html = Template::raw("<a href=\"$embeddedAsset->url\" target=\"_blank\" rel=\"noopener\">$embeddedAsset->title</a>");
+		}
+
+		return $html;
 	}
 
 	/**
@@ -304,6 +368,56 @@ class Service extends Component
 	{
 		return is_array($embeddedAsset->providerIcons) ?
 			$this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
+	}
+
+	/**
+	 * Gets the width/height of an embedded asset.
+	 * Attempts to extract missing dimensional properties from the embed code.
+	 *
+	 * @param EmbeddedAsset $embeddedAsset
+	 * @return array
+	 */
+	private function _getDimensions(EmbeddedAsset $embeddedAsset): array
+	{
+		$width = $embeddedAsset->width;
+		$height = $embeddedAsset->height;
+
+		if (!$width || !$height)
+		{
+			$dom = $this->getEmbedCode($embeddedAsset);
+
+			if ($dom)
+			{
+				$iframeElement = $dom->getElementsByTagName('iframe')->item(0);
+
+				if ($iframeElement)
+				{
+					$width = $iframeElement->getAttribute('width');
+					$height = $iframeElement->getAttribute('height');
+					$style = $iframeElement->getAttribute('style');
+
+					$matches = [];
+					$matchCount = preg_match_all('/(width|height):\s*([0-9]+(\.[0-9]+)?)px/i', $style, $matches);
+
+					for ($i = 0; $i < $matchCount; $i++)
+					{
+						$styleProperty = strtolower($matches[1][$i]);
+						$styleValue = $matches[2][$i];
+
+						switch ($styleProperty)
+						{
+							case 'width': $width = $styleValue; break;
+							case 'height': $height = $styleValue; break;
+						}
+					}
+
+					$width = $width ? floatval($width) : null;
+					$height = $height ? floatval($height) : null;
+				}
+			}
+		}
+
+		return [ $width, $height ];
 	}
 
 	/**

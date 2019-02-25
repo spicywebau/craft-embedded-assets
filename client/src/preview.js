@@ -21,15 +21,16 @@ window.EmbeddedAssetsPreview = {
 
 		if (iframeEl)
 		{
+			const width = iframeEl.offsetWidth
+			const height = iframeEl.offsetHeight
+
 			codeEl.classList.add('is-ratio')
-
-			const width = iframeEl.getAttribute('width')|0
-			const height = iframeEl.getAttribute('height')|0
-
-			if (width && height)
-			{
-				codeEl.style.paddingTop = ((height / width) * 100) + '%'
-			}
+			codeEl.style.paddingTop = ((height / width) * 100) + '%'
+		}
+		else
+		{
+			codeEl.classList.remove('is-ratio')
+			codeEl.style.paddingTop = ''
 		}
 	},
 }

@@ -13,6 +13,7 @@ use craft\helpers\UrlHelper;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\TemplateEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
+use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 
 use benf\embeddedassets\assets\Main as MainAsset;
@@ -142,7 +143,12 @@ class Plugin extends BasePlugin
 			{
 				$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
 				$thumbSize = max($event->width, $event->height);
-				$event->url = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+				$thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+
+				if ($thumbnailUrl)
+				{
+					$event->url = $thumbnailUrl;
+				}
 			}
 		);
 	}
@@ -155,6 +161,21 @@ class Plugin extends BasePlugin
 		$newAttributes = [
 			'provider' => "Provider",
 		];
+
+		Event::on(
+			Asset::class,
+			Asset::EVENT_REGISTER_HTML_ATTRIBUTES,
+			function(RegisterElementHtmlAttributesEvent $event)
+			{
+				$embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
+
+				if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->isSafe())
+				{
+					// Setting `null` actually adds the attribute, but doesn't include a value
+					$event->htmlAttributes['data-embedded-asset'] = $embeddedAsset->aspectRatio;
+				}
+			}
+		);
 
 		Event::on(
 			Asset::class,

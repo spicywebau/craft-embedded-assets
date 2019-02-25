@@ -2,6 +2,7 @@ import './main.scss'
 import Craft from 'craft'
 import EmbeddedAssets from './classes/EmbeddedAssets'
 import Button from './classes/Button'
+import Preview from './classes/Preview'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()
@@ -53,6 +54,27 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 		idsToSelect.forEach((id) => this.view.selectElementById(id))
 		idsToSelect = []
 	})
+})
+
+monkeypatch(Craft.AssetEditor, 'updateForm', function()
+{
+	const assetId = this.$element.attr('data-id')
+	const embedRatio = this.$element.attr('data-embedded-asset')
+
+	if (assetId && typeof embedRatio !== 'undefined')
+	{
+		// Won't be needing this anymore
+		this.$fieldsContainer.find('.image-preview-container').remove()
+
+		const preview = new Preview()
+		const paddingTop = Math.min(embedRatio ? embedRatio : 100, 75) + '%'
+
+		preview.$element.css({ paddingTop })
+
+		this.$fieldsContainer.find('.field.first').before(preview.$element)
+
+		requestAnimationFrame(() => preview.request({ assetId, showContent: false }))
+	}
 })
 
 window.EmbeddedAssets = embeddedAssets

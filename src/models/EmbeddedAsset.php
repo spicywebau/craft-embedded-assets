@@ -7,7 +7,6 @@ use Twig_Markup;
 
 use Craft;
 use craft\base\Model;
-use craft\helpers\Template;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
 
@@ -173,29 +172,13 @@ class EmbeddedAsset extends Model implements JsonSerializable
 	}
 
 	/**
-	 * Gets the HTML for the embedded asset.
-	 * This method automatically checks if the embed code is safe to use. If it is, then the embed code is returned.
-	 * Otherwise, if the embedded asset is not a "link" type and it has an image, an <img> tag is returned. Otherwise,
-	 * an <a> link tag is returned.
+	 * Method wrapper for Service::getEmbedHtml
 	 *
 	 * @return Twig_Markup
 	 */
 	public function getHtml(): Twig_Markup
 	{
-		if ($this->code && $this->isSafe())
-		{
-			$html = $this->code;
-		}
-		else if ($this->type !== 'link' && $this->image)
-		{
-			$html = Template::raw("<img src=\"$this->image\" alt=\"$this->title\" width=\"$this->imageWidth\" height=\"$this->imageHeight\">");
-		}
-		else
-		{
-			$html = Template::raw("<a href=\"$this->url\" target=\"_blank\" rel=\"noopener\">$this->title</a>");
-		}
-
-		return $html;
+		return EmbeddedAssets::$plugin->methods->getEmbedHtml($this);
 	}
 
 	/**

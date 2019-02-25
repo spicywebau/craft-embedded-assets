@@ -141,6 +141,11 @@ class Settings extends Model
 	];
 
 	/**
+	 * @var array of strings
+	 */
+	public $extraWhitelist = [];
+
+	/**
 	 * @var int
 	 */
 	public $minImageSize = 16;
@@ -168,7 +173,7 @@ class Settings extends Model
 		return [
 			[['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey'], StringValidator::class],
 			['parameters', 'each', 'rule' => [ParameterValidator::class]],
-			['whitelist', 'each', 'rule' => [StringValidator::class]],
+			[['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
 			[['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
 			['cacheDuration', 'integer', 'min' => 0],
 		];

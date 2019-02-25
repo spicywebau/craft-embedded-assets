@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import Craft from 'craft'
 import Emitter from './Emitter'
+import Preview from './Preview'
 import { uniqueId, isUrl } from '../utilities'
 
 export default class Form extends Emitter
@@ -13,7 +14,6 @@ export default class Form extends Emitter
 
 		const inputId = uniqueId()
 		const bodyId = uniqueId()
-		const previewId = uniqueId()
 
 		const formAction = Craft.getActionUrl('embeddedassets/actions/save')
 
@@ -24,7 +24,6 @@ export default class Form extends Emitter
 					<input type="text" placeholder="http://" id="${inputId}" name="url" autocomplete="off" spellcheck="false">
 				</div>
 				<div id="${bodyId}" class="embedded-assets_form_body">
-					<iframe id="${previewId}" src="about:blank"></iframe>
 					<div class="spinner"></div>
 				</div>
 			</form>
@@ -32,9 +31,31 @@ export default class Form extends Emitter
 
 		this.$input = this.$element.find(`#${inputId}`)
 		this.$body = this.$element.find(`#${bodyId}`)
-		this.$preview = this.$element.find(`#${previewId}`)
 
-		this.$element.on('submit', (e) =>
+		this.preview = new Preview()
+		this.$body.prepend(this.preview.$element)
+
+		this.preview.on('load', e =>
+		{
+			if (e.url === this._url && this._state === 'requesting')
+			{
+				this.setState('requested')
+			}
+		})
+
+		this.preview.on('timeout', e =>
+		{
+			if (e.url === this._url && this._state === 'requesting')
+			{
+				Craft.cp.displayError(Craft.t('embeddedassets', `Could not retrieve embed information.`))
+
+				this.setState('idle')
+			}
+		})
+
+		this.preview.on('resize', e => this.$body.css('height', e.height + 'px'))
+
+		this.$element.on('submit', e =>
 		{
 			e.preventDefault()
 
@@ -52,7 +73,7 @@ export default class Form extends Emitter
 
 		this.$input.on('change blur', () => this.request())
 
-		this.$input.on('paste', (e) =>
+		this.$input.on('paste', e =>
 		{
 			const clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData
 			const url = clipboardData.getData('text')
@@ -60,21 +81,21 @@ export default class Form extends Emitter
 			this.request(url)
 		})
 
-		this._monitorPreviewHeight()
+		this._setupHeightMonitor()
+
 		this.setState('idle')
 	}
 
 	destroy()
 	{
+		this.preview.destroy()
+
 		this.$element.remove()
 		this.$element = null
 		this.$input = null
 		this.$body = null
-		this.$preview = null
 
-		cancelAnimationFrame(this._previewMonitor)
-
-		delete window[this._callbackName]
+		cancelAnimationFrame(this._heightMonitor)
 
 		this.trigger('destroy')
 	}
@@ -87,24 +108,8 @@ export default class Form extends Emitter
 
 			if (isUrl(url))
 			{
-				const isRequesting = () => this._url === url && this._state === 'requesting'
 				this.setState('requesting')
-				this._setPreview(url)
-					.then(() =>
-					{
-						if (isRequesting())
-						{
-							this.setState('requested')
-						}
-					})
-					.catch(() =>
-					{
-						if (isRequesting())
-						{
-							Craft.cp.displayError(Craft.t('embeddedassets', `Could not retrieve embed information.`))
-							this.setState('idle')
-						}
-					})
+				this.preview.request({ url })
 			}
 			else
 			{
@@ -181,86 +186,23 @@ export default class Form extends Emitter
 		}
 	}
 
-	_setPreview(url, timeout = 15000)
+	_setupHeightMonitor()
 	{
-		return new Promise((resolve, reject) =>
+		this._height = 0
+
+		const monitorHeight = () =>
 		{
-			const previewWindow = this.$preview[0].contentWindow
+			const height = this.$element.height()
 
-			if (previewWindow)
+			if (this._height !== height)
 			{
-				const isPreviewUrl = Boolean(url)
-				let previewUrl = 'about:blank'
-
-				if (isPreviewUrl)
-				{
-					const callback = uniqueId('embeddedAssets_')
-					const cleanup = () => delete window[callback]
-
-					previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', { url, callback })
-
-					// On load
-					window[callback] = () => { resolve(); cleanup() }
-
-					// On timeout
-					setTimeout(() => { reject(); cleanup() }, timeout)
-				}
-
-				previewWindow.location.replace(previewUrl)
-
-				if (!isPreviewUrl)
-				{
-					resolve()
-				}
-			}
-			else
-			{
-				reject()
-			}
-		})
-	}
-
-	_getCurrentPreviewUrl()
-	{
-		const previewWindow = this.$preview[0].contentWindow
-		const url = previewWindow ? previewWindow.location.href : ''
-
-		return url.indexOf('embeddedassets') > 0 ? url : false
-	}
-
-	_monitorPreviewHeight()
-	{
-		let previousHeight = 0
-
-		const setHeight = () =>
-		{
-			const isPreviewUrl = Boolean(this._getCurrentPreviewUrl())
-
-			if (isPreviewUrl && this.$preview[0].contentDocument)
-			{
-				const $previewBody = $(this.$preview[0].contentDocument.body)
-				this.$body.css('height', $previewBody.height() + 'px')
-			}
-			else
-			{
-				this.$body.css('height', '')
+				this.trigger('resize', { prevHeight: this._height, height })
+				this._height = height
 			}
 
-			const nextHeight = this.$body.height()
-
-			if (previousHeight !== nextHeight)
-			{
-				this.trigger('resize', {
-					previousHeight,
-					nextHeight,
-				})
-
-				previousHeight = nextHeight
-			}
-
-			this._previewMonitor = requestAnimationFrame(setHeight)
+			this._heightMonitor = requestAnimationFrame(monitorHeight)
 		}
 
-		setHeight()
+		monitorHeight()
 	}
 }

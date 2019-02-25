@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
@@ -36,6 +35,10 @@ module.exports = {
 					{ loader: 'css-loader' },
 					{ loader: 'sass-loader' },
 				],
+			},
+			{
+				test: /\.(png|svg)$/,
+				use: { loader: 'url-loader' },
 			},
 		],
 	},
