@@ -39,6 +39,10 @@ class Controller extends BaseController
 	{
 		$this->requireAcceptsJson();
 
+		// The behaviour of certain controller actions depends on whether Craft 3.0 or 3.1 is being used
+		// Figure out which Craft version is being used by checking whether the project config service class exists
+		$isCraft30 = !class_exists('craft\\services\\ProjectConfig');
+
 		$response = null;
 
 		$assetsService = Craft::$app->getAssets();
@@ -49,7 +53,10 @@ class Controller extends BaseController
 		$folderId = $requestService->getRequiredParam('folderId');
 
 		$embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-		$folder = $assetsService->findFolder(['uid' => $folderId]);
+
+		// Craft 3.0 requires finding the folder by its ID, whereas Craft 3.1 requires finding it by its UID
+		$folderIdProp = $isCraft30 ? 'id' : 'uid';
+		$folder = $assetsService->findFolder([$folderIdProp => $folderId]);
 
 		if (!$folder)
 		{
@@ -59,8 +66,8 @@ class Controller extends BaseController
 		$userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
 		if (!$userTempFolder || $folder->id != $userTempFolder->id)
 		{
-			$volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId); 
-			$this->requirePermission('saveAssetInVolume:'. $volume->uid);
+			$volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
+			$this->requirePermission('saveAssetInVolume:'. $volume->$folderIdProp);
 		}
 
 		$asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
