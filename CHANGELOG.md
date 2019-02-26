@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.0.0 - 2019-02-26
+> {note} The plugin’s package name has changed to `spicyweb/craft-embedded-assets`. After updating to Embedded Assets 2.0 or later, make sure you remove the old package by running `composer remove benjamminf/craft-embedded-assets` from your terminal.
+
+### Added
+- Embedded Assets is now maintained by Spicy Web
+- Added `extraWhitelist` setting (thanks @benjamminf)
+
+### Changed
+- The asset preview controller action now supports passing an `assetId` parameter (thanks @benjamminf)
+- Show image preview if large enough / reduce max height for smaller screens (thanks @benjamminf)
+- Refactored preview iframe JS into its own class (thanks @benjamminf)
+- Improved asset previews in assets table (thanks @benjamminf)
+
+### Fixed
+- Fixed issues with not being able to save embedded assets in subfolders (thanks @kyle51north)
+- Fixed asset volume permission issue, preventing embedded assets from being saved in Craft 3.1 (thanks @limesquare-nl / @kyle51north)
+- Prevent scripts from loading async in preview, causing the asset preview to jump around after it loads (thanks @benjamminf)
+- Fixed issue with blank thumbnails showing in asset preview (thanks @benjamminf)
+
+### Removed
+-  Removed unnecessary JS size detection in favour of readily available embed data (thanks @benjamminf)
+
 ## 1.0.2 - 2018-05-09
 ### Added
 - Added `html` property for conveniently handling checks for embed codes and safety
