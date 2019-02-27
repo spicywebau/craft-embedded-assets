@@ -1,7 +1,7 @@
 # Changelog
 
 ## 2.0.0 - 2019-02-26
-> {note} The plugin’s package name has changed to `spicyweb/craft-embedded-assets`. After updating to Embedded Assets 2.0 or later, make sure you remove the old package by running `composer remove benjamminf/craft-embedded-assets` from your terminal.
+> {note} The plugin’s package name has changed to `spicyweb/craft-embedded-assets`. Embedded Assets will need be updated to 2.0 from a terminal, by running `composer require spicyweb/craft-embedded-assets` and then `composer remove benjamminf/craft-embedded-assets`.
 
 ### Added
 - Embedded Assets is now maintained by Spicy Web
