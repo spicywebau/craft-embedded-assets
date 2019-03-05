@@ -57,11 +57,14 @@ class Service extends Component
 				'oembed' => ['parameters' => []],
 			];
 
-			foreach ($pluginSettings->parameters as $parameter)
+			if (!empty($pluginSettings->parameters))
 			{
-				$param = $parameter['param'];
-				$value = $parameter['value'];
-				$options['oembed']['parameters'][$param] = $value;
+				foreach ($pluginSettings->parameters as $parameter)
+				{
+					$param = $parameter['param'];
+					$value = $parameter['value'];
+					$options['oembed']['parameters'][$param] = $value;
+				}
 			}
 
 			if ($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
