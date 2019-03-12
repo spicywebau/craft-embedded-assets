@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.1 - 2019-03-12
 ### Fixed
 - Fixed error when saving an embedded asset if Embedded Assets' Parameters setting was empty
 - Fixed error when saving an embedded asset if the title contained emoji (now removes any emoji from the asset title)
