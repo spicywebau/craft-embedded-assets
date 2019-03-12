@@ -217,6 +217,8 @@ class Service extends Component
 	 */
 	public function createAsset(EmbeddedAsset $embeddedAsset, VolumeFolder $folder): Asset
 	{
+		$isCraft30 = !class_exists('craft\\services\\ProjectConfig');
+
 		$assetsService = Craft::$app->getAssets();
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
 
@@ -226,6 +228,19 @@ class Service extends Component
 		FileHelper::writeToFile($tempFilePath, $fileContents);
 
 		$assetTitle = $embeddedAsset->title ?: $embeddedAsset->url;
+
+		// Ensure the title contains no emoji
+		if (!$isCraft30)
+		{
+			$assetTitle = StringHelper::replaceMb4($assetTitle, '');
+		}
+		else if (StringHelper::containsMb4($assetTitle))
+		{
+			$assetTitle = preg_replace_callback('/./u', function(array $match): string
+			{
+				return strlen($match[0]) >= 4 ? '' : $match[0];
+			}, $assetTitle);
+		}
 
 		$fileName = Assets::prepareAssetName($assetTitle, false);
 		$fileName = str_replace('.', '', $fileName);
