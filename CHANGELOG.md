@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed Embedded Assets 2.0.1 incompatibility with Craft 3.1 releases prior to 3.1.13
+
 ## 2.0.1 - 2019-03-12
 ### Fixed
 - Fixed error when saving an embedded asset if Embedded Assets' Parameters setting was empty

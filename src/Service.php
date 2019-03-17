@@ -217,7 +217,7 @@ class Service extends Component
 	 */
 	public function createAsset(EmbeddedAsset $embeddedAsset, VolumeFolder $folder): Asset
 	{
-		$isCraft30 = !class_exists('craft\\services\\ProjectConfig');
+		$hasReplaceMb4 = method_exists(StringHelper::class, 'replaceMb4');
 
 		$assetsService = Craft::$app->getAssets();
 		$pluginSettings = EmbeddedAssets::$plugin->getSettings();
@@ -230,7 +230,7 @@ class Service extends Component
 		$assetTitle = $embeddedAsset->title ?: $embeddedAsset->url;
 
 		// Ensure the title contains no emoji
-		if (!$isCraft30)
+		if ($hasReplaceMb4)
 		{
 			$assetTitle = StringHelper::replaceMb4($assetTitle, '');
 		}
