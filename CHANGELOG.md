@@ -2,6 +2,7 @@
 
 ## Unreleased
 ### Fixed
+- Fixed incompatibility with Internet Explorer 11
 - Fixed Embedded Assets 2.0.1 incompatibility with Craft 3.1 releases prior to 3.1.13
 
 ## 2.0.1 - 2019-03-12

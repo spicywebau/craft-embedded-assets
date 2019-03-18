@@ -2,7 +2,7 @@ import $ from 'jquery'
 import Garnish from 'garnish'
 import Emitter from './Emitter'
 import Form from './Form'
-import { uniqueId } from '../utilities'
+import { uniqueId, objectAssign } from '../utilities'
 
 export default class Modal extends Emitter
 {
@@ -18,11 +18,13 @@ export default class Modal extends Emitter
 
 	create($target, settings = {})
 	{
-		settings = Object.assign({
+		const defaults = {
 			hudClass: 'hud embedded-assets_hud',
 			mainClass: 'embedded-assets_hud_main',
 			minBodyWidth: 400,
-		}, settings)
+		}
+
+		settings = objectAssign(defaults, settings)
 
 		const cancelId = uniqueId()
 		const saveId = uniqueId()
