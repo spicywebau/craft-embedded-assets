@@ -1,4 +1,4 @@
-<img src="docs/assets/icon.png" width="60">
+<img src="docs/assets/icon.png" width="100">
 
 # Embedded Assets
 #### Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets

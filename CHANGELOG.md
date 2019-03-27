@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- New icon
+
 ## 2.0.2 - 2019-03-18
 ### Fixed
 - Fixed incompatibility with Internet Explorer 11
