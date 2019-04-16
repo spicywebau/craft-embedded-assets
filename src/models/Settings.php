@@ -170,6 +170,11 @@ class Settings extends Model
 	public $cacheDuration = 5 * 60; // 5 minutes
 
 	/**
+	 * @var bool
+	 */
+	public $showThumbnailsInCp = true;
+
+	/**
 	 * @return array
 	 */
 	public function rules()
@@ -180,6 +185,7 @@ class Settings extends Model
 			[['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
 			[['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
 			['cacheDuration', 'integer', 'min' => 0],
+			['showThumbnailsInCp', 'boolean'],
 		];
 	}
 }
