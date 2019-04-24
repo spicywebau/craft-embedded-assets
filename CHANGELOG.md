@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
-### Changed
+## 2.0.3 - 2019-04-24
+### Added
+- Add `showThumbnailsInCp` setting - Thanks @ttempleton
 - New icon
 
 ## 2.0.2 - 2019-03-18
