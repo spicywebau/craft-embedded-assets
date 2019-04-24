@@ -228,6 +228,13 @@ class Plugin extends BasePlugin
     private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
 	{
 		$assetManagerService = Craft::$app->getAssetManager();
+		$defaultThumb = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
+
+		// If embedded asset thumbnails are disabled, just show Embedded Assets' default.
+		if (!$this->getSettings()->showThumbnailsInCp)
+		{
+			return $defaultThumb;
+		}
 
 		$url = false;
 		$image = $embeddedAsset->getImageToSize($size);
@@ -252,7 +259,7 @@ class Plugin extends BasePlugin
 			}
 			else
 			{
-				$url = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
+				$url = $defaultThumb;
 			}
 		}
 
