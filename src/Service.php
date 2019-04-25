@@ -140,7 +140,7 @@ class Service extends Component
 					$embeddedAsset = $this->createEmbeddedAsset($decodedJson);
 				}
 			}
-			catch (Exception $e)
+			catch (\Throwable $e)
 			{
 				// Ignore errors and assume it's not an embedded asset
 				$embeddedAsset = null;
