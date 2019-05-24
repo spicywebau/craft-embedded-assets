@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.4 - 2019-05-24
+### Fixed
+- Fix vulnerability issues with tar <4.4.2
+- Actually catch the error thrown if the json file doesn't exist - thanks @engram-design
+
 ## 2.0.3 - 2019-04-24
 ### Added
 - Add `showThumbnailsInCp` setting - Thanks @ttempleton
