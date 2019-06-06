@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5 - 2019-06-06
+### Fixed
+- Fix vulnarability issue with js-yaml<3.13.1
+
 ## 2.0.4 - 2019-05-24
 ### Fixed
 - Fix vulnerability issues with tar <4.4.2
