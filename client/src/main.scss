@@ -185,15 +185,3 @@
 	max-width: 380px;
 	max-height: 190px;
 }
-
-//
-// Another fix for Craft asset thumbnails.
-//
-// The embedded asset thumbnails aren't always the right size (as explained above), and this causes some weird sizing
-// issues when switching between thumbnail views.
-//
-// The following fixes that. I don't know why.
-//
-.elementthumb > img {
-	width: 100%;
-}
