@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6 - 2019-06-12
+### Fixed
+- Fixed #99 stretched thumbnail issue
+
+
 ## 2.0.5 - 2019-06-06
 ### Fixed
 - Fix vulnarability issue with js-yaml<3.13.1
