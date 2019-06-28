@@ -57,6 +57,8 @@ class Plugin extends BasePlugin
 		'actions' => Controller::class,
 	];
 
+	private $defaultThumbnailUrl = "";
+
 	/**
 	 * Plugin initializer.
 	 */
@@ -76,9 +78,16 @@ class Plugin extends BasePlugin
 
 		if ($requestService->getIsCpRequest())
 		{
+			$assetManagerService = Craft::$app->getAssetManager();
+			$this->defaultThumbnailUrl = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
+			
 			$this->_configureCpResources();
 			$this->_configureAssetThumbnails();
-			$this->_configureAssetIndexAttributes();
+
+			// if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
+			if($this->getSettings()->showThumbnailsInCp) {
+				$this->_configureAssetIndexAttributes();
+			}
 		}
 	}
 
@@ -145,13 +154,20 @@ class Plugin extends BasePlugin
 			Assets::EVENT_GET_ASSET_THUMB_URL,
 			function(GetAssetThumbUrlEvent $event)
 			{
-				$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
-				$thumbSize = max($event->width, $event->height);
-				$thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
-
-				if ($thumbnailUrl)
-				{
-					$event->url = $thumbnailUrl;
+				// if showThumbnailsInCp is not true, return the default thumbnail url.
+				// else retrieve the thumbnail.
+				// this is done so it doesn't prolong the query times by retrieving the thumbnail from the embedded asset.
+				if(!$this->getSettings()->showThumbnailsInCp) {
+					$event->url = $this->defaultThumbnailUrl;
+				} else {
+					$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
+					$thumbSize = max($event->width, $event->height);
+					$thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+	
+					if ($thumbnailUrl)
+					{
+						$event->url = $thumbnailUrl;
+					}
 				}
 			}
 		);
@@ -227,8 +243,7 @@ class Plugin extends BasePlugin
 	 */
     private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
 	{
-		$assetManagerService = Craft::$app->getAssetManager();
-		$defaultThumb = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
+		$defaultThumb = $this->defaultThumbnailUrl;
 
 		// If embedded asset thumbnails are disabled, just show Embedded Assets' default.
 		if (!$this->getSettings()->showThumbnailsInCp)
