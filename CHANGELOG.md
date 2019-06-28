@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.7 - 2019-06-28
+### Fixed
+- Make sure to not execute any thumbnail retrieval functions if showThumbnailsInCp is false
+
 ## 2.0.6 - 2019-06-12
 ### Fixed
 - Fixed #99 stretched thumbnail issue
