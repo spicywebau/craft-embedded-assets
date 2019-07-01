@@ -1,7 +1,7 @@
 {
   "name": "spicyweb/craft-embedded-assets",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "type": "craft-plugin",
   "keywords": [
     "cms",

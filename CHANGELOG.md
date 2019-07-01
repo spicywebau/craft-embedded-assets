@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.8 - 2019-07-01
+### Added
+- Added getVideoUrl and getVideoCode. Allows additional params to be added to the embedded video urls.
+
 ## 2.0.7 - 2019-06-28
 ### Fixed
 - Make sure to not execute any thumbnail retrieval functions if showThumbnailsInCp is false
