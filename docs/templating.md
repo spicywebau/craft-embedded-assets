@@ -104,6 +104,39 @@ Parameters (\*required) | Description
 **Returns** |
 [Image](#image)&#124;null | The image object, or `null` if one is not found.
 
+### getVideoUrl
+`getVideoUrl(params)`
+
+Returns the embedded video url from an embedded asset. Allows extra parameters to be to the video url.
+
+Parameters (\*required) | Description
+-|-
+`params` Array | Array of params
+**Returns** |
+[String](#string)&#124;null | The url string, or `null`.
+
+Example Usage:
+```twig
+{% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
+{{ vid.getVideoUrl(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+```
+
+### getVideoCode
+`getVideoCode(params)`
+
+Returns the embedded video code from an embedded asset. Allows extra parameters to be added to the video url.
+
+Parameters (\*required) | Description
+-|-
+`params` Array | Array of params
+**Returns** |
+[\Twig\Markup](#\Twig\Markup)&#124;null | The code markup, or `null`.
+
+Example Usage:
+```twig
+{% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
+{{ vid.getVideoCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+```
 
 ## Upgrading from Craft 2
 

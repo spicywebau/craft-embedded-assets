@@ -9,6 +9,7 @@ use Craft;
 use craft\base\Model;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
+use craft\helpers\Template;
 
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\validators\Image as ImageValidator;
@@ -205,6 +206,74 @@ class EmbeddedAsset extends Model implements JsonSerializable
 	public function getProviderIconToSize(int $size)
 	{
 		return EmbeddedAssets::$plugin->methods->getProviderIconToSize($this, $size);
+	}
+
+	/**
+	 * Returns the URL with additional params passed. Has to be type of video.
+	 * @return string
+	 */
+	public function getVideoUrl($params)
+	{
+		$url = null;
+
+		if($this->type == "video" && is_array($params)) {
+			$url = $this->getMatchedVideoUrl();
+			$url = $this->addParamsToVideoUrl($params, $url);
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Returns the raw code with additional params passed. Has to be type of video.
+	 * @return string
+	 */
+	public function getVideoCode($params)
+	{
+		$url = null;
+		$code = null;
+
+		if($this->type == "video" && is_array($params)) {
+			$url = $this->getMatchedVideoUrl();
+			$originalUrl = $url;
+			$code = $this->code;
+
+			$url = $this->addParamsToVideoUrl($params, $url);
+
+			$code = str_replace($originalUrl, $url, $code);
+		}
+
+		return Template::raw($code);
+	}
+
+	/**
+	 * Returns the modified url with params added.
+	 * @return string
+	 */
+	private function addParamsToVideoUrl($arr, $pUrl)
+	{
+		$url = $pUrl;
+
+		$paramsLength = count($arr);
+
+		if($paramsLength > 0) {
+			for($i = 0; $i < $paramsLength; $i++) {
+				if(is_string($arr[$i])) {
+					$url = $url . '&' . $arr[$i];
+				}
+			}
+		}
+
+		return $url;
+	}
+	/**
+	 * Returns the embedded video url.
+	 * @return string
+	 */
+	private function getMatchedVideoUrl() {
+		preg_match('/src="([^"]+)"/', $this->code, $match);
+
+		return $match[1];
 	}
 
 	//
