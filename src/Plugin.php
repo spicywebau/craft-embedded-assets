@@ -77,10 +77,7 @@ class Plugin extends BasePlugin
 		$this->_configureTemplateVariable();
 
 		if ($requestService->getIsCpRequest())
-		{
-			$assetManagerService = Craft::$app->getAssetManager();
-			$this->defaultThumbnailUrl = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
-			
+		{		
 			$this->_configureCpResources();
 			$this->_configureAssetThumbnails();
 
@@ -125,6 +122,9 @@ class Plugin extends BasePlugin
 			{
 				$viewService = Craft::$app->getView();
 				$viewService->registerAssetBundle(MainAsset::class);
+				
+				$assetManagerService = Craft::$app->getAssetManager();
+				$this->defaultThumbnailUrl = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg', true);
 			}
 		);
 	}
