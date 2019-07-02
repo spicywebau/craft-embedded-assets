@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.9 - 2019-07-03
+### Fixed
+- Fix - Register the assets first before getting the default thumbnail
+
 ## 2.0.8 - 2019-07-01
 ### Added
 - Added getVideoUrl and getVideoCode. Allows additional params to be added to the embedded video urls.
