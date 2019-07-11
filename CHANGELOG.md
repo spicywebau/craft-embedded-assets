@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.10 - 2019-07-11
+### Fixed
+- Fix - Dependancy security vulnarability fix with lodash.mergewith
+
 ## 2.0.9 - 2019-07-03
 ### Fixed
 - Fix - Register the assets first before getting the default thumbnail
