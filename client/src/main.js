@@ -59,7 +59,8 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 monkeypatch(Craft.AssetEditor, 'updateForm', function()
 {
 	const assetId = this.$element.attr('data-id')
-	const embedRatio = this.$element.attr('data-embedded-asset')
+	const dataEmbedRatio = this.$element.attr('data-embedded-asset')
+	const embedRatio = dataEmbedRatio ? dataEmbedRatio : "56.25"
 
 	if (assetId && typeof embedRatio !== 'undefined')
 	{
