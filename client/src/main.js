@@ -60,10 +60,13 @@ monkeypatch(Craft.AssetEditor, 'updateForm', function()
 {
 	const assetId = this.$element.attr('data-id')
 	const dataEmbedRatio = this.$element.attr('data-embedded-asset')
-	const embedRatio = dataEmbedRatio ? dataEmbedRatio : "56.25"
+	let embedRatio = dataEmbedRatio
 
 	if (assetId && typeof embedRatio !== 'undefined')
 	{
+		if (typeof embedRatio == 'string') {
+			embedRatio = '56.25'
+		}
 		// Won't be needing this anymore
 		this.$fieldsContainer.find('.image-preview-container').remove()
 

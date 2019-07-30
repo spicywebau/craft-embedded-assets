@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.11 - 2019-07-30
+### Changed
+- switch to yarn.
+
+### Fixed
+- fix an issue with previews for assets that's not an embedded asset.
+
 ## 2.0.10 - 2019-07-11
 ### Fixed
 - Fix - Dependancy security vulnarability fix with lodash.mergewith
