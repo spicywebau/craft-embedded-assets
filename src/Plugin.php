@@ -84,7 +84,9 @@ class Plugin extends BasePlugin
 			// if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
 			if($this->getSettings()->showThumbnailsInCp) {
 				$this->_configureAssetIndexAttributes();
-			}
+			} else {
+			    $this->_configureAssetIndexAttributesNoThumbnail();
+            }
 		}
 	}
 
@@ -157,21 +159,41 @@ class Plugin extends BasePlugin
 				// if showThumbnailsInCp is not true, return the default thumbnail url.
 				// else retrieve the thumbnail.
 				// this is done so it doesn't prolong the query times by retrieving the thumbnail from the embedded asset.
-				if(!$this->getSettings()->showThumbnailsInCp) {
-					$event->url = $this->defaultThumbnailUrl;
-				} else {
-					$embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
-					$thumbSize = max($event->width, $event->height);
-					$thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
-	
-					if ($thumbnailUrl)
-					{
-						$event->url = $thumbnailUrl;
-					}
-				}
+                if ($event->asset->kind === "json") {
+                    if(!$this->getSettings()->showThumbnailsInCp) {
+                        $event->url = $this->defaultThumbnailUrl;
+                    } else {
+                        $embeddedAsset = $this->methods->getEmbeddedAsset($event->asset);
+                        $thumbSize = max($event->width, $event->height);
+                        $thumbnailUrl = $embeddedAsset ? $this->_getThumbnailUrl($embeddedAsset, $thumbSize) : null;
+
+                        if ($thumbnailUrl)
+                        {
+                            $event->url = $thumbnailUrl;
+                        }
+                    }
+                }
 			}
 		);
 	}
+
+    /**
+     * Adds new and modifies existing asset table attributes in the control panel.
+     */
+    private function _configureAssetIndexAttributesNoThumbnail()
+    {
+
+        Event::on(
+            Asset::class,
+            Asset::EVENT_REGISTER_HTML_ATTRIBUTES,
+            function(RegisterElementHtmlAttributesEvent $event)
+            {
+                if ($event->sender->kind === "json") {
+                    $event->htmlAttributes['data-embedded-asset'] = null;
+                }
+            }
+        );
+    }
 
 	/**
 	 * Adds new and modifies existing asset table attributes in the control panel.
