@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.12 - 2019-09-20
+## Fix
+- Fix #116 - updating embed library to the latest version to fix the vimeo issue - thanks @cole007
+
 ## 2.0.11 - 2019-07-30
 ### Changed
 - switch to yarn.
