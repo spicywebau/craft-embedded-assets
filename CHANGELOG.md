@@ -1,7 +1,15 @@
 # Changelog
 
+## 2.1.0 - 2019-10-18
+### Added
+- embed button won't be shown if the field doesn't allow json files
+- Allow API Keys to be set using env variables.
+
+### Changed
+- Update composer craft requirement to ^3.1.0
+
 ## 2.0.12 - 2019-09-20
-## Fix
+### Fix
 - Fix #116 - updating embed library to the latest version to fix the vimeo issue - thanks @cole007
 
 ## 2.0.11 - 2019-07-30
