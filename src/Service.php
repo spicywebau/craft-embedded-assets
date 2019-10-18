@@ -67,11 +67,11 @@ class Service extends Component
 				}
 			}
 
-			if ($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = $pluginSettings->embedlyKey;
-			if ($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = $pluginSettings->iframelyKey;
-			if ($pluginSettings->googleKey) $options['google'] = ['key' => $pluginSettings->googleKey];
-			if ($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => $pluginSettings->soundcloudKey];
-			if ($pluginSettings->facebookKey) $options['facebook'] = ['key' => $pluginSettings->facebookKey];
+			if ($pluginSettings->embedlyKey) $options['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
+			if ($pluginSettings->iframelyKey) $options['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
+			if ($pluginSettings->googleKey) $options['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
+			if ($pluginSettings->soundcloudKey) $options['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
+			if ($pluginSettings->facebookKey) $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
 
 			$adapter = Embed::create($url, $options);
 			$array = $this->_convertFromAdapter($adapter);

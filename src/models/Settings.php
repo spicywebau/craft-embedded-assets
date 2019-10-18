@@ -2,6 +2,7 @@
 namespace spicyweb\embeddedassets\models;
 
 use craft\base\Model;
+use craft\behaviors\EnvAttributeParserBehavior;
 use craft\validators\StringValidator;
 
 use spicyweb\embeddedassets\validators\Parameter as ParameterValidator;
@@ -173,6 +174,16 @@ class Settings extends Model
 	 * @var bool
 	 */
 	public $showThumbnailsInCp = true;
+	
+	public function behaviors()
+	{
+		return [
+			'parser' => [
+				'class' => EnvAttributeParserBehavior::class,
+				'attributes' => ['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey'],
+			],
+		];
+	}
 
 	/**
 	 * @return array
