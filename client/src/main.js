@@ -53,6 +53,16 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 	{
 		idsToSelect.forEach((id) => this.view.selectElementById(id))
 		idsToSelect = []
+
+		let kinds = this.settings.criteria.kind;
+
+		if (kinds && Array.isArray(kinds) && kinds.length > 0) {
+			if (kinds.indexOf('json') === -1) {
+				button.$element.css('display', 'none');
+			} else {
+				button.$element.css('display', '');
+			}
+		}
 	})
 })
 
