@@ -1,4 +1,7 @@
 # Changelog
+## 2.1.1 - 2019-10-28
+### Fixed
+- Fix #117 - make sure the url has the query string when adding params
 
 ## 2.1.0 - 2019-10-18
 ### Added
