@@ -10,6 +10,7 @@ const embeddedAssets = new EmbeddedAssets()
 monkeypatch(Craft.AssetIndex, 'init', function()
 {
 	const button = new Button()
+	const replaceButton = new Button('replace')
 
 	const $uploadButton = this.$uploadButton
 	const inHeader = $uploadButton.closest('#header').length > 0
@@ -19,6 +20,8 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 
 	if (inHeader)
 	{
+		replaceButton.$element.css('display', 'none');
+		this.$uploadButton.before(replaceButton.$element)
 		this.$uploadButton.before(button.$element)
 		modalOrientations = ['bottom', 'left', 'right', 'top']
 	}
@@ -62,6 +65,25 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 			} else {
 				button.$element.css('display', '');
 			}
+		}
+	})
+
+	this.on('selectionChange', (e) => {
+		let selectedItems = e.target.view.elementSelect.$selectedItems
+
+		if (selectedItems.length && selectedItems.length === 1) {
+			let findAssetEl = $(selectedItems[0]).find('[data-embedded-asset]')
+
+			if (findAssetEl.length) {
+				// show replace button
+				replaceButton.$element.css('display', '');
+			} else {
+				//	hide replace button
+				replaceButton.$element.css('display', 'none');
+			}
+		} else {
+			//	hide replace button
+			replaceButton.$element.css('display', 'none');
 		}
 	})
 })
