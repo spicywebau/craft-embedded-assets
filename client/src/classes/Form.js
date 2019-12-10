@@ -132,9 +132,20 @@ export default class Form extends Emitter
 		this.setState('idle')
 	}
 
+	setReplace(replace, id)
+	{
+		console.log('SET REPLACE', replace)
+		this._replace = replace
+		this._replaceAssetId = id
+		console.log('Form setReplace', id)
+	}
+
 	save(url = this.$input.val(), folderId = this._getFolderId())
 	{
-		Craft.queueActionRequest('embeddedassets/actions/save', { url, folderId }, (response, status) =>
+		console.log('SAVE', this._replace, this._replaceAssetId)
+		const assetId = this._replaceAssetId
+
+		Craft.queueActionRequest('embeddedassets/actions/' + (this._replace ? 'replace' : 'save'), { url, folderId, assetId }, (response, status) =>
 		{
 			if (this._state === 'saving' && status === 'success' && response.success)
 			{

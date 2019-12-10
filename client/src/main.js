@@ -43,6 +43,7 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 	};
 
 	embeddedAssets.addButton(button, modalOrientations, getFolderId)
+	embeddedAssets.addButton(replaceButton, modalOrientations, getFolderId, true)
 
 	let idsToSelect = []
 
@@ -77,6 +78,8 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 			if (findAssetEl.length) {
 				// show replace button
 				replaceButton.$element.css('display', '');
+
+				embeddedAssets.setReplaceAssetId(selectedItems[0].attributes['data-id'].value)
 			} else {
 				//	hide replace button
 				replaceButton.$element.css('display', 'none');

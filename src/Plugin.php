@@ -134,7 +134,7 @@ class Plugin extends BasePlugin
 	/**
 	 * Assigns the template variable so it can be accessed in the templates at `craft.embeddedAssets`.
 	 */
-    private function _configureTemplateVariable()
+	private function _configureTemplateVariable()
 	{
 		Event::on(
 			CraftVariable::class,

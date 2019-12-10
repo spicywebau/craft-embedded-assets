@@ -106,7 +106,7 @@ export default class Modal extends Emitter
 		this.trigger('destroy')
 	}
 
-	show($target, settings = {})
+	show($target, settings = {}, replace)
 	{
 		if (this.hud)
 		{
@@ -128,8 +128,16 @@ export default class Modal extends Emitter
 			this.form.focus()
 		}
 
+		// this.form.setReplace(replace, this._replaceAssetId)
+
 		this.trigger('show')
 	}
+
+	// setReplaceAssetId(id)
+	// {
+	// 	this._replaceAssetId = id
+	// 	console.log('Modal setReplaceAssetId', id)
+	// }
 
 	hide()
 	{
