@@ -569,9 +569,20 @@ class Service extends Component
         $difference = $date->diff($currentDate)->d;
         
         if ($difference > 13) {
-            $headers = @get_headers($imageUrl);
             
-            if ($headers && strpos($headers[0], '200') === false) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $imageUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_NOBODY, 1);
+            
+            $output = curl_exec($ch);
+            curl_close($ch);
+            
+            $output = rtrim($output);
+            $data = explode("\n",$output);
+            
+            if ($data && strpos($data[0], '200') === false) {
                 return true;
             }
         }
