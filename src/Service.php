@@ -50,45 +50,50 @@ class Service extends Component
         
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
-            
-            $options = [
-                'min_image_width' => $pluginSettings->minImageSize,
-                'min_image_height' => $pluginSettings->minImageSize,
-                'oembed' => ['parameters' => []],
-            ];
-            
-            if (!empty($pluginSettings->parameters)) {
-                foreach ($pluginSettings->parameters as $parameter) {
-                    $param = $parameter['param'];
-                    $value = $parameter['value'];
-                    $options['oembed']['parameters'][$param] = $value;
-                }
-            }
-            
-            if ($pluginSettings->embedlyKey) {
-                $options['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
-            }
-            if ($pluginSettings->iframelyKey) {
-                $options['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
-            }
-            if ($pluginSettings->googleKey) {
-                $options['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
-            }
-            if ($pluginSettings->soundcloudKey) {
-                $options['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
-            }
-            if ($pluginSettings->facebookKey) {
-                $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
-            }
-            
-            $adapter = Embed::create($url, $options);
-            $array = $this->_convertFromAdapter($adapter);
+            $array = $this->_getDataFromAdapter($url);
             $embeddedAsset = $this->createEmbeddedAsset($array);
             
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
         }
         
         return $embeddedAsset;
+    }
+    
+    private function _getDataFromAdapter(string $url): array
+    {
+        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
+        $options = [
+            'min_image_width' => $pluginSettings->minImageSize,
+            'min_image_height' => $pluginSettings->minImageSize,
+            'oembed' => ['parameters' => []],
+        ];
+        
+        if (!empty($pluginSettings->parameters)) {
+            foreach ($pluginSettings->parameters as $parameter) {
+                $param = $parameter['param'];
+                $value = $parameter['value'];
+                $options['oembed']['parameters'][$param] = $value;
+            }
+        }
+        
+        if ($pluginSettings->embedlyKey) {
+            $options['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
+        }
+        if ($pluginSettings->iframelyKey) {
+            $options['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
+        }
+        if ($pluginSettings->googleKey) {
+            $options['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
+        }
+        if ($pluginSettings->soundcloudKey) {
+            $options['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
+        }
+        if ($pluginSettings->facebookKey) {
+            $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
+        }
+        
+        $adapter = Embed::create($url, $options);
+        return $this->_convertFromAdapter($adapter);
     }
     
     /**
@@ -137,6 +142,17 @@ class Service extends Component
                 // This version was released on 2018-05-08 so need to wait for majority adoption
                 $fileContents = stream_get_contents($asset->getStream());
                 $decodedJson = Json::decodeIfJson($fileContents);
+                
+                if (
+                    ($decodedJson['providerName'] === 'Instagram') && $this->_hasInstagramImageExpired($decodedJson['image'],
+                        $asset->dateModified)
+                ) {
+                    $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
+                    
+                    if (!is_array($decodedJson)) {
+                        $decodedJson = false;
+                    }
+                }
                 
                 if (is_array($decodedJson)) {
                     $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
@@ -542,5 +558,58 @@ class Service extends Component
             'providerName' => $legacy['providerName'] ?? null,
             'providerUrl' => $legacy['providerUrl'] ?? null,
         ];
+    }
+    
+    private function _hasInstagramImageExpired(string $imageUrl, \DateTime $dateModified): bool
+    {
+        // get headers of the image url and make sure it's not expired yet.
+        
+        $date = $dateModified;
+        $currentDate = new \DateTime();
+        $difference = $date->diff($currentDate)->d;
+        
+        if ($difference > 13) {
+            $headers = @get_headers($imageUrl);
+            
+            if ($headers && strpos($headers[0], '200') === false) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private function _updateInstagramFile(Asset $asset, $url)
+    {
+        // get new data from the url
+        $array = $this->_getDataFromAdapter($url);
+        $newEmbeddedAsset = $this->createEmbeddedAsset($array);
+        
+        if ($newEmbeddedAsset) {
+            try {
+                $assets = Craft::$app->getAssets();
+                // $fileContents = Json::encode($newEmbeddedAsset,
+                //     JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                // $path = $asset->getPath();
+                // $volume = $asset->getVolume();
+                // $url = $volume->getRootUrl();
+                // FileHelper::writeToFile($url . $path, $fileContents);
+                // $asset->dateModified = new \DateTime('@' . filemtime($url . $path));
+                // Craft::$app->getElements()->saveElement($asset);
+                
+                $folder = $assets->findFolder(['id' => $asset->folderId]);
+                $assetToReplace = $this->createAsset($newEmbeddedAsset, $folder);
+                Craft::$app->getElements()->saveElement($assetToReplace);
+                
+                $tempPath = $assetToReplace->getCopyOfFile();
+                $assets->replaceAssetFile($asset, $tempPath, $asset->filename);
+                Craft::$app->getElements()->deleteElement($assetToReplace);
+                
+            } catch (\Throwable $e) {
+                return false;
+            }
+        }
+        
+        return $array;
     }
 }

@@ -63,7 +63,7 @@ class Controller extends BaseController
             throw new BadRequestHttpException('The target folder provided for uploading is not valid');
         }
         
-        $userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
+        $userTempFolder = !$folder->volumeId ? $assetsService->getUserTemporaryUploadFolder() : null;
         if (!$userTempFolder || $folder->id != $userTempFolder->id) {
             $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
             $this->requirePermission('saveAssetInVolume:' . $volume->$folderIdProp);

@@ -36,6 +36,7 @@ class Variable
      * Determines if an asset is an embedded asset or not.
      *
      * @param Asset $asset
+     * @throws
      * @return bool
      * @deprecated Will be removed in next major version. Use the `get` method instead.
      *
@@ -52,6 +53,7 @@ class Variable
      * Retrieves the embedded asset model from an asset, if one exists.
      *
      * @param Asset $asset
+     * @throws
      * @return mixed
      * @deprecated Will be removed in next major version. Use the `get` method instead.
      *
@@ -69,6 +71,7 @@ class Variable
      *
      * @param mixed $assets An iterable object of asset models.
      * @param null $indexBy Whether to index the resulting array by a property of the asset.
+     * @throws
      * @return array
      * @deprecated Will be removed in next major version. Use the `get` method instead.
      *
