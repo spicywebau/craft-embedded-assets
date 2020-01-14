@@ -1,4 +1,5 @@
 <?php
+
 namespace spicyweb\embeddedassets\assets;
 
 use craft\web\AssetBundle;
@@ -13,11 +14,11 @@ use craft\web\AssetBundle;
  */
 class Preview extends AssetBundle
 {
-	public function init()
-	{
-		$this->sourcePath = '@spicyweb/embeddedassets/resources';
-		$this->js = ['preview.js'];
-
-		parent::init();
-	}
+    public function init()
+    {
+        $this->sourcePath = '@spicyweb/embeddedassets/resources';
+        $this->js = ['preview.js'];
+        
+        parent::init();
+    }
 }
