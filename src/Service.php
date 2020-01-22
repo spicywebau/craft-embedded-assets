@@ -143,14 +143,17 @@ class Service extends Component
                 $fileContents = stream_get_contents($asset->getStream());
                 $decodedJson = Json::decodeIfJson($fileContents);
                 
-                if (
-                    ($decodedJson['providerName'] === 'Instagram') && $this->_hasInstagramImageExpired($decodedJson['image'],
-                        $asset->dateModified)
-                ) {
-                    $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
-                    
-                    if (!is_array($decodedJson)) {
-                        $decodedJson = false;
+                if (($decodedJson['providerName'] === 'Instagram')) {
+                    if ($this->_hasInstagramImageExpired($decodedJson['image'], $asset->dateModified)) {
+                        $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
+        
+                        if (!is_array($decodedJson)) {
+                            $decodedJson = false;
+                        }
+                    } else {
+                        // if not expire yet update the date modified so it checks the file in another 7 days
+                        $asset->dateModified = new \DateTime();
+                        $s = Craft::$app->getElements()->saveElement($asset);
                     }
                 }
                 
@@ -568,8 +571,7 @@ class Service extends Component
         $currentDate = new \DateTime();
         $difference = $date->diff($currentDate)->d;
         
-        if ($difference > 13) {
-            
+        if ($difference > 7) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $imageUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -580,7 +582,7 @@ class Service extends Component
             curl_close($ch);
             
             $output = rtrim($output);
-            $data = explode("\n",$output);
+            $data = explode("\n", $output);
             
             if ($data && strpos($data[0], '200') === false) {
                 return true;
@@ -599,14 +601,6 @@ class Service extends Component
         if ($newEmbeddedAsset) {
             try {
                 $assets = Craft::$app->getAssets();
-                // $fileContents = Json::encode($newEmbeddedAsset,
-                //     JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                // $path = $asset->getPath();
-                // $volume = $asset->getVolume();
-                // $url = $volume->getRootUrl();
-                // FileHelper::writeToFile($url . $path, $fileContents);
-                // $asset->dateModified = new \DateTime('@' . filemtime($url . $path));
-                // Craft::$app->getElements()->saveElement($asset);
                 
                 $folder = $assets->findFolder(['id' => $asset->folderId]);
                 $assetToReplace = $this->createAsset($newEmbeddedAsset, $folder);
