@@ -113,7 +113,6 @@ class Controller extends BaseController
 
 		$assetToReplace = null;
 
-		var_dump($assetId);
 		if ($assetId && !$assetToReplace = $assetsService->getAssetById($assetId)) {
 			throw new NotFoundHttpException('Asset not found.');
 		}
@@ -140,7 +139,6 @@ class Controller extends BaseController
 		$result = $elementsService->saveElement($asset);
 
 		$tempPath = $asset->getCopyOfFile();
-		var_dump($tempPath);
 		$assetToReplace->title = $asset->title;
 		$assetToReplace->newFilename = $asset->filename;
 		$assetsService->replaceAssetFile($assetToReplace, $tempPath, $assetToReplace->newFilename);

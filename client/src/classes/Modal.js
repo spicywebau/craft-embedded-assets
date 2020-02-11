@@ -6,7 +6,7 @@ import { uniqueId, objectAssign } from '../utilities'
 
 export default class Modal extends Emitter
 {
-	constructor(getFolderId = ()=>-1)
+	constructor(getFolderId = () => -1)
 	{
 		super()
 
@@ -128,16 +128,8 @@ export default class Modal extends Emitter
 			this.form.focus()
 		}
 
-		// this.form.setReplace(replace, this._replaceAssetId)
-
 		this.trigger('show')
 	}
-
-	// setReplaceAssetId(id)
-	// {
-	// 	this._replaceAssetId = id
-	// 	console.log('Modal setReplaceAssetId', id)
-	// }
 
 	hide()
 	{

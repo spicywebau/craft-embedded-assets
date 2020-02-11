@@ -10,7 +10,9 @@ const embeddedAssets = new EmbeddedAssets()
 monkeypatch(Craft.AssetIndex, 'init', function()
 {
 	const button = new Button()
-	const replaceButton = new Button('replace')
+	const replaceButton = new Button()
+
+	replaceButton.setLabel('Replace')
 
 	const $uploadButton = this.$uploadButton
 	const inHeader = $uploadButton.closest('#header').length > 0
@@ -20,26 +22,28 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 
 	if (inHeader)
 	{
-		replaceButton.$element.css('display', 'none');
-		this.$uploadButton.before(replaceButton.$element)
 		this.$uploadButton.before(button.$element)
+		this.$uploadButton.before(replaceButton.$element)
 		modalOrientations = ['bottom', 'left', 'right', 'top']
 	}
 	else if (inModal)
 	{
 		this.$uploadButton.after(button.$element)
+		this.$uploadButton.after(replaceButton.$element)
 		modalOrientations = ['top', 'right', 'bottom', 'left']
 	}
+
+	replaceButton.hide()
 
 	const getFolderId = () => {
 		const split = this.getDefaultSourceKey().split(':');
 
-        if (split[split.length - 1])
-        {
-            return split[split.length - 1];
-        }
+		if (split[split.length - 1])
+		{
+			return split[split.length - 1];
+		}
 
-        return 0;
+		return 0;
 	};
 
 	embeddedAssets.addButton(button, modalOrientations, getFolderId)
@@ -60,11 +64,14 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 
 		let kinds = this.settings.criteria.kind;
 
+		button.show()
+		replaceButton.hide()
+
 		if (kinds && Array.isArray(kinds) && kinds.length > 0) {
 			if (kinds.indexOf('json') === -1) {
-				button.$element.css('display', 'none');
+				button.hide()
 			} else {
-				button.$element.css('display', '');
+				button.show()
 			}
 		}
 	})
@@ -76,17 +83,17 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 			let findAssetEl = $(selectedItems[0]).find('[data-embedded-asset]')
 
 			if (findAssetEl.length) {
-				// show replace button
-				replaceButton.$element.css('display', '');
+				button.hide()
+				replaceButton.show()
 
 				embeddedAssets.setReplaceAssetId(selectedItems[0].attributes['data-id'].value)
 			} else {
-				//	hide replace button
-				replaceButton.$element.css('display', 'none');
+				button.show()
+				replaceButton.hide()
 			}
 		} else {
-			//	hide replace button
-			replaceButton.$element.css('display', 'none');
+			button.show()
+			replaceButton.hide()
 		}
 	})
 })
@@ -102,8 +109,9 @@ monkeypatch(Craft.AssetEditor, 'updateForm', function()
 		if (typeof embedRatio == 'string') {
 			embedRatio = '56.25'
 		}
+
 		// Won't be needing this anymore
-		this.$fieldsContainer.find('.image-preview-container').remove()
+		this.$fieldsContainer.find('.preview-thumb-container').remove()
 
 		const preview = new Preview()
 		const paddingTop = Math.min(embedRatio ? embedRatio : 100, 75) + '%'

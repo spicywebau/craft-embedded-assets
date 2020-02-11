@@ -6,7 +6,7 @@ export default class Emitter
 	{
 		this._events = new Map()
 	}
-	
+
 	on(type, callback)
 	{
 		if (!this._events.has(type))

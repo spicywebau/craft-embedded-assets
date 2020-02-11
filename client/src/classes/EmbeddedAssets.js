@@ -25,11 +25,10 @@ export default class EmbeddedAssets extends Emitter
 	}
 
 	setReplaceAssetId(id) {
-		console.log('EmbeddedAssets setReplaceAssetId', id)
 		this._replaceAssetId = id
 	}
 
-	addButton(button, orientations = ['bottom', 'top', 'left', 'right'], getFolderId = ()=>-1, replace = false)
+	addButton(button, orientations = ['bottom', 'top', 'left', 'right'], getFolderId = () => -1, replace = false)
 	{
 		this.buttons.push(button)
 
@@ -41,7 +40,6 @@ export default class EmbeddedAssets extends Emitter
 
 				this.buttons.forEach(b => b.setActive(b === button))
 				this.modal.show(button.$element, { orientations }, replace)
-				console.log('EmbeddedAssets Button click: modal.form.setReplace', this._replaceAssetId);
 				this.modal.form.setReplace(replace, this._replaceAssetId)
 			}
 		})
