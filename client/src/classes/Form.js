@@ -6,7 +6,7 @@ import { uniqueId, isUrl } from '../utilities'
 
 export default class Form extends Emitter
 {
-	constructor(getFolderId = ()=>-1)
+	constructor(getFolderId = () => -1)
 	{
 		super()
 
@@ -127,14 +127,21 @@ export default class Form extends Emitter
 	clear()
 	{
 		this.$input.val('')
-
 		this.trigger('clear')
 		this.setState('idle')
 	}
 
+	setReplace(replace, id)
+	{
+		this._replace = replace
+		this._replaceAssetId = id
+	}
+
 	save(url = this.$input.val(), folderId = this._getFolderId())
 	{
-		Craft.queueActionRequest('embeddedassets/actions/save', { url, folderId }, (response, status) =>
+		const assetId = this._replaceAssetId
+
+		Craft.queueActionRequest('embeddedassets/actions/' + (this._replace ? 'replace' : 'save'), { url, folderId, assetId }, (response, status) =>
 		{
 			if (this._state === 'saving' && status === 'success' && response.success)
 			{

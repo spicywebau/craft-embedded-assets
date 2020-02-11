@@ -3,16 +3,28 @@ import Craft from 'craft'
 
 export default class Button
 {
-	constructor()
+	constructor(name)
 	{
-		const label = Craft.t('embeddedassets', `Embed`)
-		this.$element = $(`<div class="embedded-assets_button btn" data-icon="globe">${label}</div>`)
+		this.$element = $('<div class="embedded-assets_button btn" data-icon="globe">Embed</div>')
 	}
 
 	destroy()
 	{
 		this.$element.remove()
 		this.$element = null
+	}
+
+	setLabel(label)
+	{
+		this.$element.text(label)
+	}
+
+	show(){
+		this.$element.show()
+	}
+
+	hide(){
+		this.$element.hide()
 	}
 
 	setActive(flag = true)

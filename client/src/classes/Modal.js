@@ -6,7 +6,7 @@ import { uniqueId, objectAssign } from '../utilities'
 
 export default class Modal extends Emitter
 {
-	constructor(getFolderId = ()=>-1)
+	constructor(getFolderId = () => -1)
 	{
 		super()
 
@@ -106,7 +106,7 @@ export default class Modal extends Emitter
 		this.trigger('destroy')
 	}
 
-	show($target, settings = {})
+	show($target, settings = {}, replace)
 	{
 		if (this.hud)
 		{

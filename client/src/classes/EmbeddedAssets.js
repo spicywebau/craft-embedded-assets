@@ -24,7 +24,11 @@ export default class EmbeddedAssets extends Emitter
 		this.trigger('destroy')
 	}
 
-	addButton(button, orientations = ['bottom', 'top', 'left', 'right'], getFolderId = ()=>-1)
+	setReplaceAssetId(id) {
+		this._replaceAssetId = id
+	}
+
+	addButton(button, orientations = ['bottom', 'top', 'left', 'right'], getFolderId = () => -1, replace = false)
 	{
 		this.buttons.push(button)
 
@@ -35,7 +39,8 @@ export default class EmbeddedAssets extends Emitter
 				this._currentGetFolderId = getFolderId
 
 				this.buttons.forEach(b => b.setActive(b === button))
-				this.modal.show(button.$element, { orientations })
+				this.modal.show(button.$element, { orientations }, replace)
+				this.modal.form.setReplace(replace, this._replaceAssetId)
 			}
 		})
 

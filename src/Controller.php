@@ -90,6 +90,86 @@ class Controller extends BaseController
     }
     
     /**
+     * Replaces an embedded asset.
+     *
+     * @query string url The URL to create an embedded asset from (required).
+     * @query int folderId The volume folder ID to save the asset to (required).
+     * @query int assetId The asset ID to replace (required).
+     * @response JSON
+     *
+     * @return Response
+     * @throws BadRequestHttpException
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     * @throws \yii\web\ForbiddenHttpException
+     */
+    public function actionReplace(): Response {
+        $this->requireAcceptsJson();
+
+        // The behaviour of certain controller actions depends on whether Craft 3.0 or 3.1 is being used
+        // Figure out which Craft version is being used by checking whether the project config service class exists
+        $isCraft30 = !class_exists('craft\\services\\ProjectConfig');
+
+        $response = null;
+
+        $assetsService = Craft::$app->getAssets();
+        $elementsService = Craft::$app->getElements();
+        $requestService = Craft::$app->getRequest();
+
+        $url = $requestService->getRequiredParam('url');
+        $folderId = $requestService->getRequiredParam('folderId');
+        $assetId = $requestService->getRequiredParam('assetId');
+
+        $assetToReplace = null;
+
+        if ($assetId && !$assetToReplace = $assetsService->getAssetById($assetId)) {
+            throw new NotFoundHttpException('Asset not found.');
+        }
+
+        $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+
+        // Craft 3.0 requires finding the folder by its ID, whereas Craft 3.1 requires finding it by its UID
+        $folderIdProp = $isCraft30 ? 'id' : 'uid';
+        $folder = $assetsService->findFolder([$folderIdProp => $folderId]);
+
+        if (!$folder) {
+            throw new BadRequestHttpException('The target folder provided for uploading is not valid');
+        }
+
+        $userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
+        if (!$userTempFolder || $folder->id != $userTempFolder->id) {
+            $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
+            $this->requirePermission('saveAssetInVolume:'. $volume->$folderIdProp);
+        }
+
+        $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
+        $result = $elementsService->saveElement($asset);
+
+        $tempPath = $asset->getCopyOfFile();
+        $assetToReplace->title = $asset->title;
+        $assetToReplace->newFilename = $asset->filename;
+        $assetsService->replaceAssetFile($assetToReplace, $tempPath, $assetToReplace->newFilename);
+        Craft::$app->getElements()->deleteElement($asset);
+
+        if (!$result) {
+            $errors = $asset->getFirstErrors();
+            $errorLabel = Craft::t('app', "Failed to save the Asset:");
+            $response = $this->asErrorJson($errorLabel . implode(";\n", $errors));
+        } else {
+            $response = $this->asJson([
+                'success' => true,
+                'payload' => [
+                    'assetId' => $asset->id,
+                    'folderId' => $folderId,
+                ],
+            ]);
+        }
+
+        return $response;
+	  }
+
+    /**
      * Renders a preview of the embedded asset.
      *
      * @query string url The URL to create an embedded asset from.
