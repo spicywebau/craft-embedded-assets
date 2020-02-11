@@ -36,7 +36,7 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 	replaceButton.hide()
 
 	const getFolderId = () => {
-		const split = this.getDefaultSourceKey().split(':');
+		const split = this.sourceKey.split(':');
 
 		if (split[split.length - 1])
 		{
