@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1 - 2020-02-13
+### Fixed
+- Fix #121 - check for data URL when validating image URL
+
 ## 2.2.0 - 2020-02-13
 ### Added
 - Instagram auto refresh (once the Instragram signature expires, the JSON file will be updated)
