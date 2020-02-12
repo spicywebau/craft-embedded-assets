@@ -36,7 +36,10 @@ class Image extends Validator
         if (!is_array($image)) {
             $this->addError($model, $attribute, "Image must be an array.");
         } else {
-            if ($this->validateKeyExists($model, $attribute, 'url', true) && !UrlHelper::isAbsoluteUrl($image['url'])) {
+            if ($this->validateKeyExists($model, $attribute, 'url', true)
+                && !UrlHelper::isAbsoluteUrl($image['url'])
+                && strpos('data:image', $image['url']) === -1
+            ) {
                 $this->addError($model, $attribute, "Image key `url` must be an absolute URL.");
             }
             
