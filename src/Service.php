@@ -194,7 +194,7 @@ class Service extends Component
                 case 'code':
                     {
                         $code = $value instanceof Twig_Markup ? (string)$value :
-                            is_string($value) ? $value : '';
+                            (is_string($value) ? $value : '');
                         
                         $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
                     }
