@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0 - 2020-02-13
+### Added
+- Instagram auto refresh (once the Instragram signature expires, the JSON file will be updated)
+- Added the replace button on the asset index page
+
+### Fixed
+- Fixed bug which was causing embedded assets to save to the wrong asset folder
+- add fix for PHP 7.4 deprecation error #122 - thanks @oddnavy
+
 ## 2.1.1.1 - 2019-10-28
 ### Fixed
 - Fix releases
