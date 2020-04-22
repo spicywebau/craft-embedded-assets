@@ -193,8 +193,7 @@ class Service extends Component
             switch ($key) {
                 case 'code':
                     {
-                        $code = $value instanceof Twig_Markup ? (string)$value :
-                            (is_string($value) ? $value : '');
+                        $code = ($value instanceof Twig_Markup ? (string)$value : is_string($value)) ? $value : '';
                         
                         $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
                     }
