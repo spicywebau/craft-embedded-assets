@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1.1 - 2020-04-22
+### Fixed
+- Fix PHP 7.4 deprecation #127 - thanks @engram-design
+
 ## 2.2.1 - 2020-02-13
 ### Fixed
 - Fix #121 - check for data URL when validating image URL
