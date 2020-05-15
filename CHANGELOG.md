@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.2 - 2020-05-15
+### Added
+- Added support for Craft 3.4 asset previews
+
 ## 2.2.1.1 - 2020-04-22
 ### Fixed
 - Fix PHP 7.4 deprecation #127 - thanks @engram-design
