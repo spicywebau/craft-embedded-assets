@@ -17,6 +17,7 @@ use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 
+use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
 use spicyweb\embeddedassets\assets\Main as MainAsset;
 use spicyweb\embeddedassets\models\Settings;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
@@ -80,6 +81,11 @@ class Plugin extends BasePlugin
         if ($requestService->getIsCpRequest()) {
             $this->_configureCpResources();
             $this->_configureAssetThumbnails();
+
+            // Set up support for asset previews, Craft ^3.4 only
+            if (class_exists('craft\\events\\AssetPreviewEvent')) {
+                $this->_registerPreviewHandler();
+            }
             
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
@@ -173,7 +179,22 @@ class Plugin extends BasePlugin
             }
         );
     }
-    
+
+    /**
+     * Registers an event listener for Craft 3.4's asset previews.
+     */
+    private function _registerPreviewHandler() {
+        Event::on(
+            Assets::class,
+            Assets::EVENT_REGISTER_PREVIEW_HANDLER,
+            function (\craft\events\AssetPreviewEvent $event) {
+                if ($event->asset->kind === Asset::KIND_JSON) {
+                    $event->previewHandler = new EmbeddedAssetPreview($event->asset);
+                }
+            }
+        );
+    }
+
     /**
      * Adds new and modifies existing asset table attributes in the control panel.
      */

@@ -1,0 +1,19 @@
+{% if embeddedAsset.isSafe() and embeddedAsset.code %}
+
+    {% if embeddedAsset.aspectRatio %}
+        <div id="code" class="code is-ratio" style="padding-top: {{ min(embeddedAsset.aspectRatio, 75) }}%">
+            {{ embeddedAsset.code }}
+        </div>
+    {% else %}
+        <div id="code" class="code">
+            {{ embeddedAsset.code }}
+        </div>
+    {% endif %}
+
+{% elseif embeddedAsset.image and (embeddedAsset.imageWidth >= 400 or embeddedAsset.imageHeight >= 200) %}
+
+    <div class="image">
+        <img src="{{ embeddedAsset.image }}" width="{{ embeddedAsset.imageWidth }}" height="{{ embeddedAsset.imageHeight }}">
+    </div>
+
+{% endif %}

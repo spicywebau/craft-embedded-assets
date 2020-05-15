@@ -1,0 +1,6 @@
+{% set previewJs = view.getAssetManager().getPublishedUrl('@spicyweb/embeddedassets/resources/preview.js', true) %}
+<script src="{{ previewJs }}"></script>
+
+<div class="volume-preview">
+    {% include 'embeddedassets/_components/embedded_asset_preview' with {embeddedAsset: embeddedAsset} only %}
+</div>
