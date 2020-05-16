@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed typo in Netflix's entry in Embedded Assets' default whitelist
+
 ## 2.2.2 - 2020-05-15
 ### Added
 - Added support for Craft 3.4 asset previews

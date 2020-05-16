@@ -109,7 +109,7 @@ class Settings extends Model
         'meetupstatic.com',
         
         // Netflix
-        'netfix.com',
+        'netflix.com',
         
         // Reddit
         'reddit.com',
