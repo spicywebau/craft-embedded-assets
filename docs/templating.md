@@ -138,6 +138,21 @@ Example Usage:
 {{ vid.getVideoCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
 ```
 
+### getVideoId
+`getVideoId()`
+
+Returns an embedded video's ID.
+
+Returns | Description
+-|-
+[String](#string)&#124;null | The video ID, or `null` if the embedded asset is not a video.
+
+Example Usage:
+```twig
+{% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
+{{ vid.getVideoId() }}
+```
+
 ## Upgrading from Craft 2
 
 Embedded assets from the Craft 2 version of the plugin are fully compatible with the Craft 3 version. However, most functions, properties and methods have been deprecated in favour of the above API. Your templates will continue to work but you will receive deprecation notices until you decide to change them. See the table below for all the changes:

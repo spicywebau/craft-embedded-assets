@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Added
+- Added the `getVideoId()` method for an embedded asset from YouTube or Vimeo
+
 ### Fixed
 - Fixed typo in Netflix's entry in Embedded Assets' default whitelist
 
