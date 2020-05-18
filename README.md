@@ -19,7 +19,7 @@ Paste a URL to anything and Embedded Assets will pull all the images, embed code
 
 ### Just an asset
 
-Embedded assets are just JSON files. This means they can exist as real assets within you assets folders. With a little bit of Twig magic the embed information can be accessed and used in your templates.
+Embedded assets are just JSON files. This means they can exist as real assets within your assets folders. With a little bit of Twig magic the embed information can be accessed and used in your templates.
 
 <br>
 
