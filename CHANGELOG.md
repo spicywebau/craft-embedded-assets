@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.2.3 - 2020-05-18
 ### Added
 - Added the `getVideoId()` method for an embedded asset from YouTube or Vimeo
 

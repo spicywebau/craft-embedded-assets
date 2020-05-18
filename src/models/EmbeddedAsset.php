@@ -257,6 +257,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * Gets this embedded asset's video ID, if the embedded asset is a video.
      *
+     * @since 2.2.3
      * @return string|null the video ID, or null if the embedded asset is not a video
      */
     public function getVideoId() {
