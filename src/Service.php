@@ -440,7 +440,13 @@ class Service extends Component
                 }
             }
         }
-        
+
+        // TikTok sets the width and height as '100%', which Embedded Assets doesn't really like.  Just remove them.
+        if ($width === '100%' && $height === '100%') {
+            $width = null;
+            $height = null;
+        }
+
         return [$width, $height];
     }
     

@@ -6,6 +6,7 @@
 - Updated default whitelist to include TikTok
 
 ### Fixed
+- Fixed error when trying to embed a TikTok asset
 - Fixed error when trying to embed a Giphy asset
 
 ## 2.2.3 - 2020-05-18
