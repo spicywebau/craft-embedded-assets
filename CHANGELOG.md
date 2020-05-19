@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Changed
+- Updated default whitelist to include TikTok
+
 ### Fixed
 - Fixed error when trying to embed a Giphy asset
 

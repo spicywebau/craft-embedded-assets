@@ -116,7 +116,10 @@ class Settings extends Model
         
         // SoundCloud
         'soundcloud.com',
-        
+
+        // TikTok
+        'tiktok.com',
+
         // Twitter
         't.co',
         'twitter.*',
