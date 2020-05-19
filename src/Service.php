@@ -214,6 +214,11 @@ class Service extends Component
         if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height) {
             $embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
         }
+
+        // Correct invalid types to similar, valid types
+        if ($embeddedAsset->type === 'photo') {
+            $embeddedAsset->type = 'image';
+        }
         
         return $embeddedAsset->validate() ? $embeddedAsset : null;
     }
