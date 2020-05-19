@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.2.4 - 2020-05-19
 ### Changed
 - Updated `embed/embed` library minimum requirement to ^3.4.4, for compatibility with TikTok embeds
 - Updated default whitelist to include TikTok
