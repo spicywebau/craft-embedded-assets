@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for embedding videos from PBS
+
 ## 2.2.4 - 2020-05-19
 ### Changed
 - Updated `embed/embed` library minimum requirement to ^3.4.4, for compatibility with TikTok embeds

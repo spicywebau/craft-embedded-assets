@@ -93,6 +93,13 @@ class Service extends Component
         }
         
         $adapter = Embed::create($url, $options);
+
+        // Check for PBS videos
+        if (($pbsCode = $this->_getPbsEmbedCode($adapter)) !== null) {
+            $adapter->type = 'video';
+            $adapter->code = $pbsCode;
+        }
+
         return $this->_convertFromAdapter($adapter);
     }
     
@@ -626,5 +633,28 @@ class Service extends Component
         }
         
         return $array;
+    }
+
+    private function _isProviderPbs(Adapter $adapter) {
+        $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
+
+        return in_array($adapter->providerUrl, $pbsUrls);
+    }
+
+    private function _getPbsEmbedCode(Adapter $adapter) {
+        if (!$this->_isProviderPbs($adapter)) {
+            return null;
+        }
+
+        $adapterContent = $adapter->getResponse()->getContent();
+        $matches = [];
+
+        if (preg_match('/&lt;iframe(.+)iframe&gt;/i', $adapterContent, $matches)) {
+            if (preg_match('/https:\\/\\/player.pbs.org\\/viralplayer\\/([0-9]+)\\//i', $matches[0])) {
+                return htmlspecialchars_decode($matches[0], ENT_QUOTES | ENT_HTML5);
+            }
+        }
+
+        return null;
     }
 }
