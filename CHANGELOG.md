@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.2.5 - 2020-05-26
 ### Added
 - Added support for embedding videos from PBS
 
