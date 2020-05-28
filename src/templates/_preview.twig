@@ -47,7 +47,9 @@
 
 	{% endif %}
 
-	<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
+	{% if embeddedAsset.isSafe() and embeddedAsset.code %}
+		<script>EmbeddedAssetsPreview.applyRatio(document.getElementById('code'))</script>
+	{% endif %}
 
 </body>
 </html>
