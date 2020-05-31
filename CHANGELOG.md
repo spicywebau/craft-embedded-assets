@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.6 - 2020-05-31
+### Fixed
+- Updated `embed/embed` library minimum requirement to ^3.4.5, to fix issue with Instagram embeds not working in some cases
+- Fixed JavaScript error when entering an embed URL which returns an embedded asset with no associated media
+
 ## 2.2.5 - 2020-05-26
 ### Added
 - Added support for embedding videos from PBS
