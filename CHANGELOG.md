@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Removed
+- Removed some Craft 3.0 compatibility code that was no longer necessary
+
 ## 2.2.6 - 2020-05-31
 ### Fixed
 - Updated `embed/embed` library minimum requirement to ^3.4.5, to fix issue with Instagram embeds not working in some cases

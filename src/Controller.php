@@ -39,39 +39,33 @@ class Controller extends BaseController
     public function actionSave(): Response
     {
         $this->requireAcceptsJson();
-        
-        // The behaviour of certain controller actions depends on whether Craft 3.0 or 3.1 is being used
-        // Figure out which Craft version is being used by checking whether the project config service class exists
-        $isCraft30 = !class_exists('craft\\services\\ProjectConfig');
-        
+
         $response = null;
-        
+
         $assetsService = Craft::$app->getAssets();
         $elementsService = Craft::$app->getElements();
         $requestService = Craft::$app->getRequest();
-        
+
         $url = $requestService->getRequiredParam('url');
         $folderId = $requestService->getRequiredParam('folderId');
-        
+
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-        
-        // Craft 3.0 requires finding the folder by its ID, whereas Craft 3.1 requires finding it by its UID
-        $folderIdProp = $isCraft30 ? 'id' : 'uid';
-        $folder = $assetsService->findFolder([$folderIdProp => $folderId]);
+        $folder = $assetsService->findFolder(['uid' => $folderId]);
         
         if (!$folder) {
             throw new BadRequestHttpException('The target folder provided for uploading is not valid');
         }
-        
+
         $userTempFolder = !$folder->volumeId ? $assetsService->getUserTemporaryUploadFolder() : null;
+
         if (!$userTempFolder || $folder->id != $userTempFolder->id) {
             $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:' . $volume->$folderIdProp);
+            $this->requirePermission('saveAssetInVolume:' . $volume->uid);
         }
-        
+
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = $elementsService->saveElement($asset);
-        
+
         if (!$result) {
             $errors = $asset->getFirstErrors();
             $errorLabel = Craft::t('app', "Failed to save the Asset:");
@@ -85,7 +79,7 @@ class Controller extends BaseController
                 ],
             ]);
         }
-        
+
         return $response;
     }
     
@@ -107,10 +101,6 @@ class Controller extends BaseController
     public function actionReplace(): Response {
         $this->requireAcceptsJson();
 
-        // The behaviour of certain controller actions depends on whether Craft 3.0 or 3.1 is being used
-        // Figure out which Craft version is being used by checking whether the project config service class exists
-        $isCraft30 = !class_exists('craft\\services\\ProjectConfig');
-
         $response = null;
 
         $assetsService = Craft::$app->getAssets();
@@ -128,19 +118,17 @@ class Controller extends BaseController
         }
 
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-
-        // Craft 3.0 requires finding the folder by its ID, whereas Craft 3.1 requires finding it by its UID
-        $folderIdProp = $isCraft30 ? 'id' : 'uid';
-        $folder = $assetsService->findFolder([$folderIdProp => $folderId]);
+        $folder = $assetsService->findFolder(['uid' => $folderId]);
 
         if (!$folder) {
             throw new BadRequestHttpException('The target folder provided for uploading is not valid');
         }
 
         $userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
+
         if (!$userTempFolder || $folder->id != $userTempFolder->id) {
             $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:'. $volume->$folderIdProp);
+            $this->requirePermission('saveAssetInVolume:'. $volume->uid);
         }
 
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
@@ -189,24 +177,24 @@ class Controller extends BaseController
         $requestService = Craft::$app->getRequest();
         $viewService = Craft::$app->getView();
         $viewService->registerAssetBundle(PreviewAsset::class);
-        
+
         $url = $requestService->getParam('url');
         $assetId = $requestService->getParam('assetId');
         $callback = $requestService->getParam('callback');
         $showContent = (bool)$requestService->getParam('showContent', true);
-        
+
         if ($url) {
             $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         } else {
             if ($assetId) {
                 $asset = $assetsService->getAssetById($assetId);
-                
+
                 if (!$asset) {
                     throw new BadRequestHttpException("Could not find asset with ID: $assetId");
                 }
-                
+
                 $embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
-                
+
                 if (!$embeddedAsset) {
                     throw new BadRequestHttpException("Could not find embedded asset from asset $assetId ($asset->filename)");
                 }
@@ -214,17 +202,17 @@ class Controller extends BaseController
                 throw new BadRequestHttpException("URL or asset ID are missing from the request");
             }
         }
-        
+
         $template = $viewService->renderTemplate('embeddedassets/_preview', [
             'embeddedAsset' => $embeddedAsset,
             'callback' => $callback,
             'showContent' => $showContent,
         ]);
-        
+
         $response = $this->asRaw($template);
         $headers = $response->getHeaders();
         $headers->set('content-type', 'text/html; charset=utf-8');
-        
+
         return $response;
     }
 }
