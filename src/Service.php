@@ -141,19 +141,15 @@ class Service extends Component
     public function getEmbeddedAsset(Asset $asset)
     {
         $embeddedAsset = null;
-        
+
         if ($asset->kind === Asset::KIND_JSON) {
             try {
-                // Note - 2018-05-09
-                // As of Craft 3.0.6 this can be replaced with $asset->getContents()
-                // This version was released on 2018-05-08 so need to wait for majority adoption
-                $fileContents = stream_get_contents($asset->getStream());
-                $decodedJson = Json::decodeIfJson($fileContents);
-                
+                $decodedJson = Json::decodeIfJson($asset->getContents());
+
                 if (($decodedJson['providerName'] === 'Instagram')) {
                     if ($this->_hasInstagramImageExpired($decodedJson['image'], $asset->dateModified)) {
                         $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
-        
+
                         if (!is_array($decodedJson)) {
                             $decodedJson = false;
                         }
@@ -163,7 +159,7 @@ class Service extends Component
                         $s = Craft::$app->getElements()->saveElement($asset);
                     }
                 }
-                
+
                 if (is_array($decodedJson)) {
                     $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
                 }
@@ -172,7 +168,7 @@ class Service extends Component
                 $embeddedAsset = null;
             }
         }
-        
+
         return $embeddedAsset;
     }
     
