@@ -35,6 +35,8 @@ use spicyweb\embeddedassets\models\EmbeddedAsset;
  */
 class Service extends Component
 {
+    private $embeddedAssetData = [];
+
     /**
      * Requests embed data from a URL.
      *
@@ -140,6 +142,11 @@ class Service extends Component
      */
     public function getEmbeddedAsset(Asset $asset)
     {
+        // If the embedded asset data has already been loaded this request, there's no need to reload it
+        if (isset($this->embeddedAssetData[$asset->uid])) {
+            return $this->embeddedAssetData[$asset->uid];
+        }
+
         $embeddedAsset = null;
         
         if ($asset->kind === Asset::KIND_JSON) {
@@ -166,6 +173,7 @@ class Service extends Component
                 
                 if (is_array($decodedJson)) {
                     $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
+                    $this->embeddedAssetData[$asset->uid] = $embeddedAsset;
                 }
             } catch (\Throwable $e) {
                 // Ignore errors and assume it's not an embedded asset
