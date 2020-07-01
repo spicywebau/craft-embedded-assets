@@ -81,12 +81,8 @@ class Plugin extends BasePlugin
         if ($requestService->getIsCpRequest()) {
             $this->_configureCpResources();
             $this->_configureAssetThumbnails();
+            $this->_registerPreviewHandler();
 
-            // Set up support for asset previews, Craft ^3.4 only
-            if (class_exists('craft\\events\\AssetPreviewEvent')) {
-                $this->_registerPreviewHandler();
-            }
-            
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
                 $this->_configureAssetIndexAttributes();

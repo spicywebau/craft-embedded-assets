@@ -1,8 +1,8 @@
 # Changelog
 
 ## Unreleased
-### Removed
-- Removed some Craft 3.0 compatibility code that was no longer necessary
+### Changed
+- Embedded Assets now requires Craft 3.4.0 or later
 
 ## 2.2.6 - 2020-05-31
 ### Fixed
