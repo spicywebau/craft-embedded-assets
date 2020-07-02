@@ -18,12 +18,3 @@ Embedded Assets requires Craft CMS 3.1.0 or later.
 
 ### PHP version
 Embedded Assets requires PHP 7.0 or greater.
-
-## Allow JSON filetype
-
-Prior to Craft 3.0.23, JSON files were disabled by default when uploading files to the asset manager. 
-
-To fix this, either upgrade Craft to 3.0.23 or later, or open your `config/general.php` file and add the following setting:
-```php
-'extraAllowedFileExtensions' => 'json'
-```
