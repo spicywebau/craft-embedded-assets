@@ -14,7 +14,7 @@ composer require spicyweb/craft-embedded-assets
 ## Requirements
 
 ### Craft version
-Embedded Assets requires Craft CMS 3.1.0 or later.
+Embedded Assets requires Craft CMS 3.4.0 or later.
 
 ### PHP version
 Embedded Assets requires PHP 7.0 or greater.
