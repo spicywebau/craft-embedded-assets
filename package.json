@@ -1,6 +1,6 @@
 {
   "name": "craft-embedded-assets",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
   "main": "src/resources/main.js",
   "scripts": {

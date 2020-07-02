@@ -4,6 +4,10 @@
 ### Changed
 - Embedded Assets now requires Craft 3.4.0 or later
 
+## 2.2.7 - 2020-07-01
+### Fixed
+- Embedded Assets now internally stores all embedded asset data that has been loaded during a request, to avoid unnecessary reloads of embedded asset file contents, improving the performance of the Craft Assets page
+
 ## 2.2.6 - 2020-05-31
 ### Fixed
 - Updated `embed/embed` library minimum requirement to ^3.4.5, to fix issue with Instagram embeds not working in some cases
