@@ -33,6 +33,21 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 		modalOrientations = ['top', 'right', 'bottom', 'left']
 	}
 
+	const showButtonIfJsonAllowed = (button, allowedKinds) => {
+		if (typeof allowedKinds === 'string') {
+			allowedKinds = [allowedKinds];
+		}
+
+		if (allowedKinds && Array.isArray(allowedKinds) && allowedKinds.length > 0) {
+			if (allowedKinds.indexOf('json') === -1) {
+				button.hide()
+			} else {
+				button.show()
+			}
+		}
+	}
+
+	showButtonIfJsonAllowed(button, this.settings.criteria.kind)
 	replaceButton.hide()
 
 	const getFolderId = () => {
@@ -62,18 +77,8 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 		idsToSelect.forEach((id) => this.view.selectElementById(id))
 		idsToSelect = []
 
-		let kinds = this.settings.criteria.kind;
-
-		button.show()
+		showButtonIfJsonAllowed(button, this.settings.criteria.kind)
 		replaceButton.hide()
-
-		if (kinds && Array.isArray(kinds) && kinds.length > 0) {
-			if (kinds.indexOf('json') === -1) {
-				button.hide()
-			} else {
-				button.show()
-			}
-		}
 	})
 
 	this.on('selectionChange', (e) => {
