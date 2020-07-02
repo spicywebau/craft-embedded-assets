@@ -19,18 +19,3 @@ export function isUrl(url)
 {
 	return /^https?:\/\//.test(url)
 }
-
-export function objectAssign(target)
-{
-	for (let i = 1; i < arguments.length; i++)
-	{
-		const source = arguments[i]
-
-		for (let item in source) if (source.hasOwnProperty(item))
-		{
-			target[item] = source[item]
-		}
-	}
-
-	return target
-}

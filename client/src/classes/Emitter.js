@@ -1,5 +1,3 @@
-import { objectAssign } from '../utilities'
-
 export default class Emitter
 {
 	constructor()
@@ -45,7 +43,7 @@ export default class Emitter
 	{
 		if (this._events && this._events.has(type))
 		{
-			event = objectAssign(event, { type })
+			event = Object.assign(event, { type })
 
 			this._events.get(type).forEach(fn => fn.call(this, event))
 		}

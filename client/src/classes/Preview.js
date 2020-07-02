@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import Craft from 'craft'
 import Emitter from './Emitter'
-import { uniqueId, objectAssign } from '../utilities'
+import { uniqueId } from '../utilities'
 
 export default class Preview extends Emitter
 {
@@ -126,14 +126,12 @@ export default class Preview extends Emitter
 	
 	request(settings = {}, timeout = 15000)
 	{
-		const defaults = {
+		settings = Object.assign({
 			url: null,
 			assetId: null,
 			showContent: true,
 			callback: uniqueId('embeddedassets'),
-		}
-
-		settings = objectAssign(defaults, settings)
+		}, settings)
 
 		const previewWindow = this.getWindow()
 
