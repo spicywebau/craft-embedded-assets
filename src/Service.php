@@ -142,6 +142,11 @@ class Service extends Component
      */
     public function getEmbeddedAsset(Asset $asset)
     {
+        // Embedded assets are just JSON files, so clearly if this isn't a JSON file it can't be an embedded asset
+        if ($asset->kind !== Asset::KIND_JSON) {
+            return null;
+        }
+
         // If the embedded asset data has already been loaded this request, there's no need to reload it
         if (isset($this->embeddedAssetData[$asset->uid])) {
             return $this->embeddedAssetData[$asset->uid];
@@ -149,32 +154,30 @@ class Service extends Component
 
         $embeddedAsset = null;
 
-        if ($asset->kind === Asset::KIND_JSON) {
-            try {
-                $decodedJson = Json::decodeIfJson($asset->getContents());
+        try {
+            $decodedJson = Json::decodeIfJson($asset->getContents());
 
-                if (($decodedJson['providerName'] === 'Instagram')) {
-                    if ($this->_hasInstagramImageExpired($decodedJson['image'], $asset->dateModified)) {
-                        $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
+            if (($decodedJson['providerName'] === 'Instagram')) {
+                if ($this->_hasInstagramImageExpired($decodedJson['image'], $asset->dateModified)) {
+                    $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
 
-                        if (!is_array($decodedJson)) {
-                            $decodedJson = false;
-                        }
-                    } else {
-                        // if not expire yet update the date modified so it checks the file in another 7 days
-                        $asset->dateModified = new \DateTime();
-                        $s = Craft::$app->getElements()->saveElement($asset);
+                    if (!is_array($decodedJson)) {
+                        $decodedJson = false;
                     }
+                } else {
+                    // if not expire yet update the date modified so it checks the file in another 7 days
+                    $asset->dateModified = new \DateTime();
+                    $s = Craft::$app->getElements()->saveElement($asset);
                 }
-
-                if (is_array($decodedJson)) {
-                    $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
-                    $this->embeddedAssetData[$asset->uid] = $embeddedAsset;
-                }
-            } catch (\Throwable $e) {
-                // Ignore errors and assume it's not an embedded asset
-                $embeddedAsset = null;
             }
+
+            if (is_array($decodedJson)) {
+                $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
+                $this->embeddedAssetData[$asset->uid] = $embeddedAsset;
+            }
+        } catch (\Throwable $e) {
+            // Ignore errors and assume it's not an embedded asset
+            $embeddedAsset = null;
         }
 
         return $embeddedAsset;
