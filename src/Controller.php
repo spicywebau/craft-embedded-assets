@@ -2,15 +2,14 @@
 
 namespace spicyweb\embeddedassets;
 
-use yii\web\BadRequestHttpException;
-use yii\web\Response;
-
 use Craft;
-use craft\web\Controller as BaseController;
 use craft\helpers\Template;
-
+use craft\models\VolumeFolder;
+use craft\web\Controller as BaseController;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
+use yii\web\BadRequestHttpException;
+use yii\web\Response;
 
 /**
  * Class Controller
@@ -42,29 +41,15 @@ class Controller extends BaseController
 
         $response = null;
 
-        $assetsService = Craft::$app->getAssets();
-        $elementsService = Craft::$app->getElements();
         $requestService = Craft::$app->getRequest();
 
         $url = $requestService->getRequiredParam('url');
         $folderId = $requestService->getRequiredParam('folderId');
 
+        $folder = $this->_findFolder($folderId);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-        $folder = $assetsService->findFolder(['uid' => $folderId]);
-        
-        if (!$folder) {
-            throw new BadRequestHttpException('The target folder provided for uploading is not valid');
-        }
-
-        $userTempFolder = !$folder->volumeId ? $assetsService->getUserTemporaryUploadFolder() : null;
-
-        if (!$userTempFolder || $folder->id != $userTempFolder->id) {
-            $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:' . $volume->uid);
-        }
-
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
-        $result = $elementsService->saveElement($asset);
+        $result = Craft::$app->getElements()->saveElement($asset);
 
         if (!$result) {
             $errors = $asset->getFirstErrors();
@@ -117,20 +102,8 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
+        $folder = $this->_findFolder($folderId);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
-        $folder = $assetsService->findFolder(['uid' => $folderId]);
-
-        if (!$folder) {
-            throw new BadRequestHttpException('The target folder provided for uploading is not valid');
-        }
-
-        $userTempFolder = !$folder->volumeId ? $assetsService->getCurrentUserTemporaryUploadFolder() : null;
-
-        if (!$userTempFolder || $folder->id != $userTempFolder->id) {
-            $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:'. $volume->uid);
-        }
-
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = $elementsService->saveElement($asset);
 
@@ -138,7 +111,7 @@ class Controller extends BaseController
         $assetToReplace->title = $asset->title;
         $assetToReplace->newFilename = $asset->filename;
         $assetsService->replaceAssetFile($assetToReplace, $tempPath, $assetToReplace->newFilename);
-        Craft::$app->getElements()->deleteElement($asset);
+        $elementsService->deleteElement($asset);
 
         if (!$result) {
             $errors = $asset->getFirstErrors();
@@ -155,7 +128,7 @@ class Controller extends BaseController
         }
 
         return $response;
-	  }
+    }
 
     /**
      * Renders a preview of the embedded asset.
@@ -214,5 +187,24 @@ class Controller extends BaseController
         $headers->set('content-type', 'text/html; charset=utf-8');
 
         return $response;
+    }
+
+    private function _findFolder(string $folderId): VolumeFolder
+    {
+        $assetsService = Craft::$app->getAssets();
+        $folder = $assetsService->findFolder(['uid' => $folderId]);
+
+        if (!$folder) {
+            throw new BadRequestHttpException('The target folder provided for uploading is not valid');
+        }
+
+        $userTempFolder = !$folder->volumeId ? $assetsService->getUserTemporaryUploadFolder() : null;
+
+        if (!$userTempFolder || $folder->id != $userTempFolder->id) {
+            $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
+            $this->requirePermission('saveAssetInVolume:' . $volume->uid);
+        }
+
+        return $folder;
     }
 }
