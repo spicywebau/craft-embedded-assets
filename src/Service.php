@@ -2,28 +2,24 @@
 
 namespace spicyweb\embeddedassets;
 
-use DOMDocument;
-
-use yii\base\Component;
-use yii\base\Exception;
-use yii\base\ErrorException;
-
-use Twig_Markup;
-
 use Craft;
 use craft\elements\Asset;
-use craft\models\VolumeFolder;
 use craft\helpers\Template;
 use craft\helpers\StringHelper;
 use craft\helpers\Json;
 use craft\helpers\Assets;
 use craft\helpers\FileHelper;
-
+use craft\models\VolumeFolder;
+use DOMDocument;
 use Embed\Embed;
 use Embed\Adapters\Adapter;
-
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
+use Twig_Markup;
+use yii\base\Component;
+use yii\base\Exception;
+use yii\base\ErrorException;
+use yii\base\InvalidArgumentException;
 
 /**
  * Class Service
@@ -155,7 +151,7 @@ class Service extends Component
         $embeddedAsset = null;
 
         try {
-            $decodedJson = Json::decodeIfJson($asset->getContents());
+            $decodedJson = $this->_getAssetContents($asset);
 
             if (($decodedJson['providerName'] === 'Instagram')) {
                 if ($this->_hasInstagramImageExpired($decodedJson['image'], $asset->dateModified)) {
@@ -585,6 +581,48 @@ class Service extends Component
             'providerName' => $legacy['providerName'] ?? null,
             'providerUrl' => $legacy['providerUrl'] ?? null,
         ];
+    }
+
+    /**
+     * Gets the contents of the given asset.
+     *
+     * If a cached copy of the embedded asset exists, it will be loaded.  If a cached copy does not exist, one will be
+     * created after loading the embedded asset from its original location.
+     *
+     * @param Asset $asset
+     * @return array of embedded asset data
+     */
+    private function _getAssetContents(Asset $asset): array
+    {
+        $cachedPath = $this->_getCachedAssetPath($asset);
+        $contents = null;
+
+        if (file_exists($cachedPath)) {
+            $contents = file_get_contents($cachedPath);
+        } else {
+            $contents = $asset->getContents();
+            FileHelper::writeToFile($cachedPath, $contents);
+        }
+
+        return Json::decodeIfJson($contents);
+    }
+
+    /**
+     * Gets the cached path for the given asset.
+     *
+     * @param Asset $asset
+     * @return string the embedded asset's cached path
+     * @throws InvalidArgumentException if $asset is an unsaved Asset
+     */
+    private function _getCachedAssetPath(Asset $asset): string
+    {
+        if ($asset->uid === null) {
+            throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
+        }
+
+        $storagePath = Craft::$app->getPath()->getStoragePath(false);
+
+        return $storagePath . DIRECTORY_SEPARATOR . 'embeddedassets' . DIRECTORY_SEPARATOR . $asset->uid . '.json';
     }
     
     private function _hasInstagramImageExpired(string $imageUrl, \DateTime $dateModified): bool
