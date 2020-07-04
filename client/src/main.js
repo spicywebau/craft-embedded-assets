@@ -38,12 +38,10 @@ monkeypatch(Craft.AssetIndex, 'init', function()
 			allowedKinds = [allowedKinds];
 		}
 
-		if (allowedKinds && Array.isArray(allowedKinds) && allowedKinds.length > 0) {
-			if (allowedKinds.indexOf('json') === -1) {
-				button.hide()
-			} else {
-				button.show()
-			}
+		if (allowedKinds && allowedKinds.indexOf('json') === -1) {
+			button.hide()
+		} else {
+			button.show()
 		}
 	}
 
