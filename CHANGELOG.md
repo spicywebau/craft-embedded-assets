@@ -3,6 +3,10 @@
 ## Unreleased
 ### Changed
 - Embedded Assets now requires Craft 3.4.0 or later
+- Updated `embed/embed` library minimum requirement to 3.4.8
+
+### Fixed
+- Fixed an issue where Embedded Assets was putting an Embed button on a Redactor field's Add Image modal
 
 ## 2.2.7 - 2020-07-01
 ### Fixed
