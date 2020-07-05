@@ -178,7 +178,18 @@ class Service extends Component
 
         return $embeddedAsset;
     }
-    
+
+    /**
+     * Returns whether the given array represents valid data for creating an EmbeddedAsset.
+     *
+     * @param array $array
+     * @return bool
+     */
+    public function isValidEmbeddedAsset(array $array)
+    {
+        return $this->createEmbeddedAsset($array) !== null;
+    }
+
     /**
      * Creates an embedded asset model from an array of property/value pairs.
      * Returns the model unless the array included any properties that aren't defined on the model.

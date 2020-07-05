@@ -3,9 +3,6 @@
 namespace spicyweb\embeddedassets;
 
 use Craft;
-use craft\elements\Asset;
-use craft\helpers\FileHelper;
-use craft\helpers\Json;
 use craft\helpers\Template;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
@@ -60,7 +57,6 @@ class Controller extends BaseController
             $errorLabel = Craft::t('app', "Failed to save the Asset:");
             $response = $this->asErrorJson($errorLabel . implode(";\n", $errors));
         } else {
-            $this->_writeCachedFile($embeddedAsset, $asset);
             $response = $this->asJson([
                 'success' => true,
                 'payload' => [
@@ -123,7 +119,6 @@ class Controller extends BaseController
             $errorLabel = Craft::t('app', "Failed to save the Asset:");
             $response = $this->asErrorJson($errorLabel . implode(";\n", $errors));
         } else {
-            $this->_writeCachedFile($embeddedAsset, $assetToReplace);
             $response = $this->asJson([
                 'success' => true,
                 'payload' => [
@@ -212,12 +207,5 @@ class Controller extends BaseController
         }
 
         return $folder;
-    }
-
-    private function _writeCachedFile(EmbeddedAsset $embeddedAsset, Asset $asset)
-    {
-        $path = EmbeddedAssets::$plugin->methods->getCachedAssetPath($asset);
-        $contents = Json::encode($embeddedAsset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        FileHelper::writeToFile($path, $contents);
     }
 }

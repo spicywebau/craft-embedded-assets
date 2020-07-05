@@ -7,6 +7,7 @@ use craft\base\Element;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
 use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
@@ -82,6 +83,7 @@ class Plugin extends BasePlugin
             $this->_configureCpResources();
             $this->_configureAssetThumbnails();
             $this->_registerPreviewHandler();
+            $this->_registerSaveListener();
             $this->_registerDeleteListener();
 
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
@@ -190,6 +192,22 @@ class Plugin extends BasePlugin
                 }
             }
         );
+    }
+
+    /**
+     * Registers an event listener for saving an embedded asset's cached copy.
+     */
+    private function _registerSaveListener()
+    {
+        Event::on(Element::class, Element::EVENT_AFTER_SAVE, function (Event $event) {
+            if ($event->sender instanceof Asset && $event->sender->kind === Asset::KIND_JSON) {
+                $contents = $event->sender->getContents();
+
+                if ($this->methods->isValidEmbeddedAsset(Json::decodeIfJson($contents))) {
+                    FileHelper::writeToFile($this->methods->getCachedAssetPath($event->sender), $contents);
+                }
+            }
+        });
     }
 
     /**
