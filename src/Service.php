@@ -631,9 +631,10 @@ class Service extends Component
             throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
         }
 
-        $storagePath = Craft::$app->getPath()->getStoragePath(false);
+        $assetsPath = Craft::$app->getPath()->getAssetsPath(false);
+        $subDirPath = 'embeddedassets' . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
 
-        return $storagePath . DIRECTORY_SEPARATOR . 'embeddedassets' . DIRECTORY_SEPARATOR . $asset->uid . '.json';
+        return $assetsPath . DIRECTORY_SEPARATOR . $subDirPath . DIRECTORY_SEPARATOR . $asset->uid . '.json';
     }
     
     private function _hasInstagramImageExpired(string $imageUrl, \DateTime $dateModified): bool
