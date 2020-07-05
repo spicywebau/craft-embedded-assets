@@ -2,25 +2,25 @@
 
 namespace spicyweb\embeddedassets;
 
-use yii\base\Event;
-
 use Craft;
+use craft\base\Element;
 use craft\base\Plugin as BasePlugin;
+use craft\elements\Asset;
+use craft\helpers\FileHelper;
+use craft\helpers\UrlHelper;
+use craft\events\GetAssetThumbUrlEvent;
+use craft\events\RegisterElementHtmlAttributesEvent;
+use craft\events\RegisterElementTableAttributesEvent;
+use craft\events\SetElementTableAttributeHtmlEvent;
+use craft\events\TemplateEvent;
 use craft\services\Assets;
 use craft\web\View;
 use craft\web\twig\variables\CraftVariable;
-use craft\elements\Asset;
-use craft\helpers\UrlHelper;
-use craft\events\GetAssetThumbUrlEvent;
-use craft\events\TemplateEvent;
-use craft\events\SetElementTableAttributeHtmlEvent;
-use craft\events\RegisterElementHtmlAttributesEvent;
-use craft\events\RegisterElementTableAttributesEvent;
-
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
 use spicyweb\embeddedassets\assets\Main as MainAsset;
-use spicyweb\embeddedassets\models\Settings;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\models\Settings;
+use yii\base\Event;
 
 /**
  * Class Plugin
@@ -82,6 +82,7 @@ class Plugin extends BasePlugin
             $this->_configureCpResources();
             $this->_configureAssetThumbnails();
             $this->_registerPreviewHandler();
+            $this->_registerDeleteListener();
 
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
@@ -189,6 +190,18 @@ class Plugin extends BasePlugin
                 }
             }
         );
+    }
+
+    /**
+     * Registers an event listener for deleting an embedded asset's cached copy.
+     */
+    private function _registerDeleteListener()
+    {
+        Event::on(Element::class, Element::EVENT_AFTER_DELETE, function (Event $event) {
+            if ($event->sender instanceof Asset) {
+                FileHelper::unlink($this->methods->getCachedAssetPath($event->sender));
+            }
+        });
     }
 
     /**

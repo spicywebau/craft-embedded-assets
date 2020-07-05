@@ -594,7 +594,7 @@ class Service extends Component
      */
     private function _getAssetContents(Asset $asset): array
     {
-        $cachedPath = $this->_getCachedAssetPath($asset);
+        $cachedPath = $this->getCachedAssetPath($asset);
         $contents = null;
 
         if (file_exists($cachedPath)) {
@@ -614,7 +614,7 @@ class Service extends Component
      * @return string the embedded asset's cached path
      * @throws InvalidArgumentException if $asset is an unsaved Asset
      */
-    private function _getCachedAssetPath(Asset $asset): string
+    public function getCachedAssetPath(Asset $asset): string
     {
         if ($asset->uid === null) {
             throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
