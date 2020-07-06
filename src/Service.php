@@ -185,7 +185,7 @@ class Service extends Component
      * @param array $array
      * @return bool
      */
-    public function isValidEmbeddedAsset(array $array)
+    public function isValidEmbeddedAssetData(array $array)
     {
         return $this->createEmbeddedAsset($array) !== null;
     }

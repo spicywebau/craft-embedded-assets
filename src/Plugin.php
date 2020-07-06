@@ -203,7 +203,7 @@ class Plugin extends BasePlugin
             if ($event->sender instanceof Asset && $event->sender->kind === Asset::KIND_JSON) {
                 $contents = $event->sender->getContents();
 
-                if ($this->methods->isValidEmbeddedAsset(Json::decodeIfJson($contents))) {
+                if ($this->methods->isValidEmbeddedAssetData(Json::decodeIfJson($contents))) {
                     FileHelper::writeToFile($this->methods->getCachedAssetPath($event->sender), $contents);
                 }
             }
