@@ -2,12 +2,13 @@
 
 namespace spicyweb\embeddedassets\validators;
 
+use Twig\Markup;
 use yii\validators\Validator;
 
 /**
  * Class TwigMarkup
  *
- * Validates an instance of \Twig_Markup
+ * Validates an instance of \Twig\Markup
  *
  * @package spicyweb\embeddedassets\validators
  * @author Spicy Web <craft@spicyweb.com.au>
@@ -23,8 +24,8 @@ class TwigMarkup extends Validator
     public function validateAttribute($model, $attribute)
     {
         $markup = $model->$attribute;
-        
-        if (!($markup instanceof \Twig_Markup)) {
+
+        if (!($markup instanceof Markup)) {
             $this->addError($model, $attribute, "Code must be Twig markup.");
         }
     }

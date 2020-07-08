@@ -8,6 +8,7 @@
 
 ### Fixed
 - Fixed an issue where Embedded Assets was putting an Embed button on a Redactor field's Add Image modal
+- Replaced usage of the deprecated `Twig_Markup` class with `Twig\Markup`
 
 ## 2.2.7 - 2020-07-01
 ### Fixed

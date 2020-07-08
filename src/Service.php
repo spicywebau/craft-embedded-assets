@@ -15,7 +15,7 @@ use Embed\Embed;
 use Embed\Adapters\Adapter;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
-use Twig_Markup;
+use Twig\Markup as TwigMarkup;
 use yii\base\Component;
 use yii\base\Exception;
 use yii\base\ErrorException;
@@ -214,7 +214,7 @@ class Service extends Component
             switch ($key) {
                 case 'code':
                     {
-                        $code = ($value instanceof Twig_Markup ? (string)$value : is_string($value)) ? $value : '';
+                        $code = ($value instanceof TwigMarkup ? (string)$value : is_string($value)) ? $value : '';
                         
                         $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
                     }
@@ -371,9 +371,9 @@ class Service extends Component
      * an <a> link tag is returned.
      *
      * @param EmbeddedAsset $embeddedAsset
-     * @return Twig_Markup
+     * @return TwigMarkup
      */
-    public function getEmbedHtml(EmbeddedAsset $embeddedAsset): Twig_Markup
+    public function getEmbedHtml(EmbeddedAsset $embeddedAsset): TwigMarkup
     {
         if ($embeddedAsset->code && $embeddedAsset->isSafe()) {
             $html = $embeddedAsset->code;
