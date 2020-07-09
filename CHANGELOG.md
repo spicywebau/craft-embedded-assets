@@ -8,6 +8,7 @@
 
 ### Fixed
 - Fixed an issue where Embedded Assets was putting an Embed button on a Redactor field's Add Image modal
+- Fixed an issue where Embedded Assets was checking for expired Instagram signatures more often than intended, potentially causing performance issues on the Craft Assets page
 - Replaced usage of the deprecated `Twig_Markup` class with `Twig\Markup`
 
 ## 2.2.7 - 2020-07-01
