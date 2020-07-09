@@ -15,6 +15,7 @@ use DateTimeInterface;
 use DOMDocument;
 use Embed\Embed;
 use Embed\Adapters\Adapter;
+use Embed\Http\Url;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use Twig\Markup as TwigMarkup;
@@ -51,6 +52,13 @@ class Service extends Component
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
             $array = $this->_getDataFromAdapter($url);
+
+            // TODO: remove this when we can upgrade to Embed v4, or when it's fixed in Embed v3
+            // Embed data for Instagram is including the login URL (with otherwise correct data) in some cases
+            if ($array['url'] === 'https://www.instagram.com/accounts/login/') {
+                $array['url'] = (string)Url::create($url);
+            }
+
             $embeddedAsset = $this->createEmbeddedAsset($array);
 
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
