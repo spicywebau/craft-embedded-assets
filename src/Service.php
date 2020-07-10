@@ -188,6 +188,7 @@ class Service extends Component
     /**
      * Returns whether the given array represents valid data for creating an EmbeddedAsset.
      *
+     * @since 2.3.0
      * @param array $array
      * @return bool
      */
