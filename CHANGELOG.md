@@ -5,6 +5,7 @@
 - Embedded Assets now caches embedded asset JSON files in a Craft install's `storage/runtime/assets/embeddedassets` directory, improving the performance of the Craft Assets page when using a remote storage volume
 - Embedded Assets now requires Craft 3.4.0 or later
 - Updated `embed/embed` library minimum requirement to 3.4.8
+- Embedded Assets' JavaScript source has been converted to use the Standard JS style
 
 ### Fixed
 - Fixed an issue where Embedded Assets was putting an Embed button on a Redactor field's Add Image modal

@@ -1,216 +1,190 @@
 import $ from 'jquery'
 import Craft from 'craft'
+import Garnish from 'garnish'
 import Emitter from './Emitter'
 import { uniqueId } from '../utilities'
 
-export default class Preview extends Emitter
-{
-	constructor()
-	{
-		super()
+export default class Preview extends Emitter {
+  constructor () {
+    super()
 
-		const iframeId = uniqueId()
+    const iframeId = uniqueId()
 
-		this.$element = $(`
-			<div class="embedded-assets_preview">
-				<iframe id="${iframeId}" src="about:blank"></iframe>
-			</div>
-		`)
+    this.$element = $(`
+      <div class="embedded-assets_preview">
+        <iframe id="${iframeId}" src="about:blank"></iframe>
+      </div>
+    `)
 
-		this.$iframe = this.$element.find(`#${iframeId}`)
+    this.$iframe = this.$element.find(`#${iframeId}`)
 
-		this._setupHeightMonitor()
-	}
+    this._setupHeightMonitor()
+  }
 
-	destroy()
-	{
-		this.$element.remove()
-		this.$element = null
+  destroy () {
+    this.$element.remove()
+    this.$element = null
 
-		if (this._$warningTrigger)
-		{
-			this._$warningTrigger.remove()
-			this._$warningTrigger = null
-		}
+    if (this._$warningTrigger) {
+      this._$warningTrigger.remove()
+      this._$warningTrigger = null
+    }
 
-		if (this._warningHud)
-		{
-			this._warningHud.hide()
-			this._warningHud.$hud.remove()
-			this._warningHud.$shade.remove()
-			this._warningHud = null
-		}
+    if (this._warningHud) {
+      this._warningHud.hide()
+      this._warningHud.$hud.remove()
+      this._warningHud.$shade.remove()
+      this._warningHud = null
+    }
 
-		cancelAnimationFrame(this._heightMonitor)
-		clearTimeout(this._requestTimeout)
+    window.cancelAnimationFrame(this._heightMonitor)
+    clearTimeout(this._requestTimeout)
 
-		this.trigger('destroy')
-	}
+    this.trigger('destroy')
+  }
 
-	getWindow()
-	{
-		return this.$iframe[0].contentWindow
-	}
+  getWindow () {
+    return this.$iframe[0].contentWindow
+  }
 
-	getDocument()
-	{
-		const previewWindow = this.getWindow()
+  getDocument () {
+    const previewWindow = this.getWindow()
 
-		return previewWindow ? previewWindow.document : null
-	}
+    return previewWindow ? previewWindow.document : null
+  }
 
-	getBody()
-	{
-		const previewDocument = this.getDocument()
+  getBody () {
+    const previewDocument = this.getDocument()
 
-		return previewDocument ? previewDocument.body : null
-	}
+    return previewDocument ? previewDocument.body : null
+  }
 
-	showWarning()
-	{
-		const $previewWindow = $(this.getWindow())
-		const $previewDocument = $(this.getDocument())
-		const $warning = $previewDocument.find('#warning')
+  showWarning () {
+    const $previewWindow = $(this.getWindow())
+    const $previewDocument = $(this.getDocument())
+    const $warning = $previewDocument.find('#warning')
 
-		if ($warning.length > 0)
-		{
-			const { top: frameTop, left: frameLeft } = this.$iframe.offset()
-			const frameScroll = $previewWindow.scrollTop()
+    if ($warning.length > 0) {
+      const { top: frameTop, left: frameLeft } = this.$iframe.offset()
+      const frameScroll = $previewWindow.scrollTop()
 
-			const { top: iconTop, left: iconLeft } = $warning.offset()
+      const { top: iconTop, left: iconLeft } = $warning.offset()
 
-			const top = frameTop - frameScroll + iconTop
-			const left = frameLeft + iconLeft
-			const width = $warning.outerWidth()
-			const height = $warning.outerHeight()
+      const top = frameTop - frameScroll + iconTop
+      const left = frameLeft + iconLeft
+      const width = $warning.outerWidth()
+      const height = $warning.outerHeight()
 
-			if (!this._$warningTrigger)
-			{
-				this._$warningTrigger = $('<div>').css({
-					position: 'absolute',
-					display: 'none',
-				})
+      if (!this._$warningTrigger) {
+        this._$warningTrigger = $('<div>').css({
+          position: 'absolute',
+          display: 'none'
+        })
 
-				Garnish.$bod.append(this._$warningTrigger)
-			}
+        Garnish.$bod.append(this._$warningTrigger)
+      }
 
-			this._$warningTrigger.css({
-				display: 'block',
-				top: top + 'px',
-				left: left + 'px',
-				width: width + 'px',
-				height: height + 'px',
-			})
+      this._$warningTrigger.css({
+        display: 'block',
+        top: top + 'px',
+        left: left + 'px',
+        width: width + 'px',
+        height: height + 'px'
+      })
 
-			if (!this._warningHud)
-			{
-				const untrustedSource = Craft.t('embeddedassets', "This information is coming from an untrusted source.")
-				const securityMeasure = Craft.t('embeddedassets', "As a security measure embed codes will not be shown.")
-				const $message = $(`
-					<p><strong>${untrustedSource}</strong></p>
-					<p>${securityMeasure}</p>
-				`)
+      if (!this._warningHud) {
+        const untrustedSource = Craft.t('embeddedassets', 'This information is coming from an untrusted source.')
+        const securityMeasure = Craft.t('embeddedassets', 'As a security measure embed codes will not be shown.')
+        const $message = $(`
+          <p><strong>${untrustedSource}</strong></p>
+          <p>${securityMeasure}</p>
+        `)
 
-				this._warningHud = new Garnish.HUD(this._$warningTrigger, $message, {
-					hudClass: 'hud info-hud',
-					closeOtherHUDs: false,
-					onHide: () => this._$warningTrigger.css('display', 'none'),
-				})
-			}
-			else
-			{
-				this._warningHud.show()
-			}
-		}
-	}
-	
-	request(settings = {}, timeout = 15000)
-	{
-		settings = Object.assign({
-			url: null,
-			assetId: null,
-			showContent: true,
-			callback: uniqueId('embeddedassets'),
-		}, settings)
+        this._warningHud = new Garnish.HUD(this._$warningTrigger, $message, {
+          hudClass: 'hud info-hud',
+          closeOtherHUDs: false,
+          onHide: () => this._$warningTrigger.css('display', 'none')
+        })
+      } else {
+        this._warningHud.show()
+      }
+    }
+  }
 
-		const previewWindow = this.getWindow()
+  request (settings = {}, timeout = 15000) {
+    settings = Object.assign({
+      url: null,
+      assetId: null,
+      showContent: true,
+      callback: uniqueId('embeddedassets')
+    }, settings)
 
-		if (previewWindow)
-		{
-			clearTimeout(this._requestTimeout)
+    const previewWindow = this.getWindow()
 
-			const showPreview = Boolean(settings.url || settings.assetId)
-			let previewUrl = 'about:blank'
+    if (previewWindow) {
+      clearTimeout(this._requestTimeout)
 
-			if (showPreview)
-			{
-				const complete = trigger =>
-				{
-					clearTimeout(this._requestTimeout)
-					delete window[settings.callback]
-					this.trigger(trigger, parameters)
-				}
+      const showPreview = Boolean(settings.url || settings.assetId)
+      let previewUrl = 'about:blank'
 
-				window[settings.callback] = () =>
-				{
-					this._setupWarning()
-					complete('load')
-				}
+      if (showPreview) {
+        const complete = trigger => {
+          clearTimeout(this._requestTimeout)
+          delete window[settings.callback]
+          this.trigger(trigger, parameters)
+        }
 
-				this._requestTimeout = setTimeout(() => complete('timeout'), timeout)
+        window[settings.callback] = () => {
+          this._setupWarning()
+          complete('load')
+        }
 
-				const parameters = {
-					showContent: settings.showContent ? 1 : 0,
-					callback: settings.callback,
-				}
+        this._requestTimeout = setTimeout(() => complete('timeout'), timeout)
 
-				if (settings.url)
-				{
-					parameters.url = settings.url
-				}
-				else if (settings.assetId)
-				{
-					parameters.assetId = settings.assetId
-				}
+        const parameters = {
+          showContent: settings.showContent ? 1 : 0,
+          callback: settings.callback
+        }
 
-				previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', parameters)
-			}
+        if (settings.url) {
+          parameters.url = settings.url
+        } else if (settings.assetId) {
+          parameters.assetId = settings.assetId
+        }
 
-			previewWindow.location.replace(previewUrl)
-		}
-	}
+        previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', parameters)
+      }
 
-	_setupHeightMonitor()
-	{
-		this._height = 0
+      previewWindow.location.replace(previewUrl)
+    }
+  }
 
-		const monitorHeight = () =>
-		{
-			const $previewBody = $(this.getBody())
-			const height = $previewBody.height() || 0
+  _setupHeightMonitor () {
+    this._height = 0
 
-			if (this._height !== height)
-			{
-				this.trigger('resize', { prevHeight: this._height, height })
-				this._height = height
-			}
+    const monitorHeight = () => {
+      const $previewBody = $(this.getBody())
+      const height = $previewBody.height() || 0
 
-			this._heightMonitor = requestAnimationFrame(monitorHeight)
-		}
+      if (this._height !== height) {
+        this.trigger('resize', { prevHeight: this._height, height })
+        this._height = height
+      }
 
-		monitorHeight()
-	}
+      this._heightMonitor = window.requestAnimationFrame(monitorHeight)
+    }
 
-	_setupWarning()
-	{
-		const $previewDocument = $(this.getDocument())
-		const $warning = $previewDocument.find('#warning')
+    monitorHeight()
+  }
 
-		if ($warning.length > 0)
-		{
-			// Just in case
-			$warning.off('.embeddedassets')
-			$warning.on('click.embeddedassets', () => this.showWarning())
-		}
-	}
+  _setupWarning () {
+    const $previewDocument = $(this.getDocument())
+    const $warning = $previewDocument.find('#warning')
+
+    if ($warning.length > 0) {
+      // Just in case
+      $warning.off('.embeddedassets')
+      $warning.on('click.embeddedassets', () => this.showWarning())
+    }
+  }
 }
