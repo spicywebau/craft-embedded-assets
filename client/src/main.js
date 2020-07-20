@@ -35,7 +35,9 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
       allowedKinds = [allowedKinds]
     }
 
-    if (allowedKinds && allowedKinds.indexOf('json') === -1) {
+    // We still need to check the array length, because `allowedKinds` will be an empty array if the
+    // asset field had no restriction on allowed file types
+    if (allowedKinds && allowedKinds.length > 0 && allowedKinds.indexOf('json') === -1) {
       button.hide()
     } else {
       button.show()
