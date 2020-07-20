@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1 - 2020-07-20
+### Fixed
+- Fixed a bug with Embedded Assets 2.3.0, where asset index modals for asset fields with no restriction on allowed file types would not show an Embed button
+
 ## 2.3.0 - 2020-07-10
 ### Changed
 - Embedded Assets now requires Craft 3.4.0 or later
