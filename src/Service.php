@@ -52,13 +52,6 @@ class Service extends Component
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
             $array = $this->_getDataFromAdapter($url);
-
-            // TODO: remove this when we can upgrade to Embed v4, or when it's fixed in Embed v3
-            // Embed data for Instagram is including the login URL (with otherwise correct data) in some cases
-            if ($array['url'] === 'https://www.instagram.com/accounts/login/') {
-                $array['url'] = (string)Url::create($url);
-            }
-
             $embeddedAsset = $this->createEmbeddedAsset($array);
 
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
@@ -106,6 +99,12 @@ class Service extends Component
         if (($pbsCode = $this->_getPbsEmbedCode($adapter)) !== null) {
             $adapter->type = 'video';
             $adapter->code = $pbsCode;
+        }
+
+        // TODO: remove this when we can upgrade to Embed v4, or if it's fixed in Embed v3
+        // Embed data for Instagram is including the login URL (with otherwise correct data) in some cases
+        if ($adapter->url === 'https://www.instagram.com/accounts/login/') {
+            $adapter->url = (string)Url::create($url);
         }
 
         return $this->_convertFromAdapter($adapter);
