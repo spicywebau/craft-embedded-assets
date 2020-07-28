@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.3.2 - 2020-07-28
 ### Fixed
 - Fixed an issue where Instagram embeds would include the login URL (with otherwise correct data) in some cases after checking for expired signatures
 
