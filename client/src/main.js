@@ -87,11 +87,11 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
 
         embeddedAssets.setReplaceAssetId(selectedItems[0].attributes['data-id'].value)
       } else {
-        button.show()
+        showButtonIfJsonAllowed(button, this.settings.criteria.kind)
         replaceButton.hide()
       }
     } else {
-      button.show()
+      showButtonIfJsonAllowed(button, this.settings.criteria.kind)
       replaceButton.hide()
     }
   })

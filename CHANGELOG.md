@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed a bug with asset index modals for asset fields that don't allow JSON assets, where the Embed button would appear after selecting an asset
+
 ## 2.3.2 - 2020-07-28
 ### Fixed
 - Fixed an issue where Instagram embeds would include the login URL (with otherwise correct data) in some cases after checking for expired signatures
