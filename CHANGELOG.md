@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 2.3.3 - 2020-08-10
 ### Fixed
 - Fixed a bug with asset index modals for asset fields that don't allow JSON assets, where the Embed button would appear after selecting an asset
+- Updated the elliptic version requirement in yarn.lock to 6.5.3
 
 ## 2.3.2 - 2020-07-28
 ### Fixed
