@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.3.4 - 2020-08-25
 ### Fixed
 - Fixed an issue where the Embed and Replace button text could not be translated
 
