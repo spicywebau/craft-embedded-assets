@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed an issue where the Embed and Replace button text could not be translated
+
 ## 2.3.3 - 2020-08-10
 ### Fixed
 - Fixed a bug with asset index modals for asset fields that don't allow JSON assets, where the Embed button would appear after selecting an asset

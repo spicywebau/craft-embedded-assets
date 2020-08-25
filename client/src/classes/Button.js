@@ -1,8 +1,10 @@
 import $ from 'jquery'
+import Craft from 'craft'
 
 export default class Button {
-  constructor (name) {
-    this.$element = $('<div class="embedded-assets_button btn" data-icon="globe">Embed</div>')
+  constructor (label) {
+    this.$element = $('<div class="embedded-assets_button btn" data-icon="globe"></div>')
+    this.setLabel(label)
   }
 
   destroy () {
@@ -11,7 +13,7 @@ export default class Button {
   }
 
   setLabel (label) {
-    this.$element.text(label)
+    this.$element.text(Craft.t('embeddedassets', label))
   }
 
   show () {

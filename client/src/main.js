@@ -9,10 +9,8 @@ import { monkeypatch } from './utilities'
 const embeddedAssets = new EmbeddedAssets()
 
 monkeypatch(Craft.AssetIndex, 'init', function () {
-  const button = new Button()
-  const replaceButton = new Button()
-
-  replaceButton.setLabel('Replace')
+  const button = new Button('Embed')
+  const replaceButton = new Button('Replace')
 
   const $uploadButton = this.$uploadButton
   const inHeader = $uploadButton.closest('#header').length > 0

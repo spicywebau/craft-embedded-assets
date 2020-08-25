@@ -20,7 +20,17 @@ class Main extends AssetBundle
         $this->sourcePath = '@spicyweb/embeddedassets/resources';
         $this->depends = [CpAsset::class];
         $this->js = ['main.js'];
-        
+
         parent::init();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function registerAssetFiles($view)
+    {
+        $view->registerTranslations('embeddedassets', ['Embed', 'Replace']);
+
+        parent::registerAssetFiles($view);
     }
 }
