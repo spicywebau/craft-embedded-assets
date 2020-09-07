@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Updated the node-sass version requirement to 4.13.1; resolves a security issue
+
 ## 2.3.4 - 2020-08-25
 
 ### Fixed
