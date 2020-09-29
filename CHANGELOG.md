@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added support for retrieving embedded asset data with GraphQL
+
 ### Fixed
 - Updated the node-sass version requirement to 4.13.1; resolves a security issue
 

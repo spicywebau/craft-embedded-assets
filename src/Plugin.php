@@ -9,16 +9,22 @@ use craft\elements\Asset;
 use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
+use craft\events\DefineGqlTypeFieldsEvent;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\TemplateEvent;
+use craft\gql\arguments\elements\Asset as AssetArguments;
+use craft\gql\TypeManager;
 use craft\services\Assets;
+use craft\services\Gql;
 use craft\web\View;
 use craft\web\twig\variables\CraftVariable;
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
 use spicyweb\embeddedassets\assets\Main as MainAsset;
+use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
+use spicyweb\embeddedassets\gql\resolvers\EmbeddedAsset as EmbeddedAssetResolver;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\models\Settings;
 use yii\base\Event;
@@ -78,6 +84,7 @@ class Plugin extends BasePlugin
         ]);
         
         $this->_configureTemplateVariable();
+        $this->_registerGql();
         
         if ($requestService->getIsCpRequest()) {
             $this->_configureCpResources();
@@ -149,7 +156,25 @@ class Plugin extends BasePlugin
             }
         );
     }
-    
+
+    private function _registerGql()
+    {
+        Event::on(
+            TypeManager::class,
+            TypeManager::EVENT_DEFINE_GQL_TYPE_FIELDS,
+            function (DefineGqlTypeFieldsEvent $event) {
+                if ($event->typeName === 'AssetInterface') {
+                    $event->fields['embeddedAsset'] = [
+                        'name' => 'embeddedAsset',
+                        'type' => EmbeddedAssetInterface::getType(),
+                        'resolve' => EmbeddedAssetResolver::class . '::resolveOne',
+                        'description' => 'This queries for a single embedded asset.',
+                    ];
+                }
+            }
+        );
+    }
+
     /**
      * Sets the embedded asset thumbnails on asset elements in the control panel.
      */
