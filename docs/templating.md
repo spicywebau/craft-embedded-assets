@@ -73,10 +73,10 @@ Key (\*required) | Description
 ## Methods
 The methods of the embedded asset model returned from the [get](#get) function.
 
-### isSafe
-`isSafe()`
+### getIsSafe
+`getIsSafe()` or `isSafe`
 
-Checks an embedded asset embed code for URL's that are safe. This is strongly recommended to be used when outputting codes in your templates as a security measure. As embedded assets are pulling in data from external sources, there is a risk of gathering malicious code. The method checks the code itself for scripts and external resources against a [whitelist](configuration.md#whitelist).
+Checks an embedded asset embed code for URLs that are safe. This is strongly recommended to be used when outputting codes in your templates as a security measure. As embedded assets are pulling in data from external sources, there is a risk of gathering malicious code. The method checks the code itself for scripts and external resources against a [whitelist](configuration.md#whitelist).
 
 Returns | Description
 -|-
@@ -168,4 +168,4 @@ Property | `embeddedAsset.thumbnailUrl` | `embeddedAsset.image`
 Property | `embeddedAsset.thumbnailWidth` | `embeddedAsset.imageWidth`
 Property | `embeddedAsset.thumbnailHeight` | `embeddedAsset.imageHeight`
 Property | `embeddedAsset.html` | `embeddedAsset.code` as `embeddedAssets.html` has been slightly repurposed
-Property | `embeddedAsset.safeHtml` | `embeddedAsset.code` within an `embeddedAsset.isSafe()` check, but `embeddedAsset.html` is preferred
+Property | `embeddedAsset.safeHtml` | `embeddedAsset.code` within an `embeddedAsset.isSafe` check, but `embeddedAsset.html` is preferred

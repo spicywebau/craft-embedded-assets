@@ -175,9 +175,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * Method wrapper for Service::isEmbedSafe
      *
+     * @since 2.4.0
      * @return bool
      */
-    public function isSafe(): bool
+    public function getIsSafe(): bool
     {
         return EmbeddedAssets::$plugin->methods->isEmbedSafe($this);
     }
@@ -308,6 +309,17 @@ class EmbeddedAsset extends Model implements JsonSerializable
 
     //
     // Deprecated properties
+
+    /**
+     * Method wrapper for Service::isEmbedSafe
+     *
+     * @deprecated in 2.4.0, will be removed in 3.0.0; use `getIsSafe()` instead
+     * @return bool
+     */
+    public function isSafe(): bool
+    {
+        return $this->getIsSafe();
+    }
 
     /**
      * @return string

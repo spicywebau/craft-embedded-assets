@@ -4,6 +4,10 @@
 
 ### Added
 - Added support for retrieving embedded asset data with GraphQL
+- Added `spicyweb\embeddedassets\models\EmbeddedAsset::getIsSafe()`
+
+### Deprecated
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::isSafe()` (this should not require any Twig template updates)
 
 ### Fixed
 - Updated the node-sass version requirement to 4.13.1; resolves a security issue
