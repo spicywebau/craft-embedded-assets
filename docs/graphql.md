@@ -6,7 +6,7 @@ As of Embedded Assets 2.4.0, Embedded Assets supports the GraphQL functionality 
 query {
   entry(slug: "homepage") {
     ... on homepage_homepage_Entry {
-	  embeddedAssetField {
+      embeddedAssetField {
         embeddedAsset {
           title
         }
