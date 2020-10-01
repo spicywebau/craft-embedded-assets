@@ -173,6 +173,16 @@ class EmbeddedAsset extends Element
                 'type' => Type::string(),
                 'description' => 'The license for the embedded asset.'
             ],
+            'isSafe' => [
+                'name' => 'isSafe',
+                'type' => Type::boolean(),
+                'description' => 'Whether or not the the embed code is safe to use.'
+            ],
+            'html' => [
+                'name' => 'html',
+                'type' => Type::string(),
+                'description' => 'The embed HTML for the embedded asset.'
+            ],
         ], self::getName());
     }
 }
