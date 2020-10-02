@@ -6,6 +6,7 @@ use craft\gql\GqlEntityRegistry;
 use craft\gql\interfaces\Element;
 use craft\gql\TypeManager;
 use GraphQL\Type\Definition\InterfaceType;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetType;
 use spicyweb\embeddedassets\models\EmbeddedAsset as EmbeddedAssetModel;
@@ -62,6 +63,38 @@ class EmbeddedAsset extends Element
      */
     public static function getFieldDefinitions(): array
     {
+        $imageType = new ObjectType([
+            'name' => 'image',
+            'description' => 'Image data',
+            'fields' => [
+                'url' => [
+                    'name' => 'url',
+                    'type' => Type::string(),
+                    'description' => 'The URL of the image.',
+                ],
+                'width' => [
+                    'name' => 'width',
+                    'type' => Type::int(),
+                    'description' => 'The width of the image.',
+                ],
+                'height' => [
+                    'name' => 'height',
+                    'type' => Type::int(),
+                    'description' => 'The height of the image.',
+                ],
+                'size' => [
+                    'name' => 'size',
+                    'type' => Type::int(),
+                    'description' => 'The size of the image.',
+                ],
+                'mime' => [
+                    'name' => 'mime',
+                    'type' => Type::string(),
+                    'description' => 'The MIME type of the image.',
+                ],
+            ],
+        ]);
+
         return TypeManager::prepareFieldDefinitions([
             'title' => [
                 'name' => 'title',
@@ -95,7 +128,7 @@ class EmbeddedAsset extends Element
             ],
             'images' => [
                 'name' => 'images',
-                'type' => Type::listOf(Type::string()),
+                'type' => Type::listOf($imageType),
                 'description' => 'The images for the embedded asset.'
             ],
             'image' => [
@@ -145,7 +178,7 @@ class EmbeddedAsset extends Element
             ],
             'providerIcons' => [
                 'name' => 'providerIcons',
-                'type' => Type::listOf(Type::string()),
+                'type' => Type::listOf($imageType),
                 'description' => 'The provider icons for the embedded asset.'
             ],
             'providerIcon' => [
