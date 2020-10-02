@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- Added support for retrieving embedded asset data with GraphQL
+- Added support for retrieving embedded asset data with GraphQL in Craft CMS Pro
 - Added `spicyweb\embeddedassets\models\EmbeddedAsset::getIsSafe()`
 
 ### Deprecated
