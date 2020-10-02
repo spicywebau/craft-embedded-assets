@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.4.0 - 2020-10-02
 
 ### Added
 - Added support for retrieving embedded asset data with GraphQL in Craft CMS Pro
