@@ -62,6 +62,16 @@
 		suggestEnvVars: true
 	}) }}
 
+	{{ forms.autosuggestField({
+		label: "HTTP Referer"|t('embeddedassets'),
+		instructions: "Domain to set as HTTP Referer, e.g. `https://domain.com`"|t('embeddedassets'),
+		id: 'referer',
+		name: 'referer',
+		value: settings.referer,
+		errors: settings.getErrors('referer'),
+		suggestEnvVars: true
+	}) }}
+
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),

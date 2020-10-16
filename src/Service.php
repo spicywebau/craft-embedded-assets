@@ -15,6 +15,7 @@ use DateTimeInterface;
 use DOMDocument;
 use Embed\Embed;
 use Embed\Adapters\Adapter;
+use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
@@ -93,7 +94,13 @@ class Service extends Component
             $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
         }
 
+        if ($pluginSettings->referer) {
+            $adapter = Embed::create($url, $options, new CurlDispatcher([
+                CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer),
+            ]));
+        } else {
         $adapter = Embed::create($url, $options);
+        }
 
         // Check for PBS videos
         if (($pbsCode = $this->_getPbsEmbedCode($adapter)) !== null) {
