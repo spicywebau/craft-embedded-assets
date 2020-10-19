@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added the `referer` plugin setting, allowing setting the domain to be sent as the referer with embedded asset requests, which allows the embedding of domain-restricted Vimeo videos (thanks @johndwells)
+
 ## 2.4.0 - 2020-10-02
 
 ### Added
