@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a JavaScript error that prevented Redactor fields' 'link to an asset' option from working correctly
+
 ## 2.4.1 - 2020-10-19
 
 ### Added
