@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- The exceptions thrown if an embedded asset's `getVideoCode()` method is called on an embedded asset that is not a video, or where it is not passed an array, have been given more descriptive error messages
+
 ## 2.4.2 - 2020-10-26
 
 ### Fixed

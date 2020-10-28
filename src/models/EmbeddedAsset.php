@@ -13,6 +13,7 @@ use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\validators\Image as ImageValidator;
 use spicyweb\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
 use Twig\Markup as TwigMarkup;
+use yii\base\Exception;
 
 /**
  * Class EmbeddedAsset
@@ -234,22 +235,19 @@ class EmbeddedAsset extends Model implements JsonSerializable
 
     /**
      * Returns the raw code with additional params passed. Has to be type of video.
+     *
+     * @param array $params
      * @return string
      */
-    public function getVideoCode($params)
+    public function getVideoCode(array $params)
     {
-        $url = null;
-        $code = null;
-
-        if ($this->type == "video" && is_array($params)) {
-            $url = $this->getMatchedVideoUrl();
-            $originalUrl = $url;
-            $code = $this->code;
-
-            $url = $this->addParamsToVideoUrl($params, $url);
-
-            $code = str_replace($originalUrl, $url, $code);
+        if ($this->type !== 'video') {
+            throw new Exception('Tried to call getVideoCode() on an embedded asset with a type other than video');
         }
+
+        $oldUrl = $this->getMatchedVideoUrl();
+        $newUrl = $this->addParamsToVideoUrl($params, $oldUrl);
+        $code = str_replace($oldUrl, $newUrl, $this->code);
 
         return Template::raw($code);
     }
