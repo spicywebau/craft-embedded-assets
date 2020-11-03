@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.4.3 - 2020-11-03
 
 ### Changed
 - Updated `embed/embed` library minimum requirement to 3.4.9
