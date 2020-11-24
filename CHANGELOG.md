@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added a default English translation file
+
 ### Fixed
 - Fixed an issue with the `getVideoCode()` and `getVideoUrl()` methods where an extra `?` could sometimes be included in the returned URL
 
