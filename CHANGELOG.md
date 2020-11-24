@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.4.4 - 2020-11-24
 
 ### Added
 - Added a default English translation file
