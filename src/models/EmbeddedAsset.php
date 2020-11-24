@@ -279,7 +279,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     private function addParamsToVideoUrl($arr, $pUrl)
     {
-        $url = (strpos('?', $pUrl) === false) ? $pUrl . '?' : $pUrl;
+        $url = (strpos($pUrl, '?') === false) ? $pUrl . '?' : $pUrl;
         $paramsLength = count($arr);
 
         if ($paramsLength > 0) {

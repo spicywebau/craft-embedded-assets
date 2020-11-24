@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an issue with the `getVideoCode()` and `getVideoUrl()` methods where an extra `?` could sometimes be included in the returned URL
+
 ## 2.4.3 - 2020-11-03
 
 ### Changed
