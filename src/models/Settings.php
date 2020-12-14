@@ -49,6 +49,11 @@ class Settings extends Model
     public $referer = '';
     
     /**
+     * @var string
+     */
+    public $customAdaptersNamespace = '';
+
+    /**
      * @var array of parameters
      */
     public $parameters = [
@@ -194,7 +199,7 @@ class Settings extends Model
         return [
             'parser' => [
                 'class' => EnvAttributeParserBehavior::class,
-                'attributes' => ['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey', 'referer'],
+                'attributes' => ['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey', 'referer', 'customAdaptersNamespace'],
             ],
         ];
     }
@@ -205,7 +210,7 @@ class Settings extends Model
     public function rules()
     {
         return [
-            [['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey', 'referer'], StringValidator::class],
+            [['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey', 'referer', 'customAdaptersNamespace'], StringValidator::class],
             ['parameters', 'each', 'rule' => [ParameterValidator::class]],
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],

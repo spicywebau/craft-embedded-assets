@@ -72,6 +72,16 @@
 		suggestEnvVars: true
 	}) }}
 
+    {{ forms.autosuggestField({
+        label: "Custom Adapters Namespace"|t('embeddedassets'),
+        instructions: "Namespace used to load custom adapters, e.g. `modules\\mymodule\\adapters\\`"|t('embeddedassets'),
+        id: 'customAdaptersNamespace',
+        name: 'customAdaptersNamespace',
+        value: settings.customAdaptersNamespace,
+        errors: settings.getErrors('customAdaptersNamespace'),
+        suggestEnvVars: true
+    }) }}
+
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),
