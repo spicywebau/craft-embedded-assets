@@ -1,5 +1,34 @@
 # Changelog
 
+## 2.4.5 - 2020-12-29
+
+### Changed
+- Updated the `embed/embed` library version requirement to ^3.4.13
+
+## 2.4.4 - 2020-11-24
+
+### Added
+- Added a default English translation file
+
+### Fixed
+- Fixed an issue with the `getVideoCode()` and `getVideoUrl()` methods where an extra `?` could sometimes be included in the returned URL
+
+## 2.4.3 - 2020-11-03
+
+### Changed
+- Updated `embed/embed` library minimum requirement to 3.4.9
+- The exceptions thrown if an embedded asset's `getVideoCode()` method is called on an embedded asset that is not a video, or where it is not passed an array, have been given more descriptive error messages
+
+## 2.4.2 - 2020-10-26
+
+### Fixed
+- Fixed a JavaScript error that prevented Redactor fields' 'link to an asset' option from working correctly
+
+## 2.4.1 - 2020-10-19
+
+### Added
+- Added the `referer` plugin setting, allowing setting the domain to be sent as the referer with embedded asset requests, which allows the embedding of domain-restricted Vimeo videos (thanks @johndwells)
+
 ## 2.4.0 - 2020-10-02
 
 ### Added

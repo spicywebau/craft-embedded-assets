@@ -16,6 +16,9 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   const inHeader = $uploadButton.closest('#header').length > 0
   const inModal = $uploadButton.closest('.modal').length > 0
 
+  // Empty array just means no file type restrictions
+  const allowedAssetKinds = this.settings.criteria ? this.settings.criteria.kind : []
+
   let modalOrientations
 
   if (inHeader) {
@@ -42,7 +45,7 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
     }
   }
 
-  showButtonIfJsonAllowed(button, this.settings.criteria.kind)
+  showButtonIfJsonAllowed(button, allowedAssetKinds)
   replaceButton.hide()
 
   const getFolderId = () => {
@@ -69,7 +72,7 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
     idsToSelect.forEach((id) => this.view.selectElementById(id))
     idsToSelect = []
 
-    showButtonIfJsonAllowed(button, this.settings.criteria.kind)
+    showButtonIfJsonAllowed(button, allowedAssetKinds)
     replaceButton.hide()
   })
 
@@ -85,11 +88,11 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
 
         embeddedAssets.setReplaceAssetId(selectedItems[0].attributes['data-id'].value)
       } else {
-        showButtonIfJsonAllowed(button, this.settings.criteria.kind)
+        showButtonIfJsonAllowed(button, allowedAssetKinds)
         replaceButton.hide()
       }
     } else {
-      showButtonIfJsonAllowed(button, this.settings.criteria.kind)
+      showButtonIfJsonAllowed(button, allowedAssetKinds)
       replaceButton.hide()
     }
   })
