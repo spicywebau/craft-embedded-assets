@@ -618,15 +618,12 @@ class Service extends Component
      */
     private function _getAssetContents(Asset $asset): array
     {
-        $cachedPath = $this->getCachedAssetPath($asset);
-        $contents = null;
-
-        if (file_exists($cachedPath)) {
-            $contents = file_get_contents($cachedPath);
-        } else {
-            $contents = $asset->getContents();
-            FileHelper::writeToFile($cachedPath, $contents);
-        }
+        $contents = Craft::$app->getCache()->getOrSet(
+			$this->getCachedAssetKey($asset),
+			static function() use($asset) {
+        		return $asset->getContents();
+			},
+			0);
 
         return Json::decodeIfJson($contents);
     }
@@ -638,16 +635,13 @@ class Service extends Component
      * @return string the embedded asset's cached path
      * @throws InvalidArgumentException if $asset is an unsaved Asset
      */
-    public function getCachedAssetPath(Asset $asset): string
+    public function getCachedAssetKey(Asset $asset): string
     {
         if ($asset->uid === null) {
-            throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
+            throw new InvalidArgumentException('Tried to get the cached key of an unsaved embedded asset');
         }
 
-        $assetsPath = Craft::$app->getPath()->getAssetsPath(false);
-        $subDirPath = 'embeddedassets' . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
-
-        return $assetsPath . DIRECTORY_SEPARATOR . $subDirPath . DIRECTORY_SEPARATOR . $asset->uid . '.json';
+        return 'embeddedassets:' . $asset->uid;
     }
 
     private function _hasBeenWeekSince(DateTimeInterface $dateModified)

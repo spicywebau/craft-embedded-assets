@@ -6,7 +6,6 @@ use Craft;
 use craft\base\Element;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
-use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 use craft\events\DefineGqlTypeFieldsEvent;
@@ -229,7 +228,7 @@ class Plugin extends BasePlugin
                 $contents = $event->sender->getContents();
 
                 if ($this->methods->isValidEmbeddedAssetData(Json::decodeIfJson($contents))) {
-                    FileHelper::writeToFile($this->methods->getCachedAssetPath($event->sender), $contents);
+                	Craft::$app->getCache()->add($this->methods->getCachedAssetKey($event->sender), $contents, 0);
                 }
             }
         });
@@ -242,7 +241,7 @@ class Plugin extends BasePlugin
     {
         Event::on(Element::class, Element::EVENT_AFTER_DELETE, function (Event $event) {
             if ($event->sender instanceof Asset) {
-                FileHelper::unlink($this->methods->getCachedAssetPath($event->sender));
+            	Craft::$app->getCache()->delete($this->methods->getCachedAssetKey($event->sender));
             }
         });
     }
