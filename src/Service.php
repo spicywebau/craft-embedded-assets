@@ -629,10 +629,11 @@ class Service extends Component
     }
 
     /**
-     * Gets the cached path for the given asset.
+     * Gets the cached key for the given asset.
      *
+     * @since 2.5.0
      * @param Asset $asset
-     * @return string the embedded asset's cached path
+     * @return string the embedded asset's cached key
      * @throws InvalidArgumentException if $asset is an unsaved Asset
      */
     public function getCachedAssetKey(Asset $asset): string
@@ -642,6 +643,26 @@ class Service extends Component
         }
 
         return 'embeddedassets:' . $asset->uid;
+    }
+
+    /**
+     * Gets the cached path for the given asset.
+     *
+     * @param Asset $asset
+     * @return string the embedded asset's cached path
+     * @throws InvalidArgumentException if $asset is an unsaved Asset
+     * @deprecated in 2.5.0
+     */
+    public function getCachedAssetPath(Asset $asset): string
+    {
+        if ($asset->uid === null) {
+            throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
+        }
+
+        $assetsPath = Craft::$app->getPath()->getAssetsPath(false);
+        $subDirPath = 'embeddedassets' . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
+
+        return $assetsPath . DIRECTORY_SEPARATOR . $subDirPath . DIRECTORY_SEPARATOR . $asset->uid . '.json';
     }
 
     private function _hasBeenWeekSince(DateTimeInterface $dateModified)
