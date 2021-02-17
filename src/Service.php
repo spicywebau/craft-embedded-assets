@@ -645,7 +645,13 @@ class Service extends Component
 			},
 			0);
 
-        return Json::decodeIfJson($contents);
+        try {
+            $contents = Json::decode($contents);
+        } catch (\Throwable $e) {
+            throw new Exception('Tried to get the contents of a non-embedded asset');
+        }
+
+        return $contents;
     }
 
     /**
