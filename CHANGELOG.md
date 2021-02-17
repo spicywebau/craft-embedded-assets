@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 - 2021-02-17
 
 ### Changed
 - The embedded asset caching added in Embedded Assets 2.3.0 now uses the Craft data cache, rather than manual saving of files within `storage/runtime/assets/embeddedassets` (thanks @johndwells)
