@@ -621,17 +621,57 @@ class Service extends Component
      */
     private function _getAssetContents(Asset $asset): array
     {
-        $cachedPath = $this->getCachedAssetPath($asset);
-        $contents = null;
+        $contents = Craft::$app->getCache()->getOrSet(
+			$this->getCachedAssetKey($asset),
+			static function() use($asset) {
+                $oldCacheDir = Craft::$app->getPath()->getAssetsPath(false) . DIRECTORY_SEPARATOR . 'embeddedassets';
+                $oldSubDir = $oldCacheDir . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
+                $oldCachedPath = $oldSubDir . DIRECTORY_SEPARATOR . $asset->uid . '.json';
+                $contents = null;
 
-        if (file_exists($cachedPath)) {
-            $contents = file_get_contents($cachedPath);
-        } else {
-            $contents = $asset->getContents();
-            FileHelper::writeToFile($cachedPath, $contents);
+                if (file_exists($oldCachedPath)) {
+                    $contents = file_get_contents($oldCachedPath);
+                    FileHelper::unlink($oldCachedPath);
+
+                    if (FileHelper::isDirectoryEmpty($oldSubDir)) {
+                        FileHelper::removeDirectory($oldSubDir);
+                    }
+
+                    if (FileHelper::isDirectoryEmpty($oldCacheDir)) {
+                        FileHelper::removeDirectory($oldCacheDir);
+                    }
+                } else {
+                    $contents = $asset->getContents();
+                }
+
+                return $contents;
+			},
+			0);
+
+        try {
+            $contents = Json::decode($contents);
+        } catch (\Throwable $e) {
+            throw new Exception('Tried to get the contents of a non-embedded asset');
         }
 
-        return Json::decodeIfJson($contents);
+        return $contents;
+    }
+
+    /**
+     * Gets the cached key for the given asset.
+     *
+     * @since 2.5.0
+     * @param Asset $asset
+     * @return string the embedded asset's cached key
+     * @throws InvalidArgumentException if $asset is an unsaved Asset
+     */
+    public function getCachedAssetKey(Asset $asset): string
+    {
+        if ($asset->uid === null) {
+            throw new InvalidArgumentException('Tried to get the cached key of an unsaved embedded asset');
+        }
+
+        return 'embeddedassets:' . $asset->uid;
     }
 
     /**
@@ -640,6 +680,7 @@ class Service extends Component
      * @param Asset $asset
      * @return string the embedded asset's cached path
      * @throws InvalidArgumentException if $asset is an unsaved Asset
+     * @deprecated in 2.5.0
      */
     public function getCachedAssetPath(Asset $asset): string
     {
