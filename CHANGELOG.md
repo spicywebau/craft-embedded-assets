@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where a validation error would occur when saving the plugin settings, if any of the Parameters list values were 0
+
 ## 2.5.0 - 2021-02-17
 
 ### Changed

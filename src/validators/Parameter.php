@@ -55,7 +55,7 @@ class Parameter extends Validator
             if (!array_key_exists($key, $array)) {
                 $this->addError($model, $attribute, "Parameter must contain a `$key` key.");
             } else {
-                if ($required && empty($array[$key])) {
+                if ($required && strlen($array[$key]) === 0) {
                     $this->addError($model, $attribute, "Parameter key `$key` is required.");
                 } else {
                     $valid = true;
