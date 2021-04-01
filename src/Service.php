@@ -269,8 +269,6 @@ class Service extends Component
      */
     public function createAsset(EmbeddedAsset $embeddedAsset, VolumeFolder $folder): Asset
     {
-        $hasReplaceMb4 = method_exists(StringHelper::class, 'replaceMb4');
-
         $assetsService = Craft::$app->getAssets();
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
 
@@ -280,18 +278,8 @@ class Service extends Component
 
         FileHelper::writeToFile($tempFilePath, $fileContents);
 
-        $assetTitle = $embeddedAsset->title ?: $embeddedAsset->url;
-
         // Ensure the title contains no emoji
-        if ($hasReplaceMb4) {
-            $assetTitle = StringHelper::replaceMb4($assetTitle, '');
-        } else {
-            if (StringHelper::containsMb4($assetTitle)) {
-                $assetTitle = preg_replace_callback('/./u', function (array $match): string {
-                    return strlen($match[0]) >= 4 ? '' : $match[0];
-                }, $assetTitle);
-            }
-        }
+        $assetTitle = StringHelper::replaceMb4($embeddedAsset->title ?: $embeddedAsset->url, '');
 
         $fileName = Assets::prepareAssetName($assetTitle, false);
         $fileName = str_replace('.', '', $fileName);
