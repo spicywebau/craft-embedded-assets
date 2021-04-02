@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Updated the `embed/embed` library version requirement to ^3.4.15
+
 ## 2.5.1 - 2021-02-27
 
 ### Fixed
