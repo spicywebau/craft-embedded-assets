@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an issue where direct Vimeo URLs could not be embedded (thanks @boboldehampsink)
+
 ## 2.5.2 - 2021-04-02
 
 ### Changed
