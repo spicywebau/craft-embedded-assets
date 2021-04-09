@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed an issue where direct Vimeo URLs could not be embedded (thanks @boboldehampsink)
+- Fixed a potential preview styling issue when the embedded asset code is a `<video>`
 
 ## 2.5.2 - 2021-04-02
 

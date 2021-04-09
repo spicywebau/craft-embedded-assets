@@ -51,6 +51,10 @@ body {
 		margin: 0 !important;
 	}
 
+	> video {
+		max-width: 100%;
+	}
+
 	&.is-ratio {
 		padding: 75% 0 0 0;
 
