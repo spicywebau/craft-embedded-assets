@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Changed Embedded Assets' JavaScript dependency package management from Yarn to NPM
+
 ## 2.5.3 - 2021-04-09
 
 ### Fixed
