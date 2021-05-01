@@ -5,7 +5,7 @@
   "main": "src/resources/main.js",
   "scripts": {
     "build-dev": "./node_modules/.bin/webpack --config ./client/build/webpack.js --mode development",
-    "build": "./node_modules/.bin/webpack --config ./client/build/webpack.js --mode production"
+    "build": "./node_modules/.bin/standard && ./node_modules/.bin/webpack --config ./client/build/webpack.js --mode production"
   },
   "repository": {
     "type": "git",
