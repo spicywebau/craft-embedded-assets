@@ -28,7 +28,7 @@
     "rss": "https://github.com/spicywebau/craft-embedded-assets/commits/master.atom"
   },
   "require": {
-    "craftcms/cms": "^3.4.0",
+    "craftcms/cms": "^3.6.0",
     "embed/embed": "^3.4.15"
   },
   "autoload": {

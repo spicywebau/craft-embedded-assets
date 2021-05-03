@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Changed
+- Embedded Assets now requires Craft 3.6.0 or later
 - Changed Embedded Assets' JavaScript dependency package management from Yarn to NPM
 
 ## 2.5.3 - 2021-04-09
