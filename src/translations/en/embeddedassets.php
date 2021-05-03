@@ -11,4 +11,6 @@ return [
     'Rich' => 'Rich',
     'This information is coming from an untrusted source.' => 'This information is coming from an untrusted source.',
     'Video' => 'Video',
+    'Use YouTube nocookie?' => 'Use YouTube nocookie?',
+    'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.' => 'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.',
 ];

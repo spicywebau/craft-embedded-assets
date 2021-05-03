@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added the `Use YouTube nocookie?` plugin setting, which will force usage of the `youtube-nocookie.com` domain for YouTube iframes when enabled
+
 ### Changed
 - Embedded Assets now requires Craft 3.6.0 or later
 - Changed Embedded Assets' JavaScript dependency package management from Yarn to NPM

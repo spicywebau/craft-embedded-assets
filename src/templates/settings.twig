@@ -72,6 +72,14 @@
 		suggestEnvVars: true
 	}) }}
 
+	{{ forms.lightswitchField({
+		label: 'Use YouTube nocookie?'|t('embeddedassets'),
+		instructions: 'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.'|t('embeddedassets'),
+		id: 'useYouTubeNoCookie',
+		name: 'useYouTubeNoCookie',
+		on: settings.useYouTubeNoCookie,
+	}) }}
+
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),

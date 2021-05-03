@@ -188,7 +188,12 @@ class Settings extends Model
      * @var bool
      */
     public $showThumbnailsInCp = true;
-    
+
+    /**
+     * @var bool
+     */
+    public $useYouTubeNoCookie = false;
+
     public function behaviors()
     {
         return [
@@ -210,7 +215,7 @@ class Settings extends Model
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
             ['cacheDuration', 'integer', 'min' => 0],
-            ['showThumbnailsInCp', 'boolean'],
+            [['showThumbnailsInCp', 'useYouTubeNoCookie'], 'boolean'],
         ];
     }
 }

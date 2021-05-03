@@ -180,6 +180,15 @@ class Service extends Component
                 }
             }
 
+            // Make YouTube iframes use the nocookie embed URL if the relevant setting is enabled
+            if ($decodedJson['providerName'] === 'YouTube' && EmbeddedAssets::$plugin->getSettings()->useYouTubeNoCookie) {
+                $decodedJson['code'] = preg_replace(
+                    '/src="https?:\/\/www.youtube.com\/embed\/(.+)\?/',
+                    'src="https://www.youtube-nocookie.com/embed/$1?',
+                    $decodedJson['code']
+                );
+            }
+
             if (is_array($decodedJson)) {
                 $embeddedAsset = $this->createEmbeddedAsset($decodedJson);
                 $this->embeddedAssetData[$asset->uid] = $embeddedAsset;
