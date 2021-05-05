@@ -227,7 +227,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
 
         if ($this->type == "video" && is_array($params)) {
             $url = $this->getMatchedVideoUrl();
-            $url = $this->addParamsToVideoUrl($params, $url);
+            $url = $this->_addParamsToUrl($params, $url);
         }
 
         return $url;
@@ -246,7 +246,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
         }
 
         $oldUrl = $this->getMatchedVideoUrl();
-        $newUrl = $this->addParamsToVideoUrl($params, $oldUrl);
+        $newUrl = $this->_addParamsToUrl($params, $oldUrl);
         $code = str_replace($oldUrl, $newUrl, $this->code);
 
         return Template::raw($code);
@@ -277,7 +277,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function addParamsToVideoUrl($newParams, $pUrl, $overrideParams = false)
+    private function _addParamsToUrl($newParams, $pUrl, $overrideParams = false)
     {
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
