@@ -277,20 +277,41 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function addParamsToVideoUrl($arr, $pUrl)
+    private function addParamsToVideoUrl($newParams, $pUrl, $overrideParams = false)
     {
-        $url = (strpos($pUrl, '?') === false) ? $pUrl . '?' : $pUrl;
-        $paramsLength = count($arr);
+        if ($overrideParams) {
+            $startPos = strpos($pUrl, '?');
+            $newUrl = substr($pUrl, 0, $startPos);
+            $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)): [];
+            $params = [];
+            $joinedParams = [];
 
-        if ($paramsLength > 0) {
-            for ($i = 0; $i < $paramsLength; $i++) {
-                if (is_string($arr[$i])) {
-                    $url = $url . '&' . $arr[$i];
+            foreach ($oldParams as $param) {
+                $split = explode('=', $param);
+                $params[$split[0]] = $split[1] ?? '';
+            }
+
+            foreach ($newParams as $param) {
+                $split = explode('=', $param);
+                $params[$split[0]] = $split[1] ?? '';
+            }
+
+            foreach ($params as $key => $value) {
+                $joinedParams[] = $key . ($value !== '' ? '=' . $value : '');
+            }
+
+            return $newUrl . (!empty($joinedParams) ? '?' . implode('&', $joinedParams) : '');
+        } else {
+            $url = (strpos($pUrl, '?') === false) ? $pUrl . '?' : $pUrl;
+
+            foreach ($newParams as $param) {
+                if (is_string($param)) {
+                    $url = $url . '&' . $param;
                 }
             }
-        }
 
-        return $url;
+            return $url;
+        }
     }
 
     /**
