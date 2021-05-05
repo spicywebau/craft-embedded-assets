@@ -254,7 +254,7 @@ class Service extends Component
         $embeddedAsset->width = $dimensions[0];
         $embeddedAsset->height = $dimensions[1];
 
-        // Sets aspect ratio is missing
+        // Sets aspect ratio if it's missing
         if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height) {
             $embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
         }
@@ -364,7 +364,7 @@ class Service extends Component
                     throw new ErrorException();
                 }
             } catch (ErrorException $e) {
-                // Corrupted code property, like due to invalid HTML.
+                // Corrupted code property, likely due to invalid HTML.
                 $dom = null;
             } finally {
                 libxml_use_internal_errors($errors);
