@@ -34,15 +34,15 @@ class EmbeddedAsset extends Element
         /* @var EmbeddedAsset $source */
         $fieldName = $resolveInfo->fieldName;
 
-        if ($fieldName === 'url') {
-            if($arguments['asVideoUrl']) {
+        if(!empty($arguments) && $fieldName === 'url') {
+            if($arguments['asVideoUrl'] === TRUE) {
                 return $source->getVideoUrl($arguments['params'] ?? []);
             }
-            if($arguments['asVideoCode']) {
+            if($arguments['asVideoCode'] === TRUE) {
                 return $source->getVideoCode($arguments['params'] ?? []);
             }
         }
-
         return parent::resolve($source, $arguments, $context, $resolveInfo);
+
     }
 }
