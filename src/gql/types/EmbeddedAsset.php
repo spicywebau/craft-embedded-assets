@@ -38,9 +38,6 @@ class EmbeddedAsset extends Element
             if($arguments['asVideoUrl'] === TRUE) {
                 return $source->getVideoUrl($arguments['params'] ?? []);
             }
-            if($arguments['asVideoCode'] === TRUE) {
-                return $source->getVideoCode($arguments['params'] ?? []);
-            }
         }
         return parent::resolve($source, $arguments, $context, $resolveInfo);
 
