@@ -116,10 +116,15 @@ class EmbeddedAsset extends Element
                         'description' => 'Should the URL be returned as a Video URL?',
                         'type' => Type::boolean()
                     ],
+                    'asVideoCode' => [
+                        'name' => 'asVideoCode',
+                        'description' => 'Should the URL be returned as a Video Code?',
+                        'type' => Type::boolean()
+                    ],
                     'params' => [
                         'name' => 'params',
                         'description' => "A list of params which will be added to the URL. For example: ['autoplay=1', 'controls=0', 'playsinline=1']",
-                        'type' => Type::listOf(Type::nonNull(Type::string())),
+                        'type' => Type::listOf(ype::string()),
                     ],
                 ],
             ],
