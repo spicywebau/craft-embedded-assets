@@ -119,7 +119,7 @@ class EmbeddedAsset extends Element
                     'params' => [
                         'name' => 'params',
                         'description' => "A list of params which will be added to the URL. For example: ['autoplay=1', 'controls=0', 'playsinline=1']",
-                        'type' => Type::nonNull(Type::listOf(Type::nonNull(Type::string()))),
+                        'type' => Type::listOf(Type::nonNull(Type::string())),
                     ],
                 ],
             ],
