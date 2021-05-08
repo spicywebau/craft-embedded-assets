@@ -191,6 +191,7 @@ class Settings extends Model
 
     /**
      * @var bool
+     * @since 2.6.0
      */
     public $useYouTubeNoCookie = false;
 
