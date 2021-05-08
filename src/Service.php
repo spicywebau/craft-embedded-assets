@@ -9,6 +9,8 @@ use craft\helpers\StringHelper;
 use craft\helpers\Json;
 use craft\helpers\Assets;
 use craft\helpers\FileHelper;
+use craft\helpers\Html as HtmlHelper;
+use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -187,6 +189,13 @@ class Service extends Component
                     'src="https://www.youtube-nocookie.com/embed/$1?',
                     $decodedJson['code']
                 );
+            }
+
+            // Make Vimeo iframes use the nocookie embed URL if the relevant setting is enabled
+            if ($decodedJson['providerName'] === 'Vimeo' && EmbeddedAssets::$plugin->getSettings()->disableVimeoTracking) {
+                $oldSrc = HtmlHelper::parseTagAttributes($decodedJson['code'])['src'];
+                $newSrc = UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']);
+                $decodedJson['code'] = HtmlHelper::modifyTagAttributes($decodedJson['code'], ['src' => $newSrc]);
             }
 
             if (is_array($decodedJson)) {

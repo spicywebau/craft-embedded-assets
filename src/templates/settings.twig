@@ -80,6 +80,14 @@
 		on: settings.useYouTubeNoCookie,
 	}) }}
 
+	{{ forms.lightswitchField({
+		label: 'Disable tracking on Vimeo iframes?'|t('embeddedassets'),
+		instructions: 'Whether to force Vimeo video iframes to use the query parameter `dnt=1` to prevent tracking.'|t('embeddedassets'),
+		id: 'disableVimeoTracking',
+		name: 'disableVimeoTracking',
+		on: settings.disableVimeoTracking,
+	}) }}
+
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),

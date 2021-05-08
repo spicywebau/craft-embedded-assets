@@ -195,6 +195,12 @@ class Settings extends Model
      */
     public $useYouTubeNoCookie = false;
 
+    /**
+     * @var bool
+     * @since 2.6.0
+     */
+    public $disableVimeoTracking = false;
+
     public function behaviors()
     {
         return [
@@ -216,7 +222,7 @@ class Settings extends Model
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
             ['cacheDuration', 'integer', 'min' => 0],
-            [['showThumbnailsInCp', 'useYouTubeNoCookie'], 'boolean'],
+            [['showThumbnailsInCp', 'useYouTubeNoCookie', 'disableVimeoTracking'], 'boolean'],
         ];
     }
 }
