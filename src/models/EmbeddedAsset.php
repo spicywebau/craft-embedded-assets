@@ -219,6 +219,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * Returns the URL with additional params passed. Has to be type of video.
      *
+     * @since 2.0.8
      * @return string|null
      */
     public function getVideoUrl($params): ?string
