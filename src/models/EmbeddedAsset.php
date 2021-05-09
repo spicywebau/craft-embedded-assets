@@ -234,6 +234,26 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
+     * Returns the iframe code with additional params passed to the source URL.
+     *
+     * @since 2.6.0
+     * @param array $params
+     * @return TwigMarkup
+     */
+    public function getIframeCode(array $params): TwigMarkup
+    {
+        if (!$this->_codeIsIframe()) {
+            throw new Exception('The embedded asset code is not an iframe');
+        }
+
+        $oldSrc = HtmlHelper::parseTagAttributes($this->code)['src'];
+        $newSrc = $this->_addParamsToUrl($params, $oldSrc, true);
+        $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
+
+        return Template::raw($code);
+    }
+
+    /**
      * Returns the URL with additional params passed. Has to be type of video.
      *
      * @since 2.0.8

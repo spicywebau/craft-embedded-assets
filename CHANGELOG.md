@@ -5,6 +5,7 @@
 ### Added
 - Added the `Use YouTube nocookie?` plugin setting, which will force usage of the `youtube-nocookie.com` domain for YouTube iframes when enabled
 - Added the `Disable tracking on Vimeo iframes?` plugin setting, which will force usage of the `dnt=1` query parameter for Vimeo iframes when enabled
+- Added `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()`
 - Added `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeSrc()`
 
 ### Changed
