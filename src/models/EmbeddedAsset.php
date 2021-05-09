@@ -6,6 +6,7 @@ use JsonSerializable;
 
 use Craft;
 use craft\base\Model;
+use craft\helpers\Html as HtmlHelper;
 use craft\helpers\Template;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
@@ -217,6 +218,22 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
+     * Returns the iframe source URL with additional params passed.
+     *
+     * @since 2.6.0
+     * @param array $params
+     * @return string
+     */
+    public function getIframeSrc(array $params): string
+    {
+        if (!$this->_codeIsIframe()) {
+            throw new Exception('The embedded asset code is not an iframe');
+        }
+
+        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], true);
+    }
+
+    /**
      * Returns the URL with additional params passed. Has to be type of video.
      *
      * @since 2.0.8
@@ -315,6 +332,17 @@ class EmbeddedAsset extends Model implements JsonSerializable
 
             return $url;
         }
+    }
+
+    /**
+     * Returns whether this embedded asset's code is an iframe.
+     *
+     * @since 2.6.0
+     * @return bool
+     */
+    private function _codeIsIframe(): bool
+    {
+        return (bool)preg_match('/^<iframe (.+)><\/iframe>$/', $this->code);
     }
 
     /**
