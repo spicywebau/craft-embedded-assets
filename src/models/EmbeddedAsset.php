@@ -260,7 +260,8 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @since 2.2.3
      * @return string|null the video ID, or null if the embedded asset is not a video
      */
-    public function getVideoId() {
+    public function getVideoId(): ?string
+    {
         if ($this->type !== "video") {
             return null;
         }
