@@ -104,21 +104,21 @@ Parameters (\*required) | Description
 **Returns** |
 [Image](#image)&#124;null | The image object, or `null` if one is not found.
 
-### getVideoUrl
-`getVideoUrl(params)`
+### getIframeSrc
+`getIframeSrc(params)`
 
-Returns the embedded video url from an embedded asset. Allows extra parameters to be to the video url.
+If the embedded asset's `code` is an `<iframe>`, returns the contents of the iframe's `src` attribute, optionally with extra parameters added to the URL.
 
 Parameters (\*required) | Description
 -|-
 `params` Array | Array of params
 **Returns** |
-[String](#string)&#124;null | The url string, or `null`.
+[String](#string) | The URL string.
 
 Example Usage:
 ```twig
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
-{{ vid.getVideoUrl(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+{{ vid.getIframeSrc(['autoplay=1', 'controls=0', 'playsinline=1']) }}
 ```
 
 ### getVideoCode
