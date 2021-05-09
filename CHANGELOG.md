@@ -11,6 +11,9 @@
 - Embedded Assets now requires Craft 3.6.0 or later
 - Changed Embedded Assets' JavaScript dependency package management from Yarn to NPM
 
+### Deprecated
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
+
 ## 2.5.3 - 2021-04-09
 
 ### Fixed
