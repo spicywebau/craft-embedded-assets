@@ -246,8 +246,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
             throw new Exception('The embedded asset code is not an iframe');
         }
 
-        $oldSrc = HtmlHelper::parseTagAttributes($this->code)['src'];
-        $newSrc = $this->_addParamsToUrl($params, $oldSrc, true);
+        $newSrc = $this->_getIframeSrc($params, true);
         $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
 
         return Template::raw($code);
@@ -261,7 +260,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getVideoUrl($params): ?string
     {
-        return $this->type === 'video' && is_array($params) ? $this->getIframeSrc($params, false) : null;
+        return $this->type === 'video' && is_array($params) ? $this->_getIframeSrc($params, false) : null;
     }
 
     /**
@@ -277,9 +276,8 @@ class EmbeddedAsset extends Model implements JsonSerializable
             throw new Exception('Tried to call getVideoCode() on an embedded asset with a type other than video');
         }
 
-        $oldUrl = $this->getMatchedVideoUrl();
-        $newUrl = $this->_addParamsToUrl($params, $oldUrl);
-        $code = str_replace($oldUrl, $newUrl, $this->code);
+        $newSrc = $this->_getIframeSrc($params, false);
+        $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
 
         return Template::raw($code);
     }
