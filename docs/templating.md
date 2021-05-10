@@ -121,21 +121,21 @@ Example Usage:
 {{ vid.getIframeSrc(['autoplay=1', 'controls=0', 'playsinline=1']) }}
 ```
 
-### getVideoCode
-`getVideoCode(params)`
+### getIframeCode
+`getIframeCode(params)`
 
-Returns the embedded video code from an embedded asset. Allows extra parameters to be added to the video url.
+If the embedded asset's `code` is an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL.
 
 Parameters (\*required) | Description
 -|-
 `params` Array | Array of params
 **Returns** |
-[\Twig\Markup](#\Twig\Markup)&#124;null | The code markup, or `null`.
+[\Twig\Markup](#\Twig\Markup) | The code markup.
 
 Example Usage:
 ```twig
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
-{{ vid.getVideoCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+{{ vid.getIframeCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
 ```
 
 ### getVideoId
