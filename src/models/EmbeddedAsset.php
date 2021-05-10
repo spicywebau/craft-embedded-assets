@@ -268,7 +268,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @since 2.0.8
      * @param array $params
-     * @return string
+     * @return TwigMarkup
      */
     public function getVideoCode(array $params)
     {
