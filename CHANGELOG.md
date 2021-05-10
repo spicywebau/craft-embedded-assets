@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.6.1 - 2021-05-10
 
 ### Changed
 - Restricted Embedded Assets' required Embed version to 3.4.15 for now
