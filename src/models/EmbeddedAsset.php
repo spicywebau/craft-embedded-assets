@@ -322,7 +322,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     {
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
-            $newUrl = substr($pUrl, 0, $startPos);
+            $newUrl = $startPos ? substr($pUrl, 0, $startPos) : $pUrl;
             $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)): [];
             $params = [];
             $joinedParams = [];
