@@ -230,7 +230,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
             throw new Exception('The embedded asset code is not an iframe');
         }
 
-        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], true);
+        return $this->_getIframeSrc($params, true);
     }
 
     /**
@@ -261,7 +261,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getVideoUrl($params): ?string
     {
-        return $this->type === 'video' && is_array($params) ? $this->getIframeSrc($params) : null;
+        return $this->type === 'video' && is_array($params) ? $this->getIframeSrc($params, false) : null;
     }
 
     /**
@@ -306,11 +306,21 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
+     * @param array $params
+     * @param bool $overrideParams
+     * @return string
+     */
+    private function _getIframeSrc(array $params, $overrideParams): string
+    {
+        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], $overrideParams);
+    }
+
+    /**
      * Returns the modified url with params added.
      *
      * @return string
      */
-    private function _addParamsToUrl($newParams, $pUrl, $overrideParams = false)
+    private function _addParamsToUrl($newParams, $pUrl, $overrideParams)
     {
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
