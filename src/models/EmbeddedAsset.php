@@ -257,16 +257,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Returns the URL with additional params passed. Has to be type of video.
      *
      * @since 2.0.8
-     * @deprecated in 2.6.0; use `getIframeSrc()` instead
      * @return string|null
      */
     public function getVideoUrl($params): ?string
     {
-        Craft::$app->getDeprecator()->log(
-            'EmbeddedAsset::getVideoUrl()',
-            'The `getVideoUrl()` method has been deprecated. Use `getIframeSrc()` instead.'
-        );
-
         return $this->type === 'video' && is_array($params) ? $this->getIframeSrc($params) : null;
     }
 
