@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.6.0 - 2021-05-10
 
 ### Added
 - Added the `Use YouTube nocookie?` plugin setting, which will force usage of the `youtube-nocookie.com` domain for YouTube iframes when enabled
