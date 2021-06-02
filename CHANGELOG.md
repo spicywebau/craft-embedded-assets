@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added the `iframeSrc` field for GraphQL queries, which takes a `params` argument in the same format as an embedded asset model's `getIframeSrc()` method
+
 ### Changed
 - Embedded Assets now requires Embed 3.4.17 or any later Embed 3 version
 
