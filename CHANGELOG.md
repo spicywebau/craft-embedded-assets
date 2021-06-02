@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Embedded Assets now requires Embed 3.4.17 or any later Embed 3 version
+
 ## 2.6.1 - 2021-05-10
 
 ### Changed
