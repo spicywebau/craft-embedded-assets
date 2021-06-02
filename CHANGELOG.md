@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased
+## 2.7.0 - 2021-06-02
 
 ### Added
-- Added the `iframeCode` and `iframeSrc` fields for GraphQL queries, which take a `params` argument in the same format as an embedded asset model's `getIframeCode()` and `getIframeSrc()` method
+- Added the `iframeCode` and `iframeSrc` fields for GraphQL queries, which take a `params` argument in the same format as an embedded asset model's `getIframeCode()` and `getIframeSrc()` methods
 
 ### Changed
 - Embedded Assets now requires Embed 3.4.17 or any later Embed 3 version
