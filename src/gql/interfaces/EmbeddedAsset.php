@@ -216,6 +216,18 @@ class EmbeddedAsset extends Element
                 'type' => Type::string(),
                 'description' => 'The embed HTML for the embedded asset.'
             ],
+            'iframeCode' => [
+                'name' => 'iframeCode',
+                'type' => Type::string(),
+                'description' => 'The embed code for the embedded asset, if the embedded asset\'s code is an iframe.',
+                'args' => [
+                    'params' => [
+                        'name' => 'params',
+                        'type' => Type::nonNull(Type::listOf(Type::string())),
+                        'description' => 'The parameters to add to the embed URL.',
+                    ],
+                ],
+            ],
             'iframeSrc' => [
                 'name' => 'iframeSrc',
                 'type' => Type::string(),

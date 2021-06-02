@@ -30,7 +30,7 @@ class EmbeddedAsset extends Element
      */
     protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
     {
-        return $resolveInfo->fieldName === 'iframeSrc'
+        return in_array($resolveInfo->fieldName, ['iframeCode', 'iframeSrc'])
             ? $source->{'get' . ucfirst($resolveInfo->fieldName)}($arguments['params'])
             : parent::resolve($source, $arguments, $context, $resolveInfo);
     }
