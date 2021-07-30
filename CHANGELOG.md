@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Updated JavaScript dependencies
+
 ## 2.7.0 - 2021-06-02
 
 ### Added

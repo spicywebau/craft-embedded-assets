@@ -1,5 +1,5 @@
 const path = require('path')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -15,9 +15,10 @@ module.exports = {
     craft: 'Craft',
     garnish: 'Garnish'
   },
-  plugins: [
-    new UglifyJsPlugin()
-  ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
+  },
   module: {
     rules: [
       {
@@ -25,7 +26,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: { presets: ['env'] }
+          options: { presets: ['@babel/preset-env'] }
         }
       },
       {
@@ -38,7 +39,7 @@ module.exports = {
       },
       {
         test: /\.(png|svg)$/,
-        use: { loader: 'url-loader' }
+        type: 'asset/inline'
       }
     ]
   }
