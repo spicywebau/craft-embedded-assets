@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.8.0 - 2021-08-02
 
 ### Added
 - Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`
