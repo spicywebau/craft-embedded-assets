@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`
+- Added `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`
+
 ### Changed
 - Updated JavaScript dependencies
 

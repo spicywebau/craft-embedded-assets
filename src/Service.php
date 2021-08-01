@@ -20,6 +20,7 @@ use Embed\Adapters\Adapter;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
+use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use Twig\Markup as TwigMarkup;
 use yii\base\Component;
@@ -37,6 +38,12 @@ use yii\base\InvalidArgumentException;
  */
 class Service extends Component
 {
+    /**
+     * @event BeforeCreateAdapterEvent The event that is triggered before creating an Embed adapter.
+     * @since 2.8.0
+     */
+    const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
+
     private $embeddedAssetData = [];
 
     /**
@@ -94,6 +101,16 @@ class Service extends Component
         }
         if ($pluginSettings->facebookKey) {
             $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
+        }
+
+        // Allow other plugins/modules to add options
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_CREATE_ADAPTER)) {
+            $event = new BeforeCreateAdapterEvent([
+                'url' => $url,
+                'options' => $options,
+            ]);
+            $this->trigger(self::EVENT_BEFORE_CREATE_ADAPTER, $event);
+            $options = $event->options;
         }
 
         $adapter = Embed::create(
