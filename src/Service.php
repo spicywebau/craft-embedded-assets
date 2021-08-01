@@ -96,13 +96,13 @@ class Service extends Component
             $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
         }
 
-        if ($pluginSettings->referer) {
-            $adapter = Embed::create($url, $options, new CurlDispatcher([
-                CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer),
-            ]));
-        } else {
-        $adapter = Embed::create($url, $options);
-        }
+        $adapter = Embed::create(
+            $url,
+            $options,
+            $pluginSettings->referer
+                ? new CurlDispatcher([CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)])
+                : null
+        );
 
         // Check for PBS videos
         if (($pbsCode = $this->_getPbsEmbedCode($adapter)) !== null) {
