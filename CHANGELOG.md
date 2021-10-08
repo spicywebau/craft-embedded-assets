@@ -1,7 +1,9 @@
 # Changelog
 
+## 2.8.1 - 2021-10-08
+
 ### Changed
-- Updated `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent` to allow custom configuration of `Dispatcher` instance
+- Updated `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent` to allow custom configuration of `Dispatcher` instance (thanks @qrazi)
 
 ## 2.8.0 - 2021-08-02
 

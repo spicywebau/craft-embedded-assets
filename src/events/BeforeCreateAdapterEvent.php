@@ -25,6 +25,7 @@ Class BeforeCreateAdapterEvent extends Event
 
     /**
      * @var array
+     * @since 2.8.1
      * @see https://github.com/oscarotero/Embed/tree/3.4.17#the-dispatcher
      */
     public $dispatcherConfig = [];
