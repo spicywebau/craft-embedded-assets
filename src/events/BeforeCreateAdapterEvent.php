@@ -22,4 +22,10 @@ Class BeforeCreateAdapterEvent extends Event
      * @see https://github.com/oscarotero/Embed/tree/3.4.17#the-adapter
      */
     public $options = [];
+
+    /**
+     * @var array
+     * @see https://github.com/oscarotero/Embed/tree/3.4.17#the-dispatcher
+     */
+    public $dispatcherConfig = [];
 }

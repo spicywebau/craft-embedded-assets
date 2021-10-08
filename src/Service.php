@@ -103,22 +103,24 @@ class Service extends Component
             $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
         }
 
+        $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
+
         // Allow other plugins/modules to add options
         if ($this->hasEventHandlers(self::EVENT_BEFORE_CREATE_ADAPTER)) {
             $event = new BeforeCreateAdapterEvent([
                 'url' => $url,
                 'options' => $options,
+                'dispatcherConfig' => $dispatcherConfig,
             ]);
             $this->trigger(self::EVENT_BEFORE_CREATE_ADAPTER, $event);
             $options = $event->options;
+            $dispatcherConfig = $event->dispatcherConfig;
         }
 
         $adapter = Embed::create(
             $url,
             $options,
-            $pluginSettings->referer
-                ? new CurlDispatcher([CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)])
-                : null
+            new CurlDispatcher($dispatcherConfig)
         );
 
         // Check for PBS videos
@@ -136,7 +138,7 @@ class Service extends Component
 
         return $this->_convertFromAdapter($adapter);
     }
-    
+
     /**
      * Checks a URL against the whitelist set on the plugin settings model.
      *
@@ -163,7 +165,7 @@ class Service extends Component
 
         return false;
     }
-    
+
     /**
      * Retrieves an embedded asset model from an asset element, if one exists.
      *
@@ -264,7 +266,7 @@ class Service extends Component
                 case 'code':
                     {
                         $code = ($value instanceof TwigMarkup ? (string)$value : is_string($value)) ? $value : '';
-                        
+
                         $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
                     }
                     break;
@@ -366,7 +368,7 @@ class Service extends Component
 
         return $isSafe;
     }
-    
+
     /**
      * Gets the embed code as DOM, if one exists and is valid.
      *
