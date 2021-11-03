@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.9.0 - 2021-11-03
+
+### Added
+- Added console commands for refreshing all embedded asset data and refreshing embedded asset data by volume
+
 ## 2.8.1 - 2021-10-08
 
 ### Changed
