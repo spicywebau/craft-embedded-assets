@@ -34,6 +34,7 @@ Embedded assets are just JSON files. This means they can exist as real assets wi
 - [GraphQL](docs/graphql.md)
 - [Configuration](docs/configuration.md)
 - [Events](docs/events.md)
+- [Console Commands](docs/console-commands.md)
 - [Changelog](CHANGELOG.md)
 
 ---
