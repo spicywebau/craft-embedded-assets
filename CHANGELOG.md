@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Removed
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::isSafe()`; use `getIsSafe()` instead
 - Removed `spicyweb\embeddedassets\Service::getCachedAssetPath()`
 
 ## 2.9.0 - 2021-11-03
