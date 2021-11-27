@@ -155,9 +155,9 @@ Example Usage:
 
 ## Upgrading from Craft 2
 
-Embedded assets from the Craft 2 version of the plugin are fully compatible with the Craft 3 version. However, most functions, properties and methods have been deprecated in favour of the above API. Your templates will continue to work but you will receive deprecation notices until you decide to change them. See the table below for all the changes:
+Embedded assets from the Craft 2 version of the plugin are fully compatible with Embedded Assets 3. However, most functions, properties and methods have been removed in favour of the above API. See the table below for all the changes you will need to make in your templates:
 
-Type | Craft 2 | Craft 3 equivalent
+Type | Embedded Assets for Craft 2 | Embedded Assets 3 equivalent
 -|-|-
 Function | `craft.embeddedAssets.isEmbedded(asset)` | `craft.embeddedAssets.get(asset)` then test whether the value is `null`
 Function | `craft.embeddedAssets.fromAsset(asset)` | `craft.embeddedAssets.get(asset)`

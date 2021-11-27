@@ -3,8 +3,17 @@
 ## Unreleased
 
 ### Removed
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getCacheAge()`
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getRequestUrl()`; use the `url` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getSafeHtml()`; use a combination of the `getIsSafe()` method and the `code` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailHeight()`; use the `imageHeight` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailUrl()`; use the `image` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailWidth()`; use the `imageWidth` property instead
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::isSafe()`; use `getIsSafe()` instead
 - Removed `spicyweb\embeddedassets\Service::getCachedAssetPath()`
+- Removed `spicyweb\embeddedassets\Variable::fromAsset()`; use `get()` instead
+- Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
+- Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
 
 ## 2.9.0 - 2021-11-03
 
