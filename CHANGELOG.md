@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.9.1 - 2021-11-30
 
 ### Fixed
 - Fixed an error that occurred when executing a GraphQL query for embedded asset data using Gridsome
