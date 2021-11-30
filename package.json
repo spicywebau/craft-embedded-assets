@@ -40,7 +40,7 @@
     "sass-loader": "^12.1.0",
     "standard": "^16.0.3",
     "style-loader": "^3.2.1",
-    "tar": "^6.1.2",
+    "tar": "^6.1.9",
     "webpack": "^5.47.1",
     "webpack-cli": "^4.7.2"
   },
