@@ -12,6 +12,7 @@ use craft\events\DefineGqlTypeFieldsEvent;
 use craft\events\GetAssetThumbUrlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\TemplateEvent;
 use craft\gql\arguments\elements\Asset as AssetArguments;
@@ -158,6 +159,13 @@ class Plugin extends BasePlugin
 
     private function _registerGql()
     {
+        Event::on(
+            Gql::class,
+            Gql::EVENT_REGISTER_GQL_TYPES,
+            function (RegisterGqlTypesEvent $event) {
+                $event->types[] = EmbeddedAssetInterface::class;
+            }
+        );
         Event::on(
             TypeManager::class,
             TypeManager::EVENT_DEFINE_GQL_TYPE_FIELDS,

@@ -3,9 +3,9 @@
 namespace spicyweb\embeddedassets\gql\interfaces;
 
 use craft\gql\GqlEntityRegistry;
-use craft\gql\interfaces\Element;
 use craft\gql\TypeManager;
-use GraphQL\Type\Definition\InterfaceType;
+use craft\gql\base\InterfaceType;
+use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetType;
@@ -17,7 +17,7 @@ use spicyweb\embeddedassets\models\EmbeddedAsset as EmbeddedAssetModel;
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 2.4.0
  */
-class EmbeddedAsset extends Element
+class EmbeddedAsset extends InterfaceType
 {
     /**
      * @inheritdoc
@@ -36,7 +36,7 @@ class EmbeddedAsset extends Element
             return $type;
         }
 
-        $type = GqlEntityRegistry::createEntity(self::getName(), new InterfaceType([
+        $type = GqlEntityRegistry::createEntity(self::getName(), new GqlInterfaceType([
             'name' => static::getName(),
             'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all embedded assets.',

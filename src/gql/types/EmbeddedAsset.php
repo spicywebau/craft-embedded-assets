@@ -2,7 +2,7 @@
 
 namespace spicyweb\embeddedassets\gql\types;
 
-use craft\gql\types\elements\Element;
+use craft\gql\base\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
 
@@ -12,7 +12,7 @@ use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterfa
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 2.4.0
  */
-class EmbeddedAsset extends Element
+class EmbeddedAsset extends ObjectType
 {
     /**
      * @inheritdoc
