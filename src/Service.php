@@ -16,9 +16,8 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DOMDocument;
 use Embed\Embed;
-use Embed\Adapters\Adapter;
+use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
-use Embed\Http\Url;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
@@ -61,7 +60,7 @@ class Service extends Component
 
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
-            $array = $this->_getDataFromAdapter($url);
+            $array = $this->_getDataFromEmbed($url);
             $embeddedAsset = $this->createEmbeddedAsset($array);
 
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
@@ -70,73 +69,78 @@ class Service extends Component
         return $embeddedAsset;
     }
 
-    private function _getDataFromAdapter(string $url): array
+    private function _getDataFromEmbed(string $url): array
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
-        $options = [
-            'min_image_width' => $pluginSettings->minImageSize,
-            'min_image_height' => $pluginSettings->minImageSize,
-            'oembed' => ['parameters' => []],
+        $settings = [
+            // TODO remove these settings, no longer available in Embed 4
+            // 'min_image_width' => $pluginSettings->minImageSize,
+            // 'min_image_height' => $pluginSettings->minImageSize,
+            'oembed:query_parameters' => [],
         ];
 
         if (!empty($pluginSettings->parameters)) {
             foreach ($pluginSettings->parameters as $parameter) {
                 $param = $parameter['param'];
                 $value = $parameter['value'];
-                $options['oembed']['parameters'][$param] = $value;
+                $settings['oembed:query_parameters'][$param] = $value;
             }
         }
 
+        /* TODO, not currently available in Embed 4
         if ($pluginSettings->embedlyKey) {
-            $options['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
+            // $settings['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
         }
         if ($pluginSettings->iframelyKey) {
-            $options['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
+            $settings['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
         }
         if ($pluginSettings->googleKey) {
-            $options['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
+            $settings['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
         }
         if ($pluginSettings->soundcloudKey) {
-            $options['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
+            $settings['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
         }
+        */
         if ($pluginSettings->facebookKey) {
-            $options['facebook'] = ['key' => Craft::parseEnv($pluginSettings->facebookKey)];
+            $settings['facebook:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }
+        // TODO
+        /*if ($pluginSettings->instagramKey) {
+            $settings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
+        }*/
 
-        $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
+        // TODO
+        // $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
 
         // Allow other plugins/modules to add options
         if ($this->hasEventHandlers(self::EVENT_BEFORE_CREATE_ADAPTER)) {
             $event = new BeforeCreateAdapterEvent([
                 'url' => $url,
-                'options' => $options,
+                'options' => $settings,
                 'dispatcherConfig' => $dispatcherConfig,
             ]);
             $this->trigger(self::EVENT_BEFORE_CREATE_ADAPTER, $event);
-            $options = $event->options;
+            $settings = $event->options;
             $dispatcherConfig = $event->dispatcherConfig;
         }
 
-        $adapter = Embed::create(
-            $url,
-            $options,
-            new CurlDispatcher($dispatcherConfig)
-        );
+        $embed = new Embed();
+        $embed->setSettings($settings);
+        $embedData = $embed->get($url);
 
         // Check for PBS videos
-        if (($pbsCode = $this->_getPbsEmbedCode($adapter)) !== null) {
-            $adapter->type = 'video';
-            $adapter->code = $pbsCode;
+        if (($pbsCode = $this->_getPbsEmbedCode($embedData)) !== null) {
+            $embedData->code = $pbsCode;
         }
 
-        // TODO: remove this when we can upgrade to Embed v4, or if it's fixed in Embed v3
-        // Embed data for Instagram is including the login URL (with otherwise correct data) in some cases
-        // Or incorrectly resolving some Vimeo url's to inaccessible streaming urls
-        if ($adapter->url === 'https://www.instagram.com/accounts/login/' || preg_match('/^https:\/\/player\.vimeo\.com\/external\/(.*?)\.mp4/', $url)) {
-            $adapter->url = (string)Url::create($url);
+        $array = $this->_convertFromExtractor($embedData);
+
+        // Embed data for Vimeo is incorrectly resolving some URLs to inaccessible streaming URLs
+        if (preg_match('/^https:\/\/player\.vimeo\.com\/external\/(.*?)\.mp4/', $url)) {
+            $array['url'] = $url;
         }
 
-        return $this->_convertFromAdapter($adapter);
+        return $array;
     }
 
     /**
@@ -558,36 +562,38 @@ class Service extends Component
     }
 
     /**
-     * Creates an "embedded asset ready" array from an adapter.
+     * Creates an "embedded asset ready" array from an Extractor.
      *
-     * @param Adapter $adapter
+     * @param Extractor $extractor
      * @return array
      */
-    private function _convertFromAdapter(Adapter $adapter): array
+    private function _convertFromExtractor(Extractor $extractor): array
     {
         return [
-            'title' => $adapter->title,
-            'description' => $adapter->description,
-            'url' => $adapter->url,
-            'type' => $adapter->type,
-            'tags' => $adapter->tags,
-            'images' => array_filter($adapter->images, [$this, '_isImageLargeEnough']),
-            'image' => $adapter->image,
-            'imageWidth' => $adapter->imageWidth,
-            'imageHeight' => $adapter->imageHeight,
-            'code' => Template::raw($adapter->code ?: ''),
-            'width' => $adapter->width,
-            'height' => $adapter->height,
-            'aspectRatio' => $adapter->aspectRatio,
-            'authorName' => $adapter->authorName,
-            'authorUrl' => $adapter->authorUrl,
-            'providerName' => $adapter->providerName,
-            'providerUrl' => $adapter->providerUrl,
-            'providerIcons' => array_filter($adapter->providerIcons, [$this, '_isImageLargeEnough']),
-            'providerIcon' => $adapter->providerIcon,
-            'publishedTime' => $adapter->publishedTime,
-            'license' => $adapter->license,
-            'feeds' => $adapter->feeds,
+            'title' => $extractor->title,
+            'description' => $extractor->description,
+            'url' => (string)$extractor->url,
+            'image' => (string)$extractor->image,
+            'code' => Template::raw($extractor->code->html ?: ''),
+            'width' => $extractor->code->width,
+            'height' => $extractor->code->height,
+            'aspectRatio' => $extractor->code->ratio,
+            'authorName' => $extractor->authorName,
+            'authorUrl' => (string)$extractor->authorUrl,
+            'providerName' => $extractor->providerName,
+            'providerUrl' => (string)$extractor->providerUrl,
+            'providerIcon' => (string)$extractor->icon,
+            'publishedTime' => $extractor->publishedTime->format('Y-m-d'),
+            'license' => $extractor->license,
+            'feeds' => array_map(function ($feed) { return (string)$feed; }, $extractor->feeds),
+
+            // New properties in Embed 4
+            'cms' => $extractor->cms,
+            'favicon' => (string)$extractor->favicon,
+            'keywords' => $extractor->keywords,
+            'language' => $extractor->language,
+            'languages' => array_map(function ($language) { return (string)$language; }, $extractor->languages),
+            'redirect' => (string)$extractor->redirect,
         ];
     }
 
@@ -743,7 +749,7 @@ class Service extends Component
     private function _updateInstagramFile(Asset $asset, $url)
     {
         // get new data from the url
-        $array = $this->_getDataFromAdapter($url);
+        $array = $this->_getDataFromEmbed($url);
         $newEmbeddedAsset = $this->createEmbeddedAsset($array);
 
         if ($newEmbeddedAsset) {
@@ -766,21 +772,21 @@ class Service extends Component
         return $array;
     }
 
-    private function _isProviderPbs(Adapter $adapter) {
+    private function _isProviderPbs(Extractor $extractor) {
         $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
 
-        return in_array($adapter->providerUrl, $pbsUrls);
+        return in_array($extractor->providerUrl, $pbsUrls);
     }
 
-    private function _getPbsEmbedCode(Adapter $adapter) {
-        if (!$this->_isProviderPbs($adapter)) {
+    private function _getPbsEmbedCode(Extractor $extractor) {
+        if (!$this->_isProviderPbs($extractor)) {
             return null;
         }
 
-        $adapterContent = $adapter->getResponse()->getContent();
+        $extractorContent = $extractor->getResponse()->getContent();
         $matches = [];
 
-        if (preg_match('/&lt;iframe(.+)iframe&gt;/i', $adapterContent, $matches)) {
+        if (preg_match('/&lt;iframe(.+)iframe&gt;/i', $extractorContent, $matches)) {
             if (preg_match('/https:\\/\\/player.pbs.org\\/viralplayer\\/([0-9]+)\\//i', $matches[0])) {
                 return htmlspecialchars_decode($matches[0], ENT_QUOTES | ENT_HTML5);
             }

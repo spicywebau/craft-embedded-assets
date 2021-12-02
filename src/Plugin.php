@@ -350,17 +350,8 @@ class Plugin extends BasePlugin
             if ($size <= $maxSize || $imageSize > $maxSize) {
                 $url = $image['url'];
             }
-        } // Check to avoid showing the default thumbnail or provider icon in the asset editor HUD.
-        else {
-            if ($size <= $maxSize) {
-                $providerIcon = $embeddedAsset->getProviderIconToSize($size);
-                
-                if ($providerIcon && UrlHelper::isAbsoluteUrl($providerIcon['url'])) {
-                    $url = $providerIcon['url'];
-                } else {
-                    $url = $defaultThumb;
-                }
-            }
+        } else {
+            $url = $embeddedAsset->image;
         }
         
         return $url;

@@ -42,39 +42,14 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public $url;
 
     /**
-     * @var string link|image|video\rich required
-     */
-    public $type;
-
-    /**
-     * @var array of strings
-     */
-    public $tags;
-
-    /**
      * @var array of URLs
      */
     public $feeds;
 
     /**
-     * @var array of images
-     */
-    public $images;
-
-    /**
      * @var string URL
      */
     public $image;
-
-    /**
-     * @var number
-     */
-    public $imageWidth;
-
-    /**
-     * @var number
-     */
-    public $imageHeight;
 
     /**
      * @var TwigMarkup
@@ -107,11 +82,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public $authorUrl;
 
     /**
-     * @var array of images
-     */
-    public $providerIcons;
-
-    /**
      * @var string URL
      */
     public $providerIcon;
@@ -137,12 +107,80 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public $license;
 
     /**
+     * @var string
+     */
+    public $cms;
+
+    /**
+     * @var string
+     */
+    public $favicon;
+
+    /**
+     * @var array of strings
+     */
+    public $keywords;
+
+    /**
+     * @var string
+     */
+    public $language;
+
+    /**
+     * @var array of strings
+     */
+    public $languages;
+
+    /**
+     * @var string
+     */
+    public $redirect;
+
+    // Deprecated properties (removed from Embed 4)
+
+    /**
+     * @var string link|image|video\rich
+     * @deprecated in 3.0.0
+     */
+    public $type;
+
+    /**
+     * @var array of strings
+     * @deprecated in 3.0.0
+     */
+    public $tags;
+
+    /**
+     * @var array of images
+     * @deprecated in 3.0.0
+     */
+    public $images;
+
+    /**
+     * @var number
+     * @deprecated in 3.0.0
+     */
+    public $imageWidth;
+
+    /**
+     * @var number
+     * @deprecated in 3.0.0
+     */
+    public $imageHeight;
+
+    /**
+     * @var array of images
+     * @deprecated in 3.0.0
+     */
+    public $providerIcons;
+
+    /**
      * @return array
      */
     public function rules()
     {
         return [
-            [['title', 'url', 'type'], 'required'],
+            [['title', 'url'], 'required'],
             [
                 ['title', 'description', 'authorName', 'providerName', 'publishedTime', 'license'],
                 StringValidator::class
@@ -153,7 +191,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
                 'defaultScheme' => 'https'
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
-            ['type', 'default', 'value' => 'link'],
             ['tags', 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
             [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
