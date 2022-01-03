@@ -27,6 +27,17 @@ Parameters (\*required) | Description
 **Returns** |
 EmbeddedAsset&#124;null | The embedded asset, or `null` if it doesn't exist for the asset.
 
+### create
+`craft.embeddedAssets.create(data)`
+
+Gets an embedded asset model, given property name/value pairs that are valid for an embedded asset. If any of the property names or values are invalid, `null` is returned.
+
+Parameters (\*required) | Description
+-|-
+\*`data` | Embedded asset property name/value pairs.
+**Returns** |
+EmbeddedAsset&#124;null | The embedded asset, or `null` if the `data` was invalid.
+
 
 ## Properties
 The properties of the embedded asset model returned from the [get](#get) function.

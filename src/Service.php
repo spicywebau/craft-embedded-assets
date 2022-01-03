@@ -248,7 +248,7 @@ class Service extends Component
      * @param array $array
      * @return EmbeddedAsset|null
      */
-    private function createEmbeddedAsset(array $array)
+    public function createEmbeddedAsset(array $array)
     {
         $embeddedAsset = new EmbeddedAsset();
 

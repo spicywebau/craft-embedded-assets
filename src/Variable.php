@@ -28,7 +28,20 @@ class Variable
     {
         return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
     }
-    
+
+    /**
+     * Creates an embedded asset model from an array of property/value pairs.
+     * Returns the model unless the array included any properties that aren't defined on the model.
+     *
+     * @param array $array
+     * @return EmbeddedAsset|null
+     * @since 2.10.0
+     */
+    public function create(array $array)
+    {
+        return EmbeddedAssets::$plugin->methods->createEmbeddedAsset($array);
+    }
+
     //
     // Deprecated methods
     
