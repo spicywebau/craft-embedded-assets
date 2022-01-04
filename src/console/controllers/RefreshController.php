@@ -33,11 +33,11 @@ class RefreshController extends Controller
     {
         $options = parent::options($actionID);
 
-        if ($actionID === 'by-volume') {
+        if (in_array($actionID, ['all', 'by-volume'])) {
             $options[] = 'volume';
         }
 
-        if ($actionID === 'by-provider') {
+        if (in_array($actionID, ['all', 'by-provider'])) {
             $options[] = 'provider';
         }
 
@@ -46,7 +46,10 @@ class RefreshController extends Controller
 
     public function actionAll(): int
     {
-        return $this->_refresh(null, null);
+        return $this->_refresh(
+            $this->volume ? explode(',', $this->volume) : null,
+            $this->provider ? explode(',', $this->provider) : null
+        );
     }
 
     public function actionByVolume(): int

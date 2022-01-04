@@ -35,3 +35,9 @@ If you just want to refresh all of your embedded assets, regardless of the provi
 ```sh
 php craft embeddedassets/refresh/all
 ```
+
+Or, if you want to refresh based on both the volume and the provider:
+
+```sh
+php craft embeddedassets/refresh/all --volume=videos --provider=YouTube
+```
