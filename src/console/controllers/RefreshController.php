@@ -110,7 +110,12 @@ class RefreshController extends Controller
             }
         }
 
-        $this->stdout(count($embeddedAssets) . ' embedded assets to be refreshed.' . PHP_EOL);
+        $count = count($embeddedAssets);
+        if ($count > 1) {
+            $this->stdout($count . ' embedded assets to be refreshed.' . PHP_EOL);
+        } else {
+            $this->stdout($count . ' embedded asset to be refreshed.' . PHP_EOL);
+        }
 
         foreach ($embeddedAssets as $assetId => $assetData) {
             $assetToReplace = $assetData['asset'];
@@ -137,11 +142,19 @@ class RefreshController extends Controller
         }
 
         if ($successCount) {
-            $this->stdout($successCount . ' embedded assets were refreshed.' . PHP_EOL);
+            if ($successCount > 1) {
+                $this->stdout($successCount . ' embedded assets were refreshed.' . PHP_EOL);
+            } else {
+                $this->stdout($successCount . ' embedded asset was refreshed.' . PHP_EOL);
+            }
         }
 
         if ($errorCount) {
-            $this->stderr($errorCount . ' embedded assets failed to refresh.' . PHP_EOL, Console::FG_RED);
+            if ($errorCount > 1) {
+                $this->stderr($errorCount . ' embedded assets failed to refresh.' . PHP_EOL, Console::FG_RED);
+            } else {
+                $this->stderr($errorCount . ' embedded asset failed to refresh.' . PHP_EOL, Console::FG_RED);
+            }
         }
 
         return $errorCount ? ExitCode::UNSPECIFIED_ERROR : ExitCode::OK;
