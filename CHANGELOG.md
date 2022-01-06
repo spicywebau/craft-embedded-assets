@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.0 - 2022-01-06
 
 ### Added
 - Added `spicyweb\embeddedassets\Variable::create()` (`craft.embeddedAssets.create()`) for creating an `EmbeddedAsset` model from an asset's contents or other user-provided data that represents a valid embedded asset
