@@ -30,7 +30,7 @@ EmbeddedAsset&#124;null | The embedded asset, or `null` if it doesn't exist for 
 ### create
 `craft.embeddedAssets.create(data)`
 
-Gets an embedded asset model, given property name/value pairs that are valid for an embedded asset. If any of the property names or values are invalid, `null` is returned.
+Gets an embedded asset model, given property name/value pairs that are valid for an embedded asset (e.g. if the data is from getting an asset's contents, rather than using `get()` on the asset itself, if the contents are needed for other purposes). If any of the property names or values are invalid, `null` is returned.
 
 Parameters (\*required) | Description
 -|-
