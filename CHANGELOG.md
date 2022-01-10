@@ -12,7 +12,7 @@
 ## 2.9.1 - 2021-11-30
 
 ### Fixed
-- Fixed an error that occurred when executing a GraphQL query for embedded asset data using Gridsome
+- Fixed an error that occurred when executing a GraphQL query for embedded asset data using Gridsome, or after generating types using GraphQL codegen
 
 ## 2.9.0 - 2021-11-03
 
