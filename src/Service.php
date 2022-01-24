@@ -191,11 +191,12 @@ class Service extends Component
         try {
             $decodedJson = $this->_getAssetContents($asset);
 
+            // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
             if (($decodedJson['providerName'] === 'Instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
                 if ($this->_hasInstagramImageExpired($decodedJson['image'])) {
                     $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
                 } else {
-                    // if not expire yet update the date modified so it checks the file in another 7 days
+                    // If not expired yet, update the date modified so it checks in another seven days
                     $asset->dateModified = new \DateTime();
                     Craft::$app->getElements()->saveElement($asset);
                 }
