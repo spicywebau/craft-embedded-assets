@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.1 - 2022-02-07
 
 ### Fixed
 - Fixed a bug where refreshing embedded assets from the console wouldn't refresh an embedded asset if the data was still cached from when the embedded asset was created
