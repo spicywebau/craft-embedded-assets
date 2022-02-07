@@ -123,7 +123,7 @@ class RefreshController extends Controller
             $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... '); 
 
             $folder = $assetToReplace->getFolder();
-            $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url);
+            $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url, false);
             $newAsset = EmbeddedAssets::$plugin->methods->createAsset($newEmbeddedAsset, $folder);
             $result = $elementsService->saveElement($newAsset);
 

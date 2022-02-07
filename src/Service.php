@@ -50,14 +50,15 @@ class Service extends Component
      * Requests embed data from a URL.
      *
      * @param string $url
+     * @param bool $checkCache Whether to check for data associated with the URL that's been stored in Craft's cache
      * @return EmbeddedAsset
      */
-    public function requestUrl(string $url): EmbeddedAsset
+    public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
     {
         $cacheService = Craft::$app->getCache();
 
         $cacheKey = 'embeddedasset:' . $url;
-        $embeddedAsset = $cacheService->get($cacheKey);
+        $embeddedAsset = $checkCache ? $cacheService->get($cacheKey) : null;
 
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
