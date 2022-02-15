@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Updated JavaScript dependencies
+
 ## 2.10.1 - 2022-02-07
 
 ### Fixed
