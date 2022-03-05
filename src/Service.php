@@ -193,7 +193,7 @@ class Service extends Component
             $decodedJson = $this->_getAssetContents($asset);
 
             // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
-            if (($decodedJson['providerName'] === 'Instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
+            if (( strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
                 if ($this->_hasInstagramImageExpired($decodedJson['image'])) {
                     $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
                 } else {
