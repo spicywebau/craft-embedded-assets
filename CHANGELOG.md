@@ -5,6 +5,9 @@
 ### Changed
 - Updated JavaScript dependencies
 
+### Fixed
+- Fixed some issues with Instagram asset auto-refreshing (thanks @arifje)
+
 ## 2.10.1 - 2022-02-07
 
 ### Fixed
