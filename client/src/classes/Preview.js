@@ -152,7 +152,10 @@ export default class Preview extends Emitter {
           parameters.assetId = settings.assetId
         }
 
-        previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', parameters)
+        previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', {
+          ...parameters,
+          url: encodeURIComponent(parameters.url)
+        })
       }
 
       previewWindow.location.replace(previewUrl)
