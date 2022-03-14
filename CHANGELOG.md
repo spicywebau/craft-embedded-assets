@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added support for embedding Vimeo URLs with the new external embed format (thanks @boboldehampsink)
+
 ### Changed
 - Updated JavaScript dependencies
 
