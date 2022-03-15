@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.2 - 2022-03-15
 
 ### Added
 - Added support for embedding Vimeo URLs with the new external embed format (thanks @boboldehampsink)
