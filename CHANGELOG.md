@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.3 - 2022-03-21
 
 ### Fixed
 - Fixed a bug when auto-refreshing Instagram embedded assets, where the previous cached data was not being replaced
