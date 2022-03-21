@@ -767,6 +767,11 @@ class Service extends Component
                 $assets->replaceAssetFile($asset, $tempPath, $asset->filename);
                 Craft::$app->getElements()->deleteElement($assetToReplace);
 
+                // Replace the old cached data for the embedded asset
+                Craft::$app->getCache()->set(
+                    $this->getCachedAssetKey($asset),
+                    Json::encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+                );
             } catch (\Throwable $e) {
                 $array = null;
             }
