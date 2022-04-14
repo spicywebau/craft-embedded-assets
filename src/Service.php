@@ -21,6 +21,7 @@ use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
+use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use Twig\Markup as TwigMarkup;
 use yii\base\Component;
@@ -193,14 +194,11 @@ class Service extends Component
             $decodedJson = $this->_getAssetContents($asset);
 
             // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
-            if (( strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
-                if ($this->_hasInstagramImageExpired($decodedJson['image'])) {
-                    $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
-                } else {
-                    // If not expired yet, update the date modified so it checks in another seven days
-                    $asset->dateModified = new \DateTime();
-                    Craft::$app->getElements()->saveElement($asset);
-                }
+            if (( strtolower($decodedJson['providerName']) === 'instagram')){// && $this->_hasBeenWeekSince($asset->dateModified)) {
+                Craft::$app->queue->push(new InstagramRefreshCheck([
+                    'asset' => $asset,
+                    'embeddedAssetData' => $decodedJson,
+                ]));
             }
 
             // Make YouTube iframes use the nocookie embed URL if the relevant setting is enabled
@@ -722,62 +720,6 @@ class Service extends Component
     private function _hasBeenWeekSince(DateTimeInterface $dateModified)
     {
         return $dateModified->diff(new DateTimeImmutable())->d >= 7;
-    }
-
-    private function _hasInstagramImageExpired(string $imageUrl): bool
-    {
-        // get headers of the image url and make sure it's not expired yet.
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $imageUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
-
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        $output = rtrim($output);
-        $data = explode("\n", $output);
-
-        return $data && strpos($data[0], '200') === false;
-    }
-
-    private function _updateInstagramFile(Asset $asset, $url)
-    {
-        // Fix url in case we got a login url and not a instagram url referring to a post
-        // We add the post ID at the end
-        if(strpos($url, 'login') !== false) {
-            parse_str(parse_url($url)['query'], $params);
-            $url = "https://www.instagram.com" . $params['next'];
-        }
-		
-        // get new data from the url
-        $array = $this->_getDataFromAdapter($url);
-        $newEmbeddedAsset = $this->createEmbeddedAsset($array);
-
-        if ($newEmbeddedAsset) {
-            try {
-                $assets = Craft::$app->getAssets();
-
-                $folder = $assets->findFolder(['id' => $asset->folderId]);
-                $assetToReplace = $this->createAsset($newEmbeddedAsset, $folder);
-                Craft::$app->getElements()->saveElement($assetToReplace);
-
-                $tempPath = $assetToReplace->getCopyOfFile();
-                $assets->replaceAssetFile($asset, $tempPath, $asset->filename);
-                Craft::$app->getElements()->deleteElement($assetToReplace);
-
-                // Replace the old cached data for the embedded asset
-                Craft::$app->getCache()->set(
-                    $this->getCachedAssetKey($asset),
-                    Json::encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-                );
-            } catch (\Throwable $e) {
-                $array = null;
-            }
-        }
-
-        return $array;
     }
 
     private function _isProviderPbs(Adapter $adapter) {

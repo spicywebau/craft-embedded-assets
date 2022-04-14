@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Moved auto-refreshing of Instagram embedded assets to a queue job
+
 ## 2.10.3 - 2022-03-21
 
 ### Fixed
