@@ -213,7 +213,7 @@ class Service extends Component
             // Make Vimeo iframes use the nocookie embed URL if the relevant setting is enabled
             if ($decodedJson['providerName'] === 'Vimeo' && EmbeddedAssets::$plugin->getSettings()->disableVimeoTracking) {
                 $oldSrc = HtmlHelper::parseTagAttributes($decodedJson['code'])['src'];
-                $newSrc = UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']);
+                $newSrc = HtmlHelper::decode(UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']));
                 $decodedJson['code'] = HtmlHelper::modifyTagAttributes($decodedJson['code'], ['src' => $newSrc]);
             }
 

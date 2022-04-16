@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Fixed a bug that could cause invalid Vimeo URLs to be loaded when the 'Disable tracking on Vimeo iframes' setting was enabled
 - Fixed a bug with Instagram auto-refreshing in 2.10.4
 
 ## 2.10.4 - 2022-04-14
