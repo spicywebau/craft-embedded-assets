@@ -414,7 +414,7 @@ class Service extends Component
      */
     public function getEmbedHtml(EmbeddedAsset $embeddedAsset): TwigMarkup
     {
-        if ($embeddedAsset->code && $embeddedAsset->isSafe()) {
+        if ($embeddedAsset->code && $embeddedAsset->getIsSafe()) {
             $html = $embeddedAsset->code;
         } else {
             if ($embeddedAsset->type !== 'link' && $embeddedAsset->image) {

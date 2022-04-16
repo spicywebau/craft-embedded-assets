@@ -284,7 +284,7 @@ class Plugin extends BasePlugin
             function(RegisterElementHtmlAttributesEvent $event) {
                 $embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
                 
-                if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->isSafe()) {
+                if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->getIsSafe()) {
                     // Setting `null` actually adds the attribute, but doesn't include a value
                     $event->htmlAttributes['data-embedded-asset'] = $embeddedAsset->aspectRatio;
                 }
