@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added Craft 4 compatibility (requires Craft 4.0.0-beta.4 or later)
+
 ### Removed
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getCacheAge()`
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getRequestUrl()`; use the `url` property instead
