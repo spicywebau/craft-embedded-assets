@@ -139,7 +139,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['title', 'url', 'type'], 'required'],

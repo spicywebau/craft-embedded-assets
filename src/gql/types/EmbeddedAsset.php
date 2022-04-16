@@ -28,7 +28,7 @@ class EmbeddedAsset extends ObjectType
      * @inheritdoc
      * @since 2.7.0
      */
-    protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
+    protected function resolve(mixed $source, array $arguments, mixed $context, ResolveInfo $resolveInfo): mixed
     {
         return in_array($resolveInfo->fieldName, ['iframeCode', 'iframeSrc'])
             ? $source->{'get' . ucfirst($resolveInfo->fieldName)}($arguments['params'])

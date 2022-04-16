@@ -29,7 +29,8 @@
   },
   "require": {
     "craftcms/cms": "^3.6.0",
-    "embed/embed": "^3.4.17"
+    "embed/embed": "^3.4.17",
+    "php": "^8.0.2"
   },
   "autoload": {
     "psr-4": {
@@ -49,5 +50,16 @@
     "class": "spicyweb\\embeddedassets\\Plugin",
     "changelogUrl": "https://github.com/spicywebau/craft-embedded-assets/blob/master/CHANGELOG.md",
     "downloadUrl": "https://github.com/spicywebau/craft-embedded-assets/archive/master.zip"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require-dev": {
+    "craftcms/rector": "dev-main"
   }
 }

@@ -47,17 +47,17 @@ class Plugin extends BasePlugin
     /**
      * @var string
      */
-    public $changelogUrl = 'https://raw.githubusercontent.com/spicywebau/craft-embedded-assets/master/CHANGELOG.md';
+    public ?string $changelogUrl = 'https://raw.githubusercontent.com/spicywebau/craft-embedded-assets/master/CHANGELOG.md';
     
     /**
      * @var string
      */
-    public $downloadUrl = 'https://github.com/spicywebau/craft-embedded-assets/archive/master.zip';
+    public ?string $downloadUrl = 'https://github.com/spicywebau/craft-embedded-assets/archive/master.zip';
     
     /**
      * @var bool
      */
-    public $hasCpSettings = true;
+    public bool $hasCpSettings = true;
     
     /**
      * @var array
@@ -105,17 +105,17 @@ class Plugin extends BasePlugin
     /**
      * @return Settings
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
         return new Settings();
     }
     
     /**
      * @return null|string
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      * @throws \yii\base\Exception
      */
-    protected function settingsHtml()
+    protected function settingsHtml(): ?string
     {
         $viewService = Craft::$app->getView();
         
@@ -190,7 +190,7 @@ class Plugin extends BasePlugin
         Event::on(
             Assets::class,
             Assets::EVENT_GET_ASSET_THUMB_URL,
-            function (GetAssetThumbUrlEvent $event) {
+            function (\craft\events\DefineAssetThumbUrlEvent $event) {
                 // if showThumbnailsInCp is not true, return the default thumbnail url.
                 // else retrieve the thumbnail.
                 // this is done so it doesn't prolong the query times by retrieving the thumbnail from the embedded asset.

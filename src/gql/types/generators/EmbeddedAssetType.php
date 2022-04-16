@@ -21,7 +21,7 @@ class EmbeddedAssetType implements GeneratorInterface, SingleGeneratorInterface
     /**
      * @inheritdoc
      */
-    public static function generateTypes($context = null): array
+    public static function generateTypes(mixed $context = null): array
     {
         return [static::generateType($context)];
     }
@@ -29,7 +29,7 @@ class EmbeddedAssetType implements GeneratorInterface, SingleGeneratorInterface
     /**
      * @inheritdoc
      */
-    public static function generateType($context): ObjectType
+    public static function generateType(mixed $context): mixed
     {
         $typeName = 'EmbeddedAsset';
 

@@ -32,7 +32,7 @@ class InstagramRefreshCheck extends BaseJob
     /**
      * @inheritdoc
      */
-    public function execute($queue)
+    public function execute($queue): void
     {
         // Check if the data was sent through, and if not, get it from the asset contents
         if ($this->embeddedAssetData === null) {
@@ -56,7 +56,7 @@ class InstagramRefreshCheck extends BaseJob
     /**
      * @inheritdoc
      */
-    protected function defaultDescription(): string
+    protected function defaultDescription(): ?string
     {
         return Craft::t('embeddedassets', 'Checking whether Instagram embedded asset needs to be refreshed');
     }

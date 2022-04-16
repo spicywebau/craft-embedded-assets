@@ -19,7 +19,7 @@ class EmbeddedAsset extends AssetResolver
     /**
      * @inheritdoc
      */
-    public static function resolveOne($source, array $arguments, $context, ResolveInfo $resolveInfo)
+    public static function resolveOne($source, array $arguments, $context, ResolveInfo $resolveInfo): mixed
     {
         if (!($source instanceof AssetElement)) {
             return null;

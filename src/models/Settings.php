@@ -201,7 +201,7 @@ class Settings extends Model
      */
     public $disableVimeoTracking = false;
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'parser' => [
@@ -214,7 +214,7 @@ class Settings extends Model
     /**
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['embedlyKey', 'iframelyKey', 'googleKey', 'soundcloudKey', 'facebookKey', 'referer'], StringValidator::class],

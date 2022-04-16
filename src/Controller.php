@@ -141,7 +141,7 @@ class Controller extends BaseController
      *
      * @return Response
      * @throws BadRequestHttpException
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
      */
