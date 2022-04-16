@@ -283,24 +283,20 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Gets this embedded asset's video ID, if the embedded asset is a video.
+     * Gets this embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
      *
      * @since 2.2.3
-     * @return string|null the video ID, or null if the embedded asset is not a video
+     * @return string|null the video ID, or null if the embedded asset is not a YouTube or Vimeo video
      */
     public function getVideoId(): ?string
     {
-        if ($this->type !== "video") {
+        if ($this->type !== "video" || !in_array($this->providerName, ['YouTube', 'Vimeo'])) {
             return null;
         }
 
         $url = explode('/', $this->getMatchedVideoUrl());
 
-        if (in_array($this->providerName, ['YouTube', 'Vimeo'])) {
-            return explode('?', $url[4])[0];
-        }
-
-        return null;
+        return explode('?', $url[4])[0];
     }
 
     /**
