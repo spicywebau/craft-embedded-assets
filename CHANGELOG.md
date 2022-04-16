@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug with Instagram auto-refreshing in 2.10.4
+
 ## 2.10.4 - 2022-04-14
 
 ### Changed

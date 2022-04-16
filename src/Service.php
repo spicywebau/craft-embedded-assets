@@ -194,7 +194,7 @@ class Service extends Component
             $decodedJson = $this->_getAssetContents($asset);
 
             // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
-            if (( strtolower($decodedJson['providerName']) === 'instagram')){// && $this->_hasBeenWeekSince($asset->dateModified)) {
+            if ((strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
                 Craft::$app->queue->push(new InstagramRefreshCheck([
                     'asset' => $asset,
                     'embeddedAssetData' => $decodedJson,
