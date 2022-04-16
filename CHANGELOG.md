@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.5 - 2022-04-16
 
 ### Fixed
 - Fixed a bug that could cause invalid Vimeo URLs to be loaded when the 'Disable tracking on Vimeo iframes' setting was enabled
