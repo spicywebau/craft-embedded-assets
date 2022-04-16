@@ -2,14 +2,14 @@
 
 namespace spicyweb\embeddedassets\models;
 
-use JsonSerializable;
-
 use Craft;
+
 use craft\base\Model;
 use craft\helpers\Html as HtmlHelper;
 use craft\helpers\Template;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
+use JsonSerializable;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\validators\Image as ImageValidator;
 use spicyweb\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
@@ -145,12 +145,12 @@ class EmbeddedAsset extends Model implements JsonSerializable
             [['title', 'url', 'type'], 'required'],
             [
                 ['title', 'description', 'authorName', 'providerName', 'publishedTime', 'license'],
-                StringValidator::class
+                StringValidator::class,
             ],
             [
                 ['url', 'image', 'authorUrl', 'providerIcon', 'providerUrl'],
                 UrlValidator::class,
-                'defaultScheme' => 'https'
+                'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
             ['type', 'default', 'value' => 'link'],
@@ -319,7 +319,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
             $newUrl = $startPos ? substr($pUrl, 0, $startPos) : $pUrl;
-            $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)): [];
+            $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)) : [];
             $params = [];
             $joinedParams = [];
 

@@ -3,12 +3,10 @@
 namespace spicyweb\embeddedassets;
 
 use Craft;
-use craft\helpers\Template;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
-use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
-use spicyweb\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
@@ -84,7 +82,8 @@ class Controller extends BaseController
      * @throws \yii\base\Exception
      * @throws \yii\web\ForbiddenHttpException
      */
-    public function actionReplace(): Response {
+    public function actionReplace(): Response
+    {
         $this->requireAcceptsJson();
 
         $response = null;

@@ -5,8 +5,8 @@ namespace spicyweb\embeddedassets;
 use Craft;
 use craft\elements\Asset;
 
-use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 
 /**
  * Class Variable

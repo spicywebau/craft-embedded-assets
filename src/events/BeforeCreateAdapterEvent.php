@@ -10,7 +10,7 @@ use yii\base\Event;
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 2.8.0
  */
-Class BeforeCreateAdapterEvent extends Event
+class BeforeCreateAdapterEvent extends Event
 {
     /**
      * @var string

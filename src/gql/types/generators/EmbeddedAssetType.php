@@ -3,7 +3,6 @@
 namespace spicyweb\embeddedassets\gql\types\generators;
 
 use craft\gql\base\GeneratorInterface;
-use craft\gql\base\ObjectType;
 use craft\gql\base\SingleGeneratorInterface;
 use craft\gql\GqlEntityRegistry;
 use craft\gql\TypeManager;
@@ -37,7 +36,7 @@ class EmbeddedAssetType implements GeneratorInterface, SingleGeneratorInterface
             'name' => $typeName,
             'fields' => function() use ($typeName) {
                 return TypeManager::prepareFieldDefinitions(EmbeddedAssetInterface::getFieldDefinitions(), $typeName);
-            }
+            },
         ]));
     }
 }

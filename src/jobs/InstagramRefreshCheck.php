@@ -3,9 +3,9 @@
 namespace spicyweb\embeddedassets\jobs;
 
 use Craft;
+use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\queue\BaseJob;
-use craft\elements\Asset;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 
 /**
@@ -99,7 +99,7 @@ class InstagramRefreshCheck extends BaseJob
     {
         // Fix URL in case we got a login URL and not an Instagram URL referring to a post
         // We add the post ID at the end
-        if(strpos($url, 'login') !== false) {
+        if (strpos($url, 'login') !== false) {
             parse_str(parse_url($url)['query'], $params);
             $url = "https://www.instagram.com" . $params['next'];
         }

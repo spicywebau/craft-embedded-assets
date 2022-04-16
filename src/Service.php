@@ -4,29 +4,29 @@ namespace spicyweb\embeddedassets;
 
 use Craft;
 use craft\elements\Asset;
-use craft\helpers\Template;
-use craft\helpers\StringHelper;
-use craft\helpers\Json;
 use craft\helpers\Assets;
 use craft\helpers\FileHelper;
 use craft\helpers\Html as HtmlHelper;
+use craft\helpers\Json;
+use craft\helpers\StringHelper;
+use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DOMDocument;
-use Embed\Embed;
 use Embed\Adapters\Adapter;
+use Embed\Embed;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
-use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use Twig\Markup as TwigMarkup;
 use yii\base\Component;
-use yii\base\Exception;
 use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 
 /**
@@ -43,7 +43,7 @@ class Service extends Component
      * @event BeforeCreateAdapterEvent The event that is triggered before creating an Embed adapter.
      * @since 2.8.0
      */
-    const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
+    public const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
 
     private $embeddedAssetData = [];
 
@@ -617,7 +617,7 @@ class Service extends Component
                     'height' => $imageHeight,
                     'size' => $imageWidth * $imageHeight,
                     'mime' => null,
-                ]
+                ],
             ] : [],
             'image' => $imageUrl,
             'imageWidth' => $imageWidth,
@@ -645,8 +645,8 @@ class Service extends Component
     private function _getAssetContents(Asset $asset): array
     {
         $contents = Craft::$app->getCache()->getOrSet(
-			$this->getCachedAssetKey($asset),
-			static function() use($asset) {
+            $this->getCachedAssetKey($asset),
+            static function() use ($asset) {
                 $oldCacheDir = Craft::$app->getPath()->getAssetsPath(false) . DIRECTORY_SEPARATOR . 'embeddedassets';
                 $oldSubDir = $oldCacheDir . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
                 $oldCachedPath = $oldSubDir . DIRECTORY_SEPARATOR . $asset->uid . '.json';
@@ -668,8 +668,8 @@ class Service extends Component
                 }
 
                 return $contents;
-			},
-			0);
+            },
+            0);
 
         try {
             $contents = Json::decode($contents);
@@ -702,13 +702,15 @@ class Service extends Component
         return $dateModified->diff(new DateTimeImmutable())->d >= 7;
     }
 
-    private function _isProviderPbs(Adapter $adapter) {
+    private function _isProviderPbs(Adapter $adapter)
+    {
         $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
 
         return in_array($adapter->providerUrl, $pbsUrls);
     }
 
-    private function _getPbsEmbedCode(Adapter $adapter) {
+    private function _getPbsEmbedCode(Adapter $adapter)
+    {
         if (!$this->_isProviderPbs($adapter)) {
             return null;
         }

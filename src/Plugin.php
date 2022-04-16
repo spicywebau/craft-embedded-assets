@@ -6,21 +6,19 @@ use Craft;
 use craft\base\Element;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
-use craft\helpers\Json;
-use craft\helpers\UrlHelper;
 use craft\events\DefineGqlTypeFieldsEvent;
-use craft\events\GetAssetThumbUrlEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\TemplateEvent;
-use craft\gql\arguments\elements\Asset as AssetArguments;
 use craft\gql\TypeManager;
+use craft\helpers\Json;
+use craft\helpers\UrlHelper;
 use craft\services\Assets;
 use craft\services\Gql;
-use craft\web\View;
 use craft\web\twig\variables\CraftVariable;
+use craft\web\View;
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
 use spicyweb\embeddedassets\assets\Main as MainAsset;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
@@ -132,7 +130,7 @@ class Plugin extends BasePlugin
         Event::on(
             View::class,
             View::EVENT_BEFORE_RENDER_TEMPLATE,
-            function (TemplateEvent $event) {
+            function(TemplateEvent $event) {
                 $viewService = Craft::$app->getView();
                 $viewService->registerAssetBundle(MainAsset::class);
                 
@@ -151,7 +149,7 @@ class Plugin extends BasePlugin
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
-            function (Event $event) {
+            function(Event $event) {
                 $event->sender->set('embeddedAssets', Variable::class);
             }
         );
@@ -162,14 +160,14 @@ class Plugin extends BasePlugin
         Event::on(
             Gql::class,
             Gql::EVENT_REGISTER_GQL_TYPES,
-            function (RegisterGqlTypesEvent $event) {
+            function(RegisterGqlTypesEvent $event) {
                 $event->types[] = EmbeddedAssetInterface::class;
             }
         );
         Event::on(
             TypeManager::class,
             TypeManager::EVENT_DEFINE_GQL_TYPE_FIELDS,
-            function (DefineGqlTypeFieldsEvent $event) {
+            function(DefineGqlTypeFieldsEvent $event) {
                 if ($event->typeName === 'AssetInterface') {
                     $event->fields['embeddedAsset'] = [
                         'name' => 'embeddedAsset',
@@ -190,7 +188,7 @@ class Plugin extends BasePlugin
         Event::on(
             Assets::class,
             Assets::EVENT_GET_ASSET_THUMB_URL,
-            function (\craft\events\DefineAssetThumbUrlEvent $event) {
+            function(\craft\events\DefineAssetThumbUrlEvent $event) {
                 // if showThumbnailsInCp is not true, return the default thumbnail url.
                 // else retrieve the thumbnail.
                 // this is done so it doesn't prolong the query times by retrieving the thumbnail from the embedded asset.
@@ -214,11 +212,12 @@ class Plugin extends BasePlugin
     /**
      * Registers an event listener for Craft 3.4's asset previews.
      */
-    private function _registerPreviewHandler() {
+    private function _registerPreviewHandler()
+    {
         Event::on(
             Assets::class,
             Assets::EVENT_REGISTER_PREVIEW_HANDLER,
-            function (\craft\events\AssetPreviewEvent $event) {
+            function(\craft\events\AssetPreviewEvent $event) {
                 if ($event->asset->kind === Asset::KIND_JSON) {
                     $event->previewHandler = new EmbeddedAssetPreview($event->asset);
                 }
@@ -231,12 +230,12 @@ class Plugin extends BasePlugin
      */
     private function _registerSaveListener()
     {
-        Event::on(Element::class, Element::EVENT_AFTER_SAVE, function (Event $event) {
+        Event::on(Element::class, Element::EVENT_AFTER_SAVE, function(Event $event) {
             if ($event->sender instanceof Asset && $event->sender->kind === Asset::KIND_JSON) {
                 $contents = $event->sender->getContents();
 
                 if ($this->methods->isValidEmbeddedAssetData(Json::decodeIfJson($contents))) {
-                	Craft::$app->getCache()->add($this->methods->getCachedAssetKey($event->sender), $contents, 0);
+                    Craft::$app->getCache()->add($this->methods->getCachedAssetKey($event->sender), $contents, 0);
                 }
             }
         });
@@ -247,9 +246,9 @@ class Plugin extends BasePlugin
      */
     private function _registerDeleteListener()
     {
-        Event::on(Element::class, Element::EVENT_AFTER_DELETE, function (Event $event) {
+        Event::on(Element::class, Element::EVENT_AFTER_DELETE, function(Event $event) {
             if ($event->sender instanceof Asset) {
-            	Craft::$app->getCache()->delete($this->methods->getCachedAssetKey($event->sender));
+                Craft::$app->getCache()->delete($this->methods->getCachedAssetKey($event->sender));
             }
         });
     }
@@ -259,11 +258,10 @@ class Plugin extends BasePlugin
      */
     private function _configureAssetIndexAttributesNoThumbnail()
     {
-        
         Event::on(
             Asset::class,
             Asset::EVENT_REGISTER_HTML_ATTRIBUTES,
-            function (RegisterElementHtmlAttributesEvent $event) {
+            function(RegisterElementHtmlAttributesEvent $event) {
                 if ($event->sender->kind === "json") {
                     $event->htmlAttributes['data-embedded-asset'] = null;
                 }
@@ -283,7 +281,7 @@ class Plugin extends BasePlugin
         Event::on(
             Asset::class,
             Asset::EVENT_REGISTER_HTML_ATTRIBUTES,
-            function (RegisterElementHtmlAttributesEvent $event) {
+            function(RegisterElementHtmlAttributesEvent $event) {
                 $embeddedAsset = $this->methods->getEmbeddedAsset($event->sender);
                 
                 if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->isSafe()) {
@@ -296,7 +294,7 @@ class Plugin extends BasePlugin
         Event::on(
             Asset::class,
             Asset::EVENT_REGISTER_TABLE_ATTRIBUTES,
-            function (RegisterElementTableAttributesEvent $event) use ($newAttributes) {
+            function(RegisterElementTableAttributesEvent $event) use ($newAttributes) {
                 foreach ($newAttributes as $attributeHandle => $attributeLabel) {
                     $event->tableAttributes[$attributeHandle] = [
                         'label' => Craft::t('embeddedassets', $attributeLabel),
@@ -308,7 +306,7 @@ class Plugin extends BasePlugin
         Event::on(
             Asset::class,
             Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
-            function (SetElementTableAttributeHtmlEvent $event) use ($newAttributes) {
+            function(SetElementTableAttributeHtmlEvent $event) use ($newAttributes) {
                 // Prevent new table attributes from causing server errors
                 if (array_key_exists($event->attribute, $newAttributes)) {
                     $event->html = '';

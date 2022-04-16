@@ -2,9 +2,9 @@
 
 namespace spicyweb\embeddedassets\validators;
 
-use yii\validators\Validator;
-
 use craft\helpers\UrlHelper;
+
+use yii\validators\Validator;
 
 /**
  * Class Image

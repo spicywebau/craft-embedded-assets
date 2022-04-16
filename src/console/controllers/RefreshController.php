@@ -120,7 +120,7 @@ class RefreshController extends Controller
         foreach ($embeddedAssets as $assetId => $assetData) {
             $assetToReplace = $assetData['asset'];
             $embeddedAssetToReplace = $assetData['embeddedAsset'];
-            $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... '); 
+            $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... ');
 
             $folder = $assetToReplace->getFolder();
             $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url, false);
@@ -137,7 +137,7 @@ class RefreshController extends Controller
                 $elementsService->deleteElement($newAsset);
 
                 $successCount++;
-                $this->stdout('done.' . PHP_EOL); 
+                $this->stdout('done.' . PHP_EOL);
             }
         }
 

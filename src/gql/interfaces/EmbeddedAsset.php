@@ -2,9 +2,9 @@
 
 namespace spicyweb\embeddedassets\gql\interfaces;
 
+use craft\gql\base\InterfaceType;
 use craft\gql\GqlEntityRegistry;
 use craft\gql\TypeManager;
-use craft\gql\base\InterfaceType;
 use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -40,7 +40,7 @@ class EmbeddedAsset extends InterfaceType
             'name' => static::getName(),
             'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all embedded assets.',
-            'resolveType' => function (EmbeddedAssetModel $value) {
+            'resolveType' => function(EmbeddedAssetModel $value) {
                 return 'EmbeddedAsset';
             },
         ]));
@@ -99,122 +99,122 @@ class EmbeddedAsset extends InterfaceType
             'title' => [
                 'name' => 'title',
                 'type' => Type::string(),
-                'description' => 'The title of the embedded asset.'
+                'description' => 'The title of the embedded asset.',
             ],
             'description' => [
                 'name' => 'description',
                 'type' => Type::string(),
-                'description' => 'The description of the embedded asset.'
+                'description' => 'The description of the embedded asset.',
             ],
             'url' => [
                 'name' => 'url',
                 'type' => Type::string(),
-                'description' => 'The url of the embedded asset.'
+                'description' => 'The url of the embedded asset.',
             ],
             'type' => [
                 'name' => 'type',
                 'type' => Type::string(),
-                'description' => 'The type of the embedded asset.'
+                'description' => 'The type of the embedded asset.',
             ],
             'tags' => [
                 'name' => 'tags',
                 'type' => Type::listOf(Type::string()),
-                'description' => 'The tags for the embedded asset.'
+                'description' => 'The tags for the embedded asset.',
             ],
             'feeds' => [
                 'name' => 'feeds',
                 'type' => Type::listOf(Type::string()),
-                'description' => 'The feeds for the embedded asset.'
+                'description' => 'The feeds for the embedded asset.',
             ],
             'images' => [
                 'name' => 'images',
                 'type' => Type::listOf($imageType),
-                'description' => 'The images for the embedded asset.'
+                'description' => 'The images for the embedded asset.',
             ],
             'image' => [
                 'name' => 'image',
                 'type' => Type::string(),
-                'description' => 'The image for the embedded asset.'
+                'description' => 'The image for the embedded asset.',
             ],
             'imageWidth' => [
                 'name' => 'imageWidth',
                 'type' => Type::int(),
-                'description' => 'The image width for the embedded asset.'
+                'description' => 'The image width for the embedded asset.',
             ],
             'imageHeight' => [
                 'name' => 'imageHeight',
                 'type' => Type::int(),
-                'description' => 'The image height for the embedded asset.'
+                'description' => 'The image height for the embedded asset.',
             ],
             'code' => [
                 'name' => 'code',
                 'type' => Type::string(),
-                'description' => 'The code for the embedded asset.'
+                'description' => 'The code for the embedded asset.',
             ],
             'width' => [
                 'name' => 'width',
                 'type' => Type::int(),
-                'description' => 'The width for the embedded asset.'
+                'description' => 'The width for the embedded asset.',
             ],
             'height' => [
                 'name' => 'height',
                 'type' => Type::int(),
-                'description' => 'The height for the embedded asset.'
+                'description' => 'The height for the embedded asset.',
             ],
             'aspectRatio' => [
                 'name' => 'aspectRatio',
                 'type' => Type::float(),
-                'description' => 'The aspect ratio for the embedded asset.'
+                'description' => 'The aspect ratio for the embedded asset.',
             ],
             'authorName' => [
                 'name' => 'authorName',
                 'type' => Type::string(),
-                'description' => 'The author name for the embedded asset.'
+                'description' => 'The author name for the embedded asset.',
             ],
             'authorUrl' => [
                 'name' => 'authorUrl',
                 'type' => Type::string(),
-                'description' => 'The author URL for the embedded asset.'
+                'description' => 'The author URL for the embedded asset.',
             ],
             'providerIcons' => [
                 'name' => 'providerIcons',
                 'type' => Type::listOf($imageType),
-                'description' => 'The provider icons for the embedded asset.'
+                'description' => 'The provider icons for the embedded asset.',
             ],
             'providerIcon' => [
                 'name' => 'providerIcon',
                 'type' => Type::string(),
-                'description' => 'The provider icon for the embedded asset.'
+                'description' => 'The provider icon for the embedded asset.',
             ],
             'providerName' => [
                 'name' => 'providerName',
                 'type' => Type::string(),
-                'description' => 'The provider name for the embedded asset.'
+                'description' => 'The provider name for the embedded asset.',
             ],
             'providerUrl' => [
                 'name' => 'providerUrl',
                 'type' => Type::string(),
-                'description' => 'The provider URL for the embedded asset.'
+                'description' => 'The provider URL for the embedded asset.',
             ],
             'publishedTime' => [
                 'name' => 'publishedTime',
                 'type' => Type::string(),
-                'description' => 'The published time of the embedded asset.'
+                'description' => 'The published time of the embedded asset.',
             ],
             'license' => [
                 'name' => 'license',
                 'type' => Type::string(),
-                'description' => 'The license for the embedded asset.'
+                'description' => 'The license for the embedded asset.',
             ],
             'isSafe' => [
                 'name' => 'isSafe',
                 'type' => Type::boolean(),
-                'description' => 'Whether or not the the embed code is safe to use.'
+                'description' => 'Whether or not the the embed code is safe to use.',
             ],
             'html' => [
                 'name' => 'html',
                 'type' => Type::string(),
-                'description' => 'The embed HTML for the embedded asset.'
+                'description' => 'The embed HTML for the embedded asset.',
             ],
             'iframeCode' => [
                 'name' => 'iframeCode',
