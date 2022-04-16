@@ -187,7 +187,7 @@ class Plugin extends BasePlugin
     {
         Event::on(
             Assets::class,
-            Assets::EVENT_GET_ASSET_THUMB_URL,
+            Assets::EVENT_DEFINE_THUMB_URL,
             function(\craft\events\DefineAssetThumbUrlEvent $event) {
                 // if showThumbnailsInCp is not true, return the default thumbnail url.
                 // else retrieve the thumbnail.
