@@ -48,18 +48,21 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   showButtonIfJsonAllowed(button, allowedAssetKinds)
   replaceButton.hide()
 
-  const getFolderId = () => {
+  const getActionTarget = () => {
     const split = this.sourceKey.split(':')
 
-    if (split[split.length - 1]) {
-      return split[split.length - 1]
+    if (split[split.length - 2]) {
+      return {
+        targetType: split[split.length - 2],
+        targetUid: split[split.length - 1]
+      }
     }
 
-    return 0
+    return {}
   }
 
-  embeddedAssets.addButton(button, modalOrientations, getFolderId)
-  embeddedAssets.addButton(replaceButton, modalOrientations, getFolderId, true)
+  embeddedAssets.addButton(button, modalOrientations, getActionTarget)
+  embeddedAssets.addButton(replaceButton, modalOrientations, getActionTarget, true)
 
   let idsToSelect = []
 

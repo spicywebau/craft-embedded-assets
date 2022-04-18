@@ -5,10 +5,10 @@ import Preview from './Preview'
 import { uniqueId, isUrl } from '../utilities'
 
 export default class Form extends Emitter {
-  constructor (getFolderId = () => -1) {
+  constructor (getActionTarget = () => {}) {
     super()
 
-    this._getFolderId = getFolderId
+    this._getActionTarget = getActionTarget
 
     const inputId = uniqueId()
     const bodyId = uniqueId()
@@ -117,20 +117,27 @@ export default class Form extends Emitter {
     this._replaceAssetId = id
   }
 
-  save (url = this.$input.val(), folderId = this._getFolderId()) {
-    const assetId = this._replaceAssetId
+  save (url = this.$input.val(), actionTarget = this._getActionTarget()) {
+    const data = {
+      ...actionTarget,
+      url,
+      assetId: this._replaceAssetId
+    }
 
-    Craft.queueActionRequest('embeddedassets/actions/' + (this._replace ? 'replace' : 'save'), { url, folderId, assetId }, (response, status) => {
-      if (this._state === 'saving' && status === 'success' && response.success) {
-        this.clear()
-        this.trigger('save', response.payload)
-      } else {
-        if (response && response.error) {
-          Craft.cp.displayError(response.error)
-        }
+    Craft.queueActionRequest(() => {
+      return Craft.sendActionRequest('POST', `embeddedassets/actions/${(this._replace ? 'replace' : 'save')}`, { data })
+        .then(response => {
+          if (this._state === 'saving' && response.data.success) {
+            this.clear()
+            this.trigger('save', response.data.payload)
+          } else {
+            if (response.data && response.data.error) {
+              Craft.cp.displayError(response.data.error)
+            }
 
-        this.setState('requested')
-      }
+            this.setState('requested')
+          }
+        })
     })
 
     this.setState('saving')

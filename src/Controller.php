@@ -3,6 +3,8 @@
 namespace spicyweb\embeddedassets;
 
 use Craft;
+use craft\db\Table;
+use craft\helpers\Db;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
@@ -24,7 +26,8 @@ class Controller extends BaseController
      * Saves an embedded asset as a Craft asset.
      *
      * @query string url The URL to create an embedded asset from (required).
-     * @query int folderId The volume folder ID to save the asset to (required).
+     * @query string targetType Whether `targetUid` belongs to a volume or a folder (required).
+     * @query string targetUid The volume or folder UID to save the asset to (required).
      * @response JSON
      *
      * @return Response
@@ -42,10 +45,15 @@ class Controller extends BaseController
 
         $requestService = Craft::$app->getRequest();
 
-        $url = $requestService->getRequiredParam('url');
-        $folderId = $requestService->getRequiredParam('folderId');
+        $url = $requestService->getRequiredBodyParam('url');
+        $targetType = $requestService->getRequiredBodyParam('targetType');
+        $targetUid = $requestService->getRequiredBodyParam('targetUid');
 
-        $folder = $this->_findFolder($folderId);
+        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
+            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
+            'parentId' => ':empty:',
+        ];
+        $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = Craft::$app->getElements()->saveElement($asset);
@@ -59,7 +67,7 @@ class Controller extends BaseController
                 'success' => true,
                 'payload' => [
                     'assetId' => $asset->id,
-                    'folderId' => $folderId,
+                    'folderUid' => $folder->uid,
                 ],
             ]);
         }
@@ -71,7 +79,8 @@ class Controller extends BaseController
      * Replaces an embedded asset.
      *
      * @query string url The URL to create an embedded asset from (required).
-     * @query int folderId The volume folder ID to save the asset to (required).
+     * @query string targetType Whether `targetUid` belongs to a volume or a folder (required).
+     * @query string targetUid The volume or folder UID to save the asset to (required).
      * @query int assetId The asset ID to replace (required).
      * @response JSON
      *
@@ -93,7 +102,8 @@ class Controller extends BaseController
         $requestService = Craft::$app->getRequest();
 
         $url = $requestService->getRequiredParam('url');
-        $folderId = $requestService->getRequiredParam('folderId');
+        $targetType = $requestService->getRequiredBodyParam('targetType');
+        $targetUid = $requestService->getRequiredBodyParam('targetUid');
         $assetId = $requestService->getRequiredParam('assetId');
 
         $assetToReplace = null;
@@ -102,7 +112,11 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
-        $folder = $this->_findFolder($folderId);
+        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
+            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
+            'parentId' => ':empty:',
+        ];
+        $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = $elementsService->saveElement($asset);
@@ -122,7 +136,7 @@ class Controller extends BaseController
                 'success' => true,
                 'payload' => [
                     'assetId' => $asset->id,
-                    'folderId' => $folderId,
+                    'folderUid' => $folder->uid,
                 ],
             ]);
         }
@@ -189,10 +203,10 @@ class Controller extends BaseController
         return $response;
     }
 
-    private function _findFolder(string $folderId): VolumeFolder
+    private function _findFolder(array $criteria): VolumeFolder
     {
         $assetsService = Craft::$app->getAssets();
-        $folder = $assetsService->findFolder(['uid' => $folderId]);
+        $folder = $assetsService->findFolder($criteria);
 
         if (!$folder) {
             throw new BadRequestHttpException('The target folder provided for uploading is not valid');
