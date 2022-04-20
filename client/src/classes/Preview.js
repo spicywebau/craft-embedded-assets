@@ -154,7 +154,7 @@ export default class Preview extends Emitter {
 
         previewUrl = Craft.getActionUrl('embeddedassets/actions/preview', {
           ...parameters,
-          url: encodeURIComponent(parameters.url)
+          url: typeof parameters.url !== 'undefined' ? encodeURIComponent(parameters.url) : null
         })
       }
 

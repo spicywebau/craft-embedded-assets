@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error that could occur when loading a saved embedded asset preview on Craft 3.6
+
 ## 2.10.5 - 2022-04-16
 
 ### Fixed
