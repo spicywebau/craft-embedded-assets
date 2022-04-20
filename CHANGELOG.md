@@ -18,6 +18,11 @@
 - Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
 - Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
 
+## 2.10.6 - 2022-04-20
+
+### Fixed
+- Fixed an error that could occur when loading a saved embedded asset preview on Craft 3.6
+
 ## 2.10.5 - 2022-04-16
 
 ### Fixed
