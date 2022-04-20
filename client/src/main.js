@@ -3,7 +3,6 @@ import $ from 'jquery'
 import Craft from 'craft'
 import EmbeddedAssets from './classes/EmbeddedAssets'
 import Button from './classes/Button'
-import Preview from './classes/Preview'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()
@@ -99,30 +98,6 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
       replaceButton.hide()
     }
   })
-})
-
-monkeypatch(Craft.AssetEditor, 'updateForm', function () {
-  const assetId = this.$element.attr('data-id')
-  const dataEmbedRatio = this.$element.attr('data-embedded-asset')
-  let embedRatio = dataEmbedRatio
-
-  if (assetId && typeof embedRatio !== 'undefined') {
-    if (typeof embedRatio === 'string') {
-      embedRatio = '56.25'
-    }
-
-    // Won't be needing this anymore
-    this.$fieldsContainer.find('.preview-thumb-container').remove()
-
-    const preview = new Preview()
-    const paddingTop = Math.min(embedRatio || 100, 75) + '%'
-
-    preview.$element.css({ paddingTop })
-
-    this.$fieldsContainer.find('.field.first').before(preview.$element)
-
-    window.requestAnimationFrame(() => preview.request({ assetId, showContent: false }))
-  }
 })
 
 window.EmbeddedAssets = embeddedAssets
