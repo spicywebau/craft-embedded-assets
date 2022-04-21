@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where replacing an embedded asset would not cause its cached data to be replaced
+
 ## 2.10.6 - 2022-04-20
 
 ### Fixed

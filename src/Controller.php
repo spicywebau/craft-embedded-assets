@@ -3,6 +3,7 @@
 namespace spicyweb\embeddedassets;
 
 use Craft;
+use craft\helpers\Json;
 use craft\helpers\Template;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
@@ -119,6 +120,12 @@ class Controller extends BaseController
             $errorLabel = Craft::t('app', "Failed to save the Asset:");
             $response = $this->asErrorJson($errorLabel . implode(";\n", $errors));
         } else {
+            // Replace the old cached data for the embedded asset
+            Craft::$app->getCache()->set(
+                EmbeddedAssets::$plugin->methods->getCachedAssetKey($assetToReplace),
+                Json::encode($embeddedAsset->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+            );
+
             $response = $this->asJson([
                 'success' => true,
                 'payload' => [
