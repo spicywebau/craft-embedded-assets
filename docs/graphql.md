@@ -18,4 +18,8 @@ query {
 
 If the asset field contains any assets that are not embedded assets, `embeddedAsset` will just return `null` for those assets.
 
-All properties of an embedded asset listed on the [Templating](templating.md#properties) page can be retrieved from an `embeddedAsset`, as well as the result of [`isSafe`](templating.md#getissafe).
+All properties of an embedded asset listed on the [Templating](templating.md#properties) page can be retrieved from an `embeddedAsset`, as well as the following:
+
+- `isSafe` - checks an embedded asset embed code for URLs that are safe. See the documentation for the `EmbeddedAsset` model's [`getIsSafe()`](templating.md#getissafe) method for more details.
+- `iframeSrc` - if the embedded asset's `code` is an `<iframe>`, returns the `<iframe>`'s `src` attribute with extra parameters added. Requires the `params` argument, passed in the same format as the `EmbeddedAsset` model's [`getIframeSrc()`](templating.md#getiframesrc) method.
+- `iframeCode` - if the embedded asset's `code` is an `<iframe>`, returns the `<iframe>` with extra parameters added to the `src` attribute. Requires the `params` argument, passed in the same format as the `EmbeddedAsset` model's [`getIframeCode()`](templating.md#getiframecode) method.

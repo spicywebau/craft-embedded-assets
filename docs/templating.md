@@ -64,7 +64,7 @@ Property (\*required) | Description
 `providerUrl` String | The URL of the provider.
 `providerIcons` Array&lt;[Image](#image)&gt; | List of all provider icons found for the embedded asset.
 `providerIcon` String | The URL of the main provider icon for the embedded asset.
-`publishedDate` String | The published date of the embedded asset.
+`publishedTime` String | The published time of the embedded asset.
 `license` String | The URL to the embedded asset license.
 `feeds` Array&lt;String&gt; | Links to any RSS/Atom feeds found from the URL.
 
