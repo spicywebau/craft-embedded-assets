@@ -2,9 +2,9 @@
 
 namespace spicyweb\embeddedassets\gql\interfaces;
 
+use Craft;
 use craft\gql\base\InterfaceType;
 use craft\gql\GqlEntityRegistry;
-use craft\gql\TypeManager;
 use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -95,7 +95,7 @@ class EmbeddedAsset extends InterfaceType
             ],
         ]);
 
-        return TypeManager::prepareFieldDefinitions([
+        return Craft::$app->getGql()->prepareFieldDefinitions([
             'title' => [
                 'name' => 'title',
                 'type' => Type::string(),
