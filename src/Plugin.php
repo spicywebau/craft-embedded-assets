@@ -56,7 +56,12 @@ class Plugin extends BasePlugin
      * @var bool
      */
     public bool $hasCpSettings = true;
-    
+
+    /**
+     * @inheritdoc
+     */
+    public string $minVersionRequired = '2.10.0';
+
     /**
      * @var array
      */
