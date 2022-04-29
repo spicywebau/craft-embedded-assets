@@ -632,29 +632,7 @@ class Service extends Component
     {
         $contents = Craft::$app->getCache()->getOrSet(
             $this->getCachedAssetKey($asset),
-            static function() use ($asset) {
-                $oldCacheDir = Craft::$app->getPath()->getAssetsPath(false) . DIRECTORY_SEPARATOR . 'embeddedassets';
-                $oldSubDir = $oldCacheDir . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
-                $oldCachedPath = $oldSubDir . DIRECTORY_SEPARATOR . $asset->uid . '.json';
-                $contents = null;
-
-                if (file_exists($oldCachedPath)) {
-                    $contents = file_get_contents($oldCachedPath);
-                    FileHelper::unlink($oldCachedPath);
-
-                    if (FileHelper::isDirectoryEmpty($oldSubDir)) {
-                        FileHelper::removeDirectory($oldSubDir);
-                    }
-
-                    if (FileHelper::isDirectoryEmpty($oldCacheDir)) {
-                        FileHelper::removeDirectory($oldCacheDir);
-                    }
-                } else {
-                    $contents = $asset->getContents();
-                }
-
-                return $contents;
-            },
+            static function() use ($asset) { return $asset->getContents(); },
             0);
 
         try {
