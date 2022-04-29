@@ -124,21 +124,24 @@ export default class Form extends Emitter {
       assetId: this._replaceAssetId
     }
 
-    Craft.queueActionRequest(() => {
-      return Craft.sendActionRequest('POST', `embeddedassets/actions/${(this._replace ? 'replace' : 'save')}`, { data })
+    Craft.queue.push(() => new Promise((resolve, reject) => {
+      Craft.sendActionRequest('POST', `embeddedassets/actions/${(this._replace ? 'replace' : 'save')}`, { data })
         .then(response => {
           if (this._state === 'saving' && response.data.success) {
             this.clear()
             this.trigger('save', response.data.payload)
+            resolve()
           } else {
             if (response.data && response.data.error) {
               Craft.cp.displayError(response.data.error)
             }
 
             this.setState('requested')
+            reject(new Error(response.data.error))
           }
         })
-    })
+        .catch(reject)
+    }))
 
     this.setState('saving')
   }
