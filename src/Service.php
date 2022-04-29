@@ -632,7 +632,9 @@ class Service extends Component
     {
         $contents = Craft::$app->getCache()->getOrSet(
             $this->getCachedAssetKey($asset),
-            static function() use ($asset) { return $asset->getContents(); },
+            static function() use ($asset) {
+                return $asset->getContents();
+            },
             0);
 
         try {

@@ -6,7 +6,6 @@ use Craft;
 use craft\db\Table;
 use craft\helpers\Db;
 use craft\helpers\Json;
-use craft\helpers\Template;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
