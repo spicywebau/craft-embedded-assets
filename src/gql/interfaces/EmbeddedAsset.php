@@ -4,6 +4,7 @@ namespace spicyweb\embeddedassets\gql\interfaces;
 
 use Craft;
 use craft\gql\base\InterfaceType;
+use craft\gql\base\SingularTypeInterface;
 use craft\gql\GqlEntityRegistry;
 use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
 use GraphQL\Type\Definition\ObjectType;
@@ -17,7 +18,7 @@ use spicyweb\embeddedassets\models\EmbeddedAsset as EmbeddedAssetModel;
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 2.4.0
  */
-class EmbeddedAsset extends InterfaceType
+class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
 {
     /**
      * @inheritdoc
@@ -30,7 +31,7 @@ class EmbeddedAsset extends InterfaceType
     /**
      * @inheritdoc
      */
-    public static function getType($fields = null): Type
+    public static function getType(): Type
     {
         if ($type = GqlEntityRegistry::getEntity(self::getName())) {
             return $type;
