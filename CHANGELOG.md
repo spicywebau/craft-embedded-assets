@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- Added Craft 4 compatibility (requires Craft 4.0.0-beta.4 or later)
+- Added Craft 4 compatibility (requires Craft 4.0.0-RC2 or later)
 
 ### Removed
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getCacheAge()`
