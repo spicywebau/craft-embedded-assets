@@ -24,7 +24,7 @@ class Variable
      * @param Asset $asset
      * @return EmbeddedAsset|null
      */
-    public function get(Asset $asset)
+    public function get(Asset $asset): ?EmbeddedAsset
     {
         return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
     }
@@ -37,7 +37,7 @@ class Variable
      * @return EmbeddedAsset|null
      * @since 2.10.0
      */
-    public function create(array $array)
+    public function create(array $array): ?EmbeddedAsset
     {
         return EmbeddedAssets::$plugin->methods->createEmbeddedAsset($array);
     }

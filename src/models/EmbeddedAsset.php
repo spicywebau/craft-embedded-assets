@@ -29,112 +29,112 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @var string required
      */
-    public $title;
+    public string $title;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * @var string URL required
      */
-    public $url;
+    public string $url;
 
     /**
      * @var string link|image|video\rich required
      */
-    public $type;
+    public string $type;
 
     /**
      * @var array of strings
      */
-    public $tags;
+    public array $tags;
 
     /**
      * @var array of URLs
      */
-    public $feeds;
+    public array $feeds;
 
     /**
      * @var array of images
      */
-    public $images;
+    public array $images;
 
     /**
      * @var string URL
      */
-    public $image;
+    public string $image;
 
     /**
      * @var number
      */
-    public $imageWidth;
+    public int $imageWidth;
 
     /**
      * @var number
      */
-    public $imageHeight;
+    public int $imageHeight;
 
     /**
-     * @var TwigMarkup
+     * @var TwigMarkup|null
      */
-    public $code;
-
-    /**
-     * @var number
-     */
-    public $width;
+    public ?TwigMarkup $code;
 
     /**
      * @var number
      */
-    public $height;
+    public int $width;
 
     /**
      * @var number
      */
-    public $aspectRatio;
+    public int $height;
+
+    /**
+     * @var number
+     */
+    public int|float $aspectRatio;
 
     /**
      * @var string
      */
-    public $authorName;
+    public string $authorName;
 
     /**
      * @var string URL
      */
-    public $authorUrl;
+    public string $authorUrl;
 
     /**
      * @var array of images
      */
-    public $providerIcons;
+    public array $providerIcons;
 
     /**
      * @var string URL
      */
-    public $providerIcon;
+    public string $providerIcon;
 
     /**
      * @var string
      */
-    public $providerName;
+    public string $providerName;
 
     /**
      * @var string URL
      */
-    public $providerUrl;
+    public string $providerUrl;
 
     /**
      * @var string
      */
-    public $publishedTime;
+    public string $publishedTime;
 
     /**
      * @var string
      */
-    public $license;
+    public string $license;
 
     /**
      * @return array
@@ -168,7 +168,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         // Disable recursion since it interferes with TwigMarkup instances and causes `code` values to be lost.
         return $this->toArray([], [], false);
@@ -199,9 +199,9 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Method wrapper for Service::getImageToSize
      *
      * @param int $size
-     * @return mixed
+     * @return array|null
      */
-    public function getImageToSize(int $size)
+    public function getImageToSize(int $size): ?array
     {
         return EmbeddedAssets::$plugin->methods->getImageToSize($this, $size);
     }
@@ -210,9 +210,9 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Method wrapper for Service::getProviderIconToSize
      *
      * @param int $size
-     * @return mixed
+     * @return array|null
      */
-    public function getProviderIconToSize(int $size)
+    public function getProviderIconToSize(int $size): ?array
     {
         return EmbeddedAssets::$plugin->methods->getProviderIconToSize($this, $size);
     }
@@ -256,9 +256,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Returns the URL with additional params passed. Has to be type of video.
      *
      * @since 2.0.8
+     * @param array $params
      * @return string|null
      */
-    public function getVideoUrl($params): ?string
+    public function getVideoUrl(array $params): ?string
     {
         return $this->type === 'video' && is_array($params) ? $this->_getIframeSrc($params, false) : null;
     }
@@ -270,7 +271,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @param array $params
      * @return TwigMarkup
      */
-    public function getVideoCode(array $params)
+    public function getVideoCode(array $params): TwigMarkup
     {
         if ($this->type !== 'video') {
             throw new Exception('Tried to call getVideoCode() on an embedded asset with a type other than video');
@@ -304,7 +305,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @param bool $overrideParams
      * @return string
      */
-    private function _getIframeSrc(array $params, $overrideParams): string
+    private function _getIframeSrc(array $params, bool $overrideParams): string
     {
         return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], $overrideParams);
     }
@@ -314,7 +315,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function _addParamsToUrl($newParams, $pUrl, $overrideParams)
+    private function _addParamsToUrl($newParams, $pUrl, $overrideParams): string
     {
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
@@ -367,7 +368,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function getMatchedVideoUrl()
+    private function getMatchedVideoUrl(): string
     {
         preg_match('/src="([^"]+)"/', $this->code, $match);
 

@@ -4,8 +4,10 @@ namespace spicyweb\embeddedassets;
 
 use Craft;
 use craft\base\Element;
+use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
+use craft\events\DefineAssetThumbUrlEvent;
 use craft\events\DefineGqlTypeFieldsEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
@@ -40,7 +42,7 @@ class Plugin extends BasePlugin
     /**
      * @var Plugin The instance of this plugin (alias for Plugin::getPlugin()).
      */
-    public static $plugin;
+    public static ?Plugin $plugin;
     
     /**
      * @var string
@@ -69,12 +71,12 @@ class Plugin extends BasePlugin
         'actions' => Controller::class,
     ];
     
-    private $defaultThumbnailUrl = "";
+    private string $defaultThumbnailUrl = '';
     
     /**
      * Plugin initializer.
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         
@@ -108,7 +110,7 @@ class Plugin extends BasePlugin
     /**
      * @return Settings
      */
-    protected function createSettingsModel(): ?\craft\base\Model
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -130,7 +132,7 @@ class Plugin extends BasePlugin
     /**
      * Includes the control panel front end resources (resources/main.js).
      */
-    private function _configureCpResources()
+    private function _configureCpResources(): void
     {
         Event::on(
             View::class,
@@ -149,7 +151,7 @@ class Plugin extends BasePlugin
     /**
      * Assigns the template variable so it can be accessed in the templates at `craft.embeddedAssets`.
      */
-    private function _configureTemplateVariable()
+    private function _configureTemplateVariable(): void
     {
         Event::on(
             CraftVariable::class,
@@ -160,7 +162,7 @@ class Plugin extends BasePlugin
         );
     }
 
-    private function _registerGql()
+    private function _registerGql(): void
     {
         Event::on(
             Gql::class,
@@ -188,12 +190,12 @@ class Plugin extends BasePlugin
     /**
      * Sets the embedded asset thumbnails on asset elements in the control panel.
      */
-    private function _configureAssetThumbnails()
+    private function _configureAssetThumbnails(): void
     {
         Event::on(
             Assets::class,
             Assets::EVENT_DEFINE_THUMB_URL,
-            function(\craft\events\DefineAssetThumbUrlEvent $event) {
+            function(DefineAssetThumbUrlEvent $event) {
                 // if showThumbnailsInCp is not true, return the default thumbnail url.
                 // else retrieve the thumbnail.
                 // this is done so it doesn't prolong the query times by retrieving the thumbnail from the embedded asset.
@@ -217,7 +219,7 @@ class Plugin extends BasePlugin
     /**
      * Registers an event listener for Craft 3.4's asset previews.
      */
-    private function _registerPreviewHandler()
+    private function _registerPreviewHandler(): void
     {
         Event::on(
             Assets::class,
@@ -233,7 +235,7 @@ class Plugin extends BasePlugin
     /**
      * Registers an event listener for saving an embedded asset's cached copy.
      */
-    private function _registerSaveListener()
+    private function _registerSaveListener(): void
     {
         Event::on(Element::class, Element::EVENT_AFTER_SAVE, function(Event $event) {
             if ($event->sender instanceof Asset && $event->sender->kind === Asset::KIND_JSON) {
@@ -249,7 +251,7 @@ class Plugin extends BasePlugin
     /**
      * Registers an event listener for deleting an embedded asset's cached copy.
      */
-    private function _registerDeleteListener()
+    private function _registerDeleteListener(): void
     {
         Event::on(Element::class, Element::EVENT_AFTER_DELETE, function(Event $event) {
             if ($event->sender instanceof Asset) {
@@ -261,7 +263,7 @@ class Plugin extends BasePlugin
     /**
      * Adds new and modifies existing asset table attributes in the control panel.
      */
-    private function _configureAssetIndexAttributesNoThumbnail()
+    private function _configureAssetIndexAttributesNoThumbnail(): void
     {
         Event::on(
             Asset::class,
@@ -277,7 +279,7 @@ class Plugin extends BasePlugin
     /**
      * Adds new and modifies existing asset table attributes in the control panel.
      */
-    private function _configureAssetIndexAttributes()
+    private function _configureAssetIndexAttributes(): void
     {
         $newAttributes = [
             'provider' => "Provider",
@@ -333,9 +335,9 @@ class Plugin extends BasePlugin
      * @param EmbeddedAsset $embeddedAsset
      * @param int $size The preferred size of the thumbnail.
      * @param int $maxSize The largest size to bother getting a thumbnail for.
-     * @return false|string The URL to the thumbnail.
+     * @return string|false The URL to the thumbnail.
      */
-    private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200)
+    private function _getThumbnailUrl(EmbeddedAsset $embeddedAsset, int $size, int $maxSize = 200): string|false
     {
         $defaultThumb = $this->defaultThumbnailUrl;
         
@@ -376,7 +378,7 @@ class Plugin extends BasePlugin
      * @param string $attribute
      * @return null|string
      */
-    private function _getTableAttributeHtml(EmbeddedAsset $embeddedAsset, string $attribute)
+    private function _getTableAttributeHtml(EmbeddedAsset $embeddedAsset, string $attribute): ?string
     {
         $html = null;
         

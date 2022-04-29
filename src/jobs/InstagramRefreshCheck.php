@@ -20,14 +20,14 @@ class InstagramRefreshCheck extends BaseJob
     /**
      * @var Asset
      */
-    public $asset;
+    public Asset $asset;
 
     /**
      * An array of embedded asset data. If `null`, the asset's contents will be used instead.
      *
      * @var array|null
      */
-    public $embeddedAssetData;
+    public ?array $embeddedAssetData;
 
     /**
      * @inheritdoc
@@ -95,7 +95,7 @@ class InstagramRefreshCheck extends BaseJob
      * @param Asset $asset
      * @param string $url
      */
-    private function _updateInstagramFile(Asset $asset, $url)
+    private function _updateInstagramFile(Asset $asset, string $url)
     {
         // Fix URL in case we got a login URL and not an Instagram URL referring to a post
         // We add the post ID at the end

@@ -18,13 +18,16 @@ use yii\helpers\Console;
  */
 class RefreshController extends Controller
 {
-    public $volume;
+    /**
+     * @var string|null
+     */
+    public ?string $volume = null;
 
     /**
      * @var string|null
      * @since 2.10.0
      */
-    public $provider;
+    public ?string $provider = null;
 
     /**
      * @inheritdoc

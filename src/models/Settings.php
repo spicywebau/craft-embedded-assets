@@ -21,37 +21,37 @@ class Settings extends Model
     /**
      * @var string
      */
-    public $embedlyKey = '';
+    public string $embedlyKey = '';
     
     /**
      * @var string
      */
-    public $iframelyKey = '';
+    public string $iframelyKey = '';
     
     /**
      * @var string
      */
-    public $googleKey = '';
+    public string $googleKey = '';
     
     /**
      * @var string
      */
-    public $soundcloudKey = '';
+    public string $soundcloudKey = '';
     
     /**
      * @var string
      */
-    public $facebookKey = '';
+    public string $facebookKey = '';
 
     /**
      * @var string
      */
-    public $referer = '';
+    public string $referer = '';
     
     /**
      * @var array of parameters
      */
-    public $parameters = [
+    public array $parameters = [
         ['param' => 'maxwidth', 'value' => '1920'],
         ['param' => 'maxheight', 'value' => '1080'],
     ];
@@ -59,7 +59,7 @@ class Settings extends Model
     /**
      * @var array of strings
      */
-    public $whitelist = [
+    public array $whitelist = [
         // Amazon
         'amazon.*',
         'amazon.co.*',
@@ -162,44 +162,44 @@ class Settings extends Model
     /**
      * @var array of strings
      */
-    public $extraWhitelist = [];
+    public array $extraWhitelist = [];
     
     /**
      * @var int
      */
-    public $minImageSize = 16;
+    public int $minImageSize = 16;
     
     /**
      * @var int
      */
-    public $maxAssetNameLength = 50;
+    public int $maxAssetNameLength = 50;
     
     /**
      * @var int
      */
-    public $maxFileNameLength = 50;
+    public int $maxFileNameLength = 50;
     
     /**
      * @var int
      */
-    public $cacheDuration = 5 * 60; // 5 minutes
+    public int $cacheDuration = 5 * 60; // 5 minutes
     
     /**
      * @var bool
      */
-    public $showThumbnailsInCp = true;
+    public bool $showThumbnailsInCp = true;
 
     /**
      * @var bool
      * @since 2.6.0
      */
-    public $useYouTubeNoCookie = false;
+    public bool $useYouTubeNoCookie = false;
 
     /**
      * @var bool
      * @since 2.6.0
      */
-    public $disableVimeoTracking = false;
+    public bool $disableVimeoTracking = false;
 
     public function behaviors(): array
     {

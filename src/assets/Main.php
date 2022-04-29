@@ -15,7 +15,7 @@ use craft\web\assets\cp\CpAsset;
  */
 class Main extends AssetBundle
 {
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = '@spicyweb/embeddedassets/resources';
         $this->depends = [CpAsset::class];
@@ -27,7 +27,7 @@ class Main extends AssetBundle
     /**
      * @inheritdoc
      */
-    public function registerAssetFiles($view)
+    public function registerAssetFiles($view): void
     {
         $view->registerTranslations('embeddedassets', ['Embed', 'Replace']);
 

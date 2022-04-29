@@ -45,7 +45,7 @@ class Service extends Component
      */
     public const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
 
-    private $embeddedAssetData = [];
+    private array $embeddedAssetData = [];
 
     /**
      * Requests embed data from a URL.
@@ -176,7 +176,7 @@ class Service extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \craft\errors\AssetException
      */
-    public function getEmbeddedAsset(Asset $asset)
+    public function getEmbeddedAsset(Asset $asset): ?EmbeddedAsset
     {
         // Embedded assets are just JSON files, so clearly if this isn't a JSON file it can't be an embedded asset
         if ($asset->kind !== Asset::KIND_JSON) {
@@ -236,7 +236,7 @@ class Service extends Component
      * @param array $array
      * @return bool
      */
-    public function isValidEmbeddedAssetData(array $array)
+    public function isValidEmbeddedAssetData(array $array): bool
     {
         return $this->createEmbeddedAsset($array) !== null;
     }
@@ -248,49 +248,35 @@ class Service extends Component
      * @param array $array
      * @return EmbeddedAsset|null
      */
-    public function createEmbeddedAsset(array $array)
+    public function createEmbeddedAsset(array $array): ?EmbeddedAsset
     {
-        $embeddedAsset = new EmbeddedAsset();
-
         $isLegacy = isset($array['__embeddedasset__']);
         if ($isLegacy) {
             $array = $this->_convertFromLegacy($array);
         }
 
-        foreach ($array as $key => $value) {
-            if (!$embeddedAsset->hasProperty($key)) {
+        foreach (array_keys($array) as $key) {
+            if (!property_exists(EmbeddedAsset::class, $key)) {
                 return null;
-            }
-
-            switch ($key) {
-                case 'code':
-                    {
-                        $code = ($value instanceof TwigMarkup ? (string)$value : is_string($value)) ? $value : '';
-
-                        $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
-                    }
-                    break;
-                default:
-                {
-                    $embeddedAsset->$key = $value;
-                }
             }
         }
 
-        // Attempts to extract missing dimensional properties from the embed code
-        $dimensions = $this->_getDimensions($embeddedAsset);
-        $embeddedAsset->width = $dimensions[0];
-        $embeddedAsset->height = $dimensions[1];
+        if (isset($array['code'])) {
+            $code = $array['code'] instanceof TwigMarkup ? (string)$array['code'] : (is_string($array['code']) ? $array['code'] : '');
+            $array['code'] = empty($code) ? null : Template::raw($code);
+        }
 
         // Sets aspect ratio if it's missing
-        if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height) {
-            $embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
+        if (!isset($array['aspectRatio']) && isset($array['width']) && isset($array['height'])) {
+            $array['aspectRatio'] = $array['height'] / $array['width'] * 100;
         }
 
         // Correct invalid types to similar, valid types
-        if ($embeddedAsset->type === 'photo') {
-            $embeddedAsset->type = 'image';
+        if ($array['type'] === 'photo') {
+            $array['type'] = 'image';
         }
+
+        $embeddedAsset = new EmbeddedAsset($array);
 
         return $embeddedAsset->validate() ? $embeddedAsset : null;
     }
@@ -375,7 +361,7 @@ class Service extends Component
      * @param EmbeddedAsset $embeddedAsset
      * @return DOMDocument|null
      */
-    public function getEmbedCode(EmbeddedAsset $embeddedAsset)
+    public function getEmbedCode(EmbeddedAsset $embeddedAsset): ?DOMDocument
     {
         $dom = null;
 
@@ -435,7 +421,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size)
+    public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size): ?array
     {
         return is_array($embeddedAsset->images) ?
             $this->_getImageToSize($embeddedAsset->images, $size) : null;
@@ -449,7 +435,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size)
+    public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size): ?array
     {
         return is_array($embeddedAsset->providerIcons) ?
             $this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
@@ -517,7 +503,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    private function _getImageToSize(array $images, int $size)
+    private function _getImageToSize(array $images, int $size): ?array
     {
         $selectedImage = null;
         $selectedSize = 0;
@@ -549,7 +535,7 @@ class Service extends Component
      * @param array $image
      * @return bool
      */
-    private function _isImageLargeEnough(array $image)
+    private function _isImageLargeEnough(array $image): bool
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $minImageSize = $pluginSettings->minImageSize;
@@ -697,19 +683,19 @@ class Service extends Component
         return 'embeddedassets:' . $asset->uid;
     }
 
-    private function _hasBeenWeekSince(DateTimeInterface $dateModified)
+    private function _hasBeenWeekSince(DateTimeInterface $dateModified): bool
     {
         return $dateModified->diff(new DateTimeImmutable())->d >= 7;
     }
 
-    private function _isProviderPbs(Adapter $adapter)
+    private function _isProviderPbs(Adapter $adapter): bool
     {
         $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
 
         return in_array($adapter->providerUrl, $pbsUrls);
     }
 
-    private function _getPbsEmbedCode(Adapter $adapter)
+    private function _getPbsEmbedCode(Adapter $adapter): ?string
     {
         if (!$this->_isProviderPbs($adapter)) {
             return null;
