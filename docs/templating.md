@@ -163,20 +163,3 @@ Example Usage:
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
 {{ vid.getVideoId() }}
 ```
-
-## Upgrading from Craft 2
-
-Embedded assets from the Craft 2 version of the plugin are fully compatible with Embedded Assets 3. However, most functions, properties and methods have been removed in favour of the above API. See the table below for all the changes you will need to make in your templates:
-
-Type | Embedded Assets for Craft 2 | Embedded Assets 3 equivalent
--|-|-
-Function | `craft.embeddedAssets.isEmbedded(asset)` | `craft.embeddedAssets.get(asset)` then test whether the value is `null`
-Function | `craft.embeddedAssets.fromAsset(asset)` | `craft.embeddedAssets.get(asset)`
-Function | `craft.embeddedAssets.fromAssets(asset)` | Iterate your assets manually and call `craft.embeddedAssets.get(asset)` on each
-Property | `embeddedAsset.requestUrl` | `embeddedAsset.url`
-Property | `embeddedAsset.cacheAge` | *There is no equivalent*
-Property | `embeddedAsset.thumbnailUrl` | `embeddedAsset.image`
-Property | `embeddedAsset.thumbnailWidth` | `embeddedAsset.imageWidth`
-Property | `embeddedAsset.thumbnailHeight` | `embeddedAsset.imageHeight`
-Property | `embeddedAsset.html` | `embeddedAsset.code` as `embeddedAssets.html` has been slightly repurposed
-Property | `embeddedAsset.safeHtml` | `embeddedAsset.code` within an `embeddedAsset.isSafe` check, but `embeddedAsset.html` is preferred
