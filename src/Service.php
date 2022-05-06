@@ -4,12 +4,12 @@ namespace spicyweb\embeddedassets;
 
 use Craft;
 use craft\elements\Asset;
-use craft\helpers\Template;
-use craft\helpers\StringHelper;
-use craft\helpers\Json;
 use craft\helpers\Assets;
 use craft\helpers\FileHelper;
 use craft\helpers\Html as HtmlHelper;
+use craft\helpers\Json;
+use craft\helpers\StringHelper;
+use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use DateTimeImmutable;
@@ -18,13 +18,14 @@ use DOMDocument;
 use Embed\Embed;
 use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
-use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
+use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
+use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use Twig\Markup as TwigMarkup;
 use yii\base\Component;
-use yii\base\Exception;
 use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 
 /**
@@ -41,22 +42,23 @@ class Service extends Component
      * @event BeforeCreateAdapterEvent The event that is triggered before creating an Embed adapter.
      * @since 2.8.0
      */
-    const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
+    public const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
 
-    private $embeddedAssetData = [];
+    private array $embeddedAssetData = [];
 
     /**
      * Requests embed data from a URL.
      *
      * @param string $url
+     * @param bool $checkCache Whether to check for data associated with the URL that's been stored in Craft's cache
      * @return EmbeddedAsset
      */
-    public function requestUrl(string $url): EmbeddedAsset
+    public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
     {
         $cacheService = Craft::$app->getCache();
 
         $cacheKey = 'embeddedasset:' . $url;
-        $embeddedAsset = $cacheService->get($cacheKey);
+        $embeddedAsset = $checkCache ? $cacheService->get($cacheKey) : null;
 
         if (!$embeddedAsset) {
             $pluginSettings = EmbeddedAssets::$plugin->getSettings();
@@ -136,7 +138,7 @@ class Service extends Component
         $array = $this->_convertFromExtractor($embedData);
 
         // Embed data for Vimeo is incorrectly resolving some URLs to inaccessible streaming URLs
-        if (preg_match('/^https:\/\/player\.vimeo\.com\/external\/(.*?)\.mp4/', $url)) {
+        if (preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url)) {
             $array['url'] = $url;
         }
 
@@ -178,7 +180,7 @@ class Service extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \craft\errors\AssetException
      */
-    public function getEmbeddedAsset(Asset $asset)
+    public function getEmbeddedAsset(Asset $asset): ?EmbeddedAsset
     {
         // Embedded assets are just JSON files, so clearly if this isn't a JSON file it can't be an embedded asset
         if ($asset->kind !== Asset::KIND_JSON) {
@@ -195,14 +197,12 @@ class Service extends Component
         try {
             $decodedJson = $this->_getAssetContents($asset);
 
-            if (($decodedJson['providerName'] === 'Instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
-                if ($this->_hasInstagramImageExpired($decodedJson['image'])) {
-                    $decodedJson = $this->_updateInstagramFile($asset, $decodedJson['url']);
-                } else {
-                    // if not expire yet update the date modified so it checks the file in another 7 days
-                    $asset->dateModified = new \DateTime();
-                    Craft::$app->getElements()->saveElement($asset);
-                }
+            // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
+            if ((strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
+                Craft::$app->queue->push(new InstagramRefreshCheck([
+                    'asset' => $asset,
+                    'embeddedAssetData' => $decodedJson,
+                ]));
             }
 
             // Make YouTube iframes use the nocookie embed URL if the relevant setting is enabled
@@ -217,7 +217,7 @@ class Service extends Component
             // Make Vimeo iframes use the nocookie embed URL if the relevant setting is enabled
             if ($decodedJson['providerName'] === 'Vimeo' && EmbeddedAssets::$plugin->getSettings()->disableVimeoTracking) {
                 $oldSrc = HtmlHelper::parseTagAttributes($decodedJson['code'])['src'];
-                $newSrc = UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']);
+                $newSrc = HtmlHelper::decode(UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']));
                 $decodedJson['code'] = HtmlHelper::modifyTagAttributes($decodedJson['code'], ['src' => $newSrc]);
             }
 
@@ -240,7 +240,7 @@ class Service extends Component
      * @param array $array
      * @return bool
      */
-    public function isValidEmbeddedAssetData(array $array)
+    public function isValidEmbeddedAssetData(array $array): bool
     {
         return $this->createEmbeddedAsset($array) !== null;
     }
@@ -252,49 +252,35 @@ class Service extends Component
      * @param array $array
      * @return EmbeddedAsset|null
      */
-    private function createEmbeddedAsset(array $array)
+    public function createEmbeddedAsset(array $array): ?EmbeddedAsset
     {
-        $embeddedAsset = new EmbeddedAsset();
-
         $isLegacy = isset($array['__embeddedasset__']);
         if ($isLegacy) {
             $array = $this->_convertFromLegacy($array);
         }
 
-        foreach ($array as $key => $value) {
-            if (!$embeddedAsset->hasProperty($key)) {
+        foreach (array_keys($array) as $key) {
+            if (!property_exists(EmbeddedAsset::class, $key)) {
                 return null;
-            }
-
-            switch ($key) {
-                case 'code':
-                    {
-                        $code = ($value instanceof TwigMarkup ? (string)$value : is_string($value)) ? $value : '';
-
-                        $embeddedAsset->$key = empty($code) ? null : Template::raw($code);
-                    }
-                    break;
-                default:
-                {
-                    $embeddedAsset->$key = $value;
-                }
             }
         }
 
-        // Attempts to extract missing dimensional properties from the embed code
-        $dimensions = $this->_getDimensions($embeddedAsset);
-        $embeddedAsset->width = $dimensions[0];
-        $embeddedAsset->height = $dimensions[1];
+        if (isset($array['code'])) {
+            $code = $array['code'] instanceof TwigMarkup ? (string)$array['code'] : (is_string($array['code']) ? $array['code'] : '');
+            $array['code'] = empty($code) ? null : Template::raw($code);
+        }
 
         // Sets aspect ratio if it's missing
-        if (!$embeddedAsset->aspectRatio && $embeddedAsset->width && $embeddedAsset->height) {
-            $embeddedAsset->aspectRatio = $embeddedAsset->height / $embeddedAsset->width * 100;
+        if (!isset($array['aspectRatio']) && isset($array['width']) && isset($array['height'])) {
+            $array['aspectRatio'] = $array['height'] / $array['width'] * 100;
         }
 
         // Correct invalid types to similar, valid types
-        if ($embeddedAsset->type === 'photo') {
-            $embeddedAsset->type = 'image';
+        if ($array['type'] === 'photo') {
+            $array['type'] = 'image';
         }
+
+        $embeddedAsset = new EmbeddedAsset($array);
 
         return $embeddedAsset->validate() ? $embeddedAsset : null;
     }
@@ -379,7 +365,7 @@ class Service extends Component
      * @param EmbeddedAsset $embeddedAsset
      * @return DOMDocument|null
      */
-    public function getEmbedCode(EmbeddedAsset $embeddedAsset)
+    public function getEmbedCode(EmbeddedAsset $embeddedAsset): ?DOMDocument
     {
         $dom = null;
 
@@ -418,7 +404,7 @@ class Service extends Component
      */
     public function getEmbedHtml(EmbeddedAsset $embeddedAsset): TwigMarkup
     {
-        if ($embeddedAsset->code && $embeddedAsset->isSafe()) {
+        if ($embeddedAsset->code && $embeddedAsset->getIsSafe()) {
             $html = $embeddedAsset->code;
         } else {
             if ($embeddedAsset->type !== 'link' && $embeddedAsset->image) {
@@ -439,7 +425,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size)
+    public function getImageToSize(EmbeddedAsset $embeddedAsset, int $size): ?array
     {
         return is_array($embeddedAsset->images) ?
             $this->_getImageToSize($embeddedAsset->images, $size) : null;
@@ -453,7 +439,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size)
+    public function getProviderIconToSize(EmbeddedAsset $embeddedAsset, int $size): ?array
     {
         return is_array($embeddedAsset->providerIcons) ?
             $this->_getImageToSize($embeddedAsset->providerIcons, $size) : null;
@@ -521,7 +507,7 @@ class Service extends Component
      * @param int $size
      * @return array|null
      */
-    private function _getImageToSize(array $images, int $size)
+    private function _getImageToSize(array $images, int $size): ?array
     {
         $selectedImage = null;
         $selectedSize = 0;
@@ -553,7 +539,7 @@ class Service extends Component
      * @param array $image
      * @return bool
      */
-    private function _isImageLargeEnough(array $image)
+    private function _isImageLargeEnough(array $image): bool
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $minImageSize = $pluginSettings->minImageSize;
@@ -623,7 +609,7 @@ class Service extends Component
                     'height' => $imageHeight,
                     'size' => $imageWidth * $imageHeight,
                     'mime' => null,
-                ]
+                ],
             ] : [],
             'image' => $imageUrl,
             'imageWidth' => $imageWidth,
@@ -651,31 +637,11 @@ class Service extends Component
     private function _getAssetContents(Asset $asset): array
     {
         $contents = Craft::$app->getCache()->getOrSet(
-			$this->getCachedAssetKey($asset),
-			static function() use($asset) {
-                $oldCacheDir = Craft::$app->getPath()->getAssetsPath(false) . DIRECTORY_SEPARATOR . 'embeddedassets';
-                $oldSubDir = $oldCacheDir . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
-                $oldCachedPath = $oldSubDir . DIRECTORY_SEPARATOR . $asset->uid . '.json';
-                $contents = null;
-
-                if (file_exists($oldCachedPath)) {
-                    $contents = file_get_contents($oldCachedPath);
-                    FileHelper::unlink($oldCachedPath);
-
-                    if (FileHelper::isDirectoryEmpty($oldSubDir)) {
-                        FileHelper::removeDirectory($oldSubDir);
-                    }
-
-                    if (FileHelper::isDirectoryEmpty($oldCacheDir)) {
-                        FileHelper::removeDirectory($oldCacheDir);
-                    }
-                } else {
-                    $contents = $asset->getContents();
-                }
-
-                return $contents;
-			},
-			0);
+            $this->getCachedAssetKey($asset),
+            static function() use ($asset) {
+                return $asset->getContents();
+            },
+            0);
 
         try {
             $contents = Json::decode($contents);
@@ -703,82 +669,20 @@ class Service extends Component
         return 'embeddedassets:' . $asset->uid;
     }
 
-    /**
-     * Gets the cached path for the given asset.
-     *
-     * @param Asset $asset
-     * @return string the embedded asset's cached path
-     * @throws InvalidArgumentException if $asset is an unsaved Asset
-     * @deprecated in 2.5.0
-     */
-    public function getCachedAssetPath(Asset $asset): string
-    {
-        if ($asset->uid === null) {
-            throw new InvalidArgumentException('Tried to get the cached path of an unsaved embedded asset');
-        }
-
-        $assetsPath = Craft::$app->getPath()->getAssetsPath(false);
-        $subDirPath = 'embeddedassets' . DIRECTORY_SEPARATOR . substr($asset->uid, 0, 2);
-
-        return $assetsPath . DIRECTORY_SEPARATOR . $subDirPath . DIRECTORY_SEPARATOR . $asset->uid . '.json';
-    }
-
-    private function _hasBeenWeekSince(DateTimeInterface $dateModified)
+    private function _hasBeenWeekSince(DateTimeInterface $dateModified): bool
     {
         return $dateModified->diff(new DateTimeImmutable())->d >= 7;
     }
 
-    private function _hasInstagramImageExpired(string $imageUrl): bool
+    private function _isProviderPbs(Extractor $extractor): bool
     {
-        // get headers of the image url and make sure it's not expired yet.
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $imageUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
-
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        $output = rtrim($output);
-        $data = explode("\n", $output);
-
-        return $data && strpos($data[0], '200') === false;
-    }
-
-    private function _updateInstagramFile(Asset $asset, $url)
-    {
-        // get new data from the url
-        $array = $this->_getDataFromEmbed($url);
-        $newEmbeddedAsset = $this->createEmbeddedAsset($array);
-
-        if ($newEmbeddedAsset) {
-            try {
-                $assets = Craft::$app->getAssets();
-
-                $folder = $assets->findFolder(['id' => $asset->folderId]);
-                $assetToReplace = $this->createAsset($newEmbeddedAsset, $folder);
-                Craft::$app->getElements()->saveElement($assetToReplace);
-
-                $tempPath = $assetToReplace->getCopyOfFile();
-                $assets->replaceAssetFile($asset, $tempPath, $asset->filename);
-                Craft::$app->getElements()->deleteElement($assetToReplace);
-
-            } catch (\Throwable $e) {
-                $array = null;
-            }
-        }
-
-        return $array;
-    }
-
-    private function _isProviderPbs(Extractor $extractor) {
         $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
 
         return in_array($extractor->providerUrl, $pbsUrls);
     }
 
-    private function _getPbsEmbedCode(Extractor $extractor) {
+    private function _getPbsEmbedCode(Extractor $extractor): ?string
+    {
         if (!$this->_isProviderPbs($extractor)) {
             return null;
         }

@@ -14,7 +14,7 @@ use craft\web\AssetBundle;
  */
 class Preview extends AssetBundle
 {
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = '@spicyweb/embeddedassets/resources';
         $this->js = ['preview.js'];

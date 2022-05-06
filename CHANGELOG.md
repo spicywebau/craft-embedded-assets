@@ -1,9 +1,79 @@
 # Changelog
 
+## 3.0.0 - 2022-05-05
+
+### Added
+- Added Craft 4 compatibility
+
+### Removed
+- Removed Craft 3 compatibility
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getCacheAge()`
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getRequestUrl()`; use the `url` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getSafeHtml()`; use a combination of the `getIsSafe()` method and the `code` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailHeight()`; use the `imageHeight` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailUrl()`; use the `image` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getThumbnailWidth()`; use the `imageWidth` property instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::isSafe()`; use `getIsSafe()` instead
+- Removed `spicyweb\embeddedassets\Service::getCachedAssetPath()`
+- Removed `spicyweb\embeddedassets\Variable::fromAsset()`; use `get()` instead
+- Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
+- Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
+
+## 2.10.7 - 2022-04-21
+
+### Fixed
+- Fixed a bug where replacing an embedded asset would not cause its cached data to be replaced
+
+## 2.10.6 - 2022-04-20
+
+### Fixed
+- Fixed an error that could occur when loading a saved embedded asset preview on Craft 3.6
+
+## 2.10.5 - 2022-04-16
+
+### Fixed
+- Fixed a bug that could cause invalid Vimeo URLs to be loaded when the 'Disable tracking on Vimeo iframes' setting was enabled
+- Fixed a bug with Instagram auto-refreshing in 2.10.4
+
+## 2.10.4 - 2022-04-14
+
+### Changed
+- Moved auto-refreshing of Instagram embedded assets to a queue job
+
+## 2.10.3 - 2022-03-21
+
+### Fixed
+- Fixed a bug when auto-refreshing Instagram embedded assets, where the previous cached data was not being replaced
+
+## 2.10.2 - 2022-03-15
+
+### Added
+- Added support for embedding Vimeo URLs with the new external embed format (thanks @boboldehampsink)
+
+### Changed
+- Updated JavaScript dependencies
+
+### Fixed
+- Fixed some issues with Instagram asset auto-refreshing (thanks @arifje)
+
+## 2.10.1 - 2022-02-07
+
+### Fixed
+- Fixed a bug where refreshing embedded assets from the console wouldn't refresh an embedded asset if the data was still cached from when the embedded asset was created
+
+## 2.10.0 - 2022-01-06
+
+### Added
+- Added `spicyweb\embeddedassets\Variable::create()` (`craft.embeddedAssets.create()`) for creating an `EmbeddedAsset` model from an asset's contents or other user-provided data that represents a valid embedded asset
+- Added a console command for refreshing embedded asset data by provider
+
+### Changed
+- The console command for refreshing all embedded asset data now accepts both `--volume` and `--provider` options
+
 ## 2.9.1 - 2021-11-30
 
 ### Fixed
-- Fixed an error that occurred when executing a GraphQL query for embedded asset data using Gridsome
+- Fixed an error that occurred when executing a GraphQL query for embedded asset data using Gridsome, or after generating types using GraphQL codegen
 
 ## 2.9.0 - 2021-11-03
 

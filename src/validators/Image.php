@@ -2,9 +2,9 @@
 
 namespace spicyweb\embeddedassets\validators;
 
-use yii\validators\Validator;
-
 use craft\helpers\UrlHelper;
+
+use yii\validators\Validator;
 
 /**
  * Class Image
@@ -29,7 +29,7 @@ class Image extends Validator
      * @param \yii\base\Model $model
      * @param string $attribute
      */
-    public function validateAttribute($model, $attribute)
+    public function validateAttribute($model, $attribute): void
     {
         $image = $model->$attribute;
         

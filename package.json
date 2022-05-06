@@ -1,6 +1,6 @@
 {
   "name": "craft-embedded-assets",
-  "version": "2.9.1",
+  "version": "3.0.0",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
   "main": "src/resources/main.js",
   "scripts": {
@@ -32,17 +32,16 @@
   },
   "homepage": "https://github.com/spicywebau/craft-embedded-assets#readme",
   "devDependencies": {
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.8",
-    "babel-loader": "^8.2.2",
-    "css-loader": "^6.2.0",
-    "node-sass": "^6.0.1",
-    "sass-loader": "^12.1.0",
-    "standard": "^16.0.3",
-    "style-loader": "^3.2.1",
-    "tar": "^6.1.9",
-    "webpack": "^5.47.1",
-    "webpack-cli": "^4.7.2"
+    "@babel/core": "^7.17.2",
+    "@babel/preset-env": "^7.16.11",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.6.0",
+    "node-sass": "^7.0.1",
+    "sass-loader": "^12.6.0",
+    "standard": "^16.0.4",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.69.0",
+    "webpack-cli": "^4.9.2"
   },
   "standard": {
     "ignore": [

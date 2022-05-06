@@ -2,14 +2,14 @@
 
 namespace spicyweb\embeddedassets\models;
 
-use JsonSerializable;
-
 use Craft;
+
 use craft\base\Model;
 use craft\helpers\Html as HtmlHelper;
 use craft\helpers\Template;
 use craft\validators\StringValidator;
 use craft\validators\UrlValidator;
+use JsonSerializable;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\validators\Image as ImageValidator;
 use spicyweb\embeddedassets\validators\TwigMarkup as TwigMarkupValidator;
@@ -29,82 +29,82 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @var string required
      */
-    public $title;
+    public string $title;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * @var string URL required
      */
-    public $url;
+    public string $url;
 
     /**
      * @var array of URLs
      */
-    public $feeds;
+    public array $feeds;
 
     /**
      * @var string URL
      */
-    public $image;
+    public string $image;
 
     /**
      * @var TwigMarkup
      */
-    public $code;
+    public ?TwigMarkup $code;
 
     /**
      * @var number
      */
-    public $width;
+    public int $width;
 
     /**
      * @var number
      */
-    public $height;
+    public int $height;
 
     /**
      * @var number
      */
-    public $aspectRatio;
+    public int|float $aspectRatio;
 
     /**
      * @var string
      */
-    public $authorName;
+    public string $authorName;
 
     /**
      * @var string URL
      */
-    public $authorUrl;
+    public string $authorUrl;
 
     /**
      * @var string URL
      */
-    public $providerIcon;
+    public string $providerIcon;
 
     /**
      * @var string
      */
-    public $providerName;
+    public string $providerName;
 
     /**
      * @var string URL
      */
-    public $providerUrl;
+    public string $providerUrl;
 
     /**
      * @var string
      */
-    public $publishedTime;
+    public string $publishedTime;
 
     /**
      * @var string
      */
-    public $license;
+    public string $license;
 
     /**
      * @var string
@@ -142,53 +142,53 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @var string link|image|video\rich
      * @deprecated in 3.0.0
      */
-    public $type;
+    public string $type;
 
     /**
      * @var array of strings
      * @deprecated in 3.0.0
      */
-    public $tags;
+    public array $tags;
 
     /**
      * @var array of images
      * @deprecated in 3.0.0
      */
-    public $images;
+    public array $images;
 
     /**
      * @var number
      * @deprecated in 3.0.0
      */
-    public $imageWidth;
+    public int $imageWidth;
 
     /**
      * @var number
      * @deprecated in 3.0.0
      */
-    public $imageHeight;
+    public int $imageHeight;
 
     /**
      * @var array of images
      * @deprecated in 3.0.0
      */
-    public $providerIcons;
+    public array $providerIcons;
 
     /**
      * @return array
      */
-    public function rules()
+    protected function defineRules(): array
     {
         return [
             [['title', 'url'], 'required'],
             [
                 ['title', 'description', 'authorName', 'providerName', 'publishedTime', 'license'],
-                StringValidator::class
+                StringValidator::class,
             ],
             [
                 ['url', 'image', 'authorUrl', 'providerIcon', 'providerUrl'],
                 UrlValidator::class,
-                'defaultScheme' => 'https'
+                'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
             ['tags', 'each', 'rule' => [StringValidator::class]],
@@ -205,7 +205,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         // Disable recursion since it interferes with TwigMarkup instances and causes `code` values to be lost.
         return $this->toArray([], [], false);
@@ -236,9 +236,9 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Method wrapper for Service::getImageToSize
      *
      * @param int $size
-     * @return mixed
+     * @return array|null
      */
-    public function getImageToSize(int $size)
+    public function getImageToSize(int $size): ?array
     {
         return EmbeddedAssets::$plugin->methods->getImageToSize($this, $size);
     }
@@ -247,9 +247,9 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Method wrapper for Service::getProviderIconToSize
      *
      * @param int $size
-     * @return mixed
+     * @return array|null
      */
-    public function getProviderIconToSize(int $size)
+    public function getProviderIconToSize(int $size): ?array
     {
         return EmbeddedAssets::$plugin->methods->getProviderIconToSize($this, $size);
     }
@@ -293,9 +293,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Returns the URL with additional params passed. Has to be type of video.
      *
      * @since 2.0.8
+     * @param array $params
      * @return string|null
      */
-    public function getVideoUrl($params): ?string
+    public function getVideoUrl(array $params): ?string
     {
         return $this->type === 'video' && is_array($params) ? $this->_getIframeSrc($params, false) : null;
     }
@@ -307,7 +308,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @param array $params
      * @return TwigMarkup
      */
-    public function getVideoCode(array $params)
+    public function getVideoCode(array $params): TwigMarkup
     {
         if ($this->type !== 'video') {
             throw new Exception('Tried to call getVideoCode() on an embedded asset with a type other than video');
@@ -320,24 +321,20 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Gets this embedded asset's video ID, if the embedded asset is a video.
+     * Gets this embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
      *
      * @since 2.2.3
-     * @return string|null the video ID, or null if the embedded asset is not a video
+     * @return string|null the video ID, or null if the embedded asset is not a YouTube or Vimeo video
      */
     public function getVideoId(): ?string
     {
-        if ($this->type !== "video") {
+        if ($this->type !== "video" || !in_array($this->providerName, ['YouTube', 'Vimeo'])) {
             return null;
         }
 
         $url = explode('/', $this->getMatchedVideoUrl());
 
-        if (in_array($this->providerName, ['YouTube', 'Vimeo'])) {
-            return explode('?', $url[4])[0];
-        }
-
-        return null;
+        return explode('?', $url[4])[0];
     }
 
     /**
@@ -345,7 +342,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @param bool $overrideParams
      * @return string
      */
-    private function _getIframeSrc(array $params, $overrideParams): string
+    private function _getIframeSrc(array $params, bool $overrideParams): string
     {
         return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], $overrideParams);
     }
@@ -355,12 +352,12 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function _addParamsToUrl($newParams, $pUrl, $overrideParams)
+    private function _addParamsToUrl($newParams, $pUrl, $overrideParams): string
     {
         if ($overrideParams) {
             $startPos = strpos($pUrl, '?');
             $newUrl = $startPos ? substr($pUrl, 0, $startPos) : $pUrl;
-            $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)): [];
+            $oldParams = $startPos !== false ? explode('&', substr($pUrl, $startPos + 1)) : [];
             $params = [];
             $joinedParams = [];
 
@@ -408,96 +405,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
      *
      * @return string
      */
-    private function getMatchedVideoUrl()
+    private function getMatchedVideoUrl(): string
     {
         preg_match('/src="([^"]+)"/', $this->code, $match);
 
         return $match[1];
-    }
-
-    //
-    // Deprecated properties
-
-    /**
-     * Method wrapper for Service::isEmbedSafe
-     *
-     * @deprecated in 2.4.0, will be removed in 3.0.0; use `getIsSafe()` instead
-     * @return bool
-     */
-    public function isSafe(): bool
-    {
-        return $this->getIsSafe();
-    }
-
-    /**
-     * @return string
-     * @deprecated
-     */
-    public function getRequestUrl()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getRequestUrl',
-            "The embedded asset property `requestUrl` is now deprecated. Use the `url` property instead.");
-
-        return $this->url;
-    }
-
-    /**
-     * @return null
-     * @deprecated
-     */
-    public function getCacheAge()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getCacheAge',
-            "The embedded asset property `cacheAge` is now deprecated.");
-
-        return null;
-    }
-
-    /**
-     * @return string
-     * @deprecated
-     */
-    public function getThumbnailUrl()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailUrl',
-            "The embedded asset property `thumbnailUrl` is now deprecated. Use the `image` property instead.");
-
-        return $this->image;
-    }
-
-    /**
-     * @return number
-     * @deprecated
-     */
-    public function getThumbnailWidth()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailWidth',
-            "The embedded asset property `thumbnailWidth` is now deprecated. Use the `imageWidth` property instead.");
-
-        return $this->imageWidth;
-    }
-
-    /**
-     * @return number
-     * @deprecated
-     */
-    public function getThumbnailHeight()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getThumbnailHeight',
-            "The embedded asset property `thumbnailHeight` is now deprecated. Use the `imageHeight` property instead.");
-
-        return $this->imageHeight;
-    }
-
-    /**
-     * @return null|TwigMarkup
-     * @deprecated
-     */
-    public function getSafeHtml()
-    {
-        Craft::$app->getDeprecator()->log('EmbeddedAsset::getSafeHtml',
-            "The embedded asset property `safeHtml` is now deprecated. Use a combination of the `isSafe()` method and the `code` property instead.");
-
-        return $this->isSafe() ? $this->code : null;
     }
 }

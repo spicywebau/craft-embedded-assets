@@ -24,7 +24,7 @@ class Parameter extends Validator
      * @param \yii\base\Model $model
      * @param string $attribute
      */
-    public function validateAttribute($model, $attribute)
+    public function validateAttribute($model, $attribute): void
     {
         $parameter = $model->$attribute;
         

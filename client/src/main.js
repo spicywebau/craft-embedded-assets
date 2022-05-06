@@ -3,7 +3,6 @@ import $ from 'jquery'
 import Craft from 'craft'
 import EmbeddedAssets from './classes/EmbeddedAssets'
 import Button from './classes/Button'
-import Preview from './classes/Preview'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()
@@ -48,18 +47,21 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   showButtonIfJsonAllowed(button, allowedAssetKinds)
   replaceButton.hide()
 
-  const getFolderId = () => {
+  const getActionTarget = () => {
     const split = this.sourceKey.split(':')
 
-    if (split[split.length - 1]) {
-      return split[split.length - 1]
+    if (split[split.length - 2]) {
+      return {
+        targetType: split[split.length - 2],
+        targetUid: split[split.length - 1]
+      }
     }
 
-    return 0
+    return {}
   }
 
-  embeddedAssets.addButton(button, modalOrientations, getFolderId)
-  embeddedAssets.addButton(replaceButton, modalOrientations, getFolderId, true)
+  embeddedAssets.addButton(button, modalOrientations, getActionTarget)
+  embeddedAssets.addButton(replaceButton, modalOrientations, getActionTarget, true)
 
   let idsToSelect = []
 
@@ -96,30 +98,6 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
       replaceButton.hide()
     }
   })
-})
-
-monkeypatch(Craft.AssetEditor, 'updateForm', function () {
-  const assetId = this.$element.attr('data-id')
-  const dataEmbedRatio = this.$element.attr('data-embedded-asset')
-  let embedRatio = dataEmbedRatio
-
-  if (assetId && typeof embedRatio !== 'undefined') {
-    if (typeof embedRatio === 'string') {
-      embedRatio = '56.25'
-    }
-
-    // Won't be needing this anymore
-    this.$fieldsContainer.find('.preview-thumb-container').remove()
-
-    const preview = new Preview()
-    const paddingTop = Math.min(embedRatio || 100, 75) + '%'
-
-    preview.$element.css({ paddingTop })
-
-    this.$fieldsContainer.find('.field.first').before(preview.$element)
-
-    window.requestAnimationFrame(() => preview.request({ assetId, showContent: false }))
-  }
 })
 
 window.EmbeddedAssets = embeddedAssets

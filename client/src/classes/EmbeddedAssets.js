@@ -5,9 +5,9 @@ export default class EmbeddedAssets extends Emitter {
   constructor () {
     super()
 
-    this._currentGetFolderId = () => -1
+    this._currentGetActionTarget = () => -1
 
-    this.modal = new Modal(() => this._getFolderId())
+    this.modal = new Modal(() => this._getActionTarget())
     this.buttons = []
 
     this.modal.on('hide', () => this.buttons.forEach(b => b.setActive(false)))
@@ -25,12 +25,12 @@ export default class EmbeddedAssets extends Emitter {
     this._replaceAssetId = id
   }
 
-  addButton (button, orientations = ['bottom', 'top', 'left', 'right'], getFolderId = () => -1, replace = false) {
+  addButton (button, orientations = ['bottom', 'top', 'left', 'right'], getActionTarget = () => {}, replace = false) {
     this.buttons.push(button)
 
     button.$element.on('click', () => {
       if (this.modal) {
-        this._currentGetFolderId = getFolderId
+        this._currentGetActionTarget = getActionTarget
 
         this.buttons.forEach(b => b.setActive(b === button))
         this.modal.show(button.$element, { orientations }, replace)
@@ -47,7 +47,7 @@ export default class EmbeddedAssets extends Emitter {
     this.trigger('removeButton', { button })
   }
 
-  _getFolderId () {
-    return this._currentGetFolderId()
+  _getActionTarget () {
+    return this._currentGetActionTarget()
   }
 }

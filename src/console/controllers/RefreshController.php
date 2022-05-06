@@ -18,17 +18,30 @@ use yii\helpers\Console;
  */
 class RefreshController extends Controller
 {
-    public $volume;
+    /**
+     * @var string|null
+     */
+    public ?string $volume = null;
+
+    /**
+     * @var string|null
+     * @since 2.10.0
+     */
+    public ?string $provider = null;
 
     /**
      * @inheritdoc
      */
-    public function options($actionID)
+    public function options($actionID): array
     {
         $options = parent::options($actionID);
 
-        if ($actionID === 'by-volume') {
+        if (in_array($actionID, ['all', 'by-volume'])) {
             $options[] = 'volume';
+        }
+
+        if (in_array($actionID, ['all', 'by-provider'])) {
+            $options[] = 'provider';
         }
 
         return $options;
@@ -36,7 +49,10 @@ class RefreshController extends Controller
 
     public function actionAll(): int
     {
-        return $this->_refresh(null);
+        return $this->_refresh(
+            $this->volume ? explode(',', $this->volume) : null,
+            $this->provider ? explode(',', $this->provider) : null
+        );
     }
 
     public function actionByVolume(): int
@@ -46,10 +62,26 @@ class RefreshController extends Controller
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
-        return $this->_refresh($this->volume);
+        return $this->_refresh(explode(',', $this->volume), null);
     }
 
-    private function _refresh(?string $volume): int
+    /**
+     * Refreshes embedded assets by provider. The provider(s) must match the `providerName` of the embedded assets.
+     *
+     * @return int
+     * @since 2.10.0
+     */
+    public function actionByProvider(): int
+    {
+        if ($this->provider === null) {
+            $this->stderr('The --provider option must be specified with the by-provider action.' . PHP_EOL, Console::FG_RED);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return $this->_refresh(null, explode(',', $this->provider));
+    }
+
+    private function _refresh(?array $volume, ?array $providers): int
     {
         $assetsService = Craft::$app->getAssets();
         $elementsService = Craft::$app->getElements();
@@ -59,11 +91,21 @@ class RefreshController extends Controller
         $assets = Asset::find()->kind('json');
 
         if ($volume !== null) {
-            $assets->volume = explode(',', $volume);
+            $assets->volume($volume);
+        }
+
+        $providersKeys = [];
+
+        if ($providers !== null) {
+            foreach ($providers as $provider) {
+                $providersKeys[$provider] = true;
+            }
         }
 
         foreach ($assets->all() as $asset) {
-            if (($embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset)) !== null) {
+            $embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
+
+            if ($embeddedAsset !== null && ($providers === null || isset($providersKeys[$embeddedAsset->providerName]))) {
                 $embeddedAssets[$asset->id] = [
                     'asset' => $asset,
                     'embeddedAsset' => $embeddedAsset,
@@ -71,15 +113,20 @@ class RefreshController extends Controller
             }
         }
 
-        $this->stdout(count($embeddedAssets) . ' embedded assets to be refreshed.' . PHP_EOL);
+        $count = count($embeddedAssets);
+        if ($count > 1) {
+            $this->stdout($count . ' embedded assets to be refreshed.' . PHP_EOL);
+        } else {
+            $this->stdout($count . ' embedded asset to be refreshed.' . PHP_EOL);
+        }
 
         foreach ($embeddedAssets as $assetId => $assetData) {
             $assetToReplace = $assetData['asset'];
             $embeddedAssetToReplace = $assetData['embeddedAsset'];
-            $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... '); 
+            $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... ');
 
             $folder = $assetToReplace->getFolder();
-            $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url);
+            $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url, false);
             $newAsset = EmbeddedAssets::$plugin->methods->createAsset($newEmbeddedAsset, $folder);
             $result = $elementsService->saveElement($newAsset);
 
@@ -93,16 +140,24 @@ class RefreshController extends Controller
                 $elementsService->deleteElement($newAsset);
 
                 $successCount++;
-                $this->stdout('done.' . PHP_EOL); 
+                $this->stdout('done.' . PHP_EOL);
             }
         }
 
         if ($successCount) {
-            $this->stdout($successCount . ' embedded assets were refreshed.' . PHP_EOL);
+            if ($successCount > 1) {
+                $this->stdout($successCount . ' embedded assets were refreshed.' . PHP_EOL);
+            } else {
+                $this->stdout($successCount . ' embedded asset was refreshed.' . PHP_EOL);
+            }
         }
 
         if ($errorCount) {
-            $this->stderr($errorCount . ' embedded assets failed to refresh.' . PHP_EOL, Console::FG_RED);
+            if ($errorCount > 1) {
+                $this->stderr($errorCount . ' embedded assets failed to refresh.' . PHP_EOL, Console::FG_RED);
+            } else {
+                $this->stderr($errorCount . ' embedded asset failed to refresh.' . PHP_EOL, Console::FG_RED);
+            }
         }
 
         return $errorCount ? ExitCode::UNSPECIFIED_ERROR : ExitCode::OK;

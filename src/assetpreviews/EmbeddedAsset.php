@@ -18,11 +18,11 @@ class EmbeddedAsset extends AssetPreviewHandler
     /**
      * @inheritdoc
      */
-    public function getPreviewHtml(): string
+    public function getPreviewHtml(array $variables = []): string
     {
         $embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($this->asset);
 
-        if ($embeddedAsset != null) {
+        if ($embeddedAsset !== null) {
             return Craft::$app->getView()->renderTemplate('embeddedassets/_previews/default', [
                 'embeddedAsset' => $embeddedAsset,
                 'showContent' => false,
@@ -30,6 +30,6 @@ class EmbeddedAsset extends AssetPreviewHandler
             ]);
         }
 
-        return null;
+        return '';
     }
 }

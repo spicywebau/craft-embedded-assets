@@ -6,10 +6,10 @@ import Form from './Form'
 import { uniqueId } from '../utilities'
 
 export default class Modal extends Emitter {
-  constructor (getFolderId = () => -1) {
+  constructor (getActionTarget = () => {}) {
     super()
 
-    this._getFolderId = getFolderId
+    this._getActionTarget = getActionTarget
 
     this.form = null
     this.hud = null
@@ -42,7 +42,7 @@ export default class Modal extends Emitter {
     this.$save = this.$footer.find(`#${saveId}`)
     this.$spinner = this.$footer.find(`#${spinnerId}`)
 
-    this.form = new Form(this._getFolderId)
+    this.form = new Form(this._getActionTarget)
     this.hud = new Garnish.HUD($target, this.form.$element.add(this.$footer), settings)
 
     this.trigger('create')

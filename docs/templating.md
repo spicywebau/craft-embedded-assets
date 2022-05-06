@@ -27,6 +27,17 @@ Parameters (\*required) | Description
 **Returns** |
 EmbeddedAsset&#124;null | The embedded asset, or `null` if it doesn't exist for the asset.
 
+### create
+`craft.embeddedAssets.create(data)`
+
+Gets an embedded asset model, given property name/value pairs that are valid for an embedded asset (e.g. if the data is from getting an asset's contents, rather than using `get()` on the asset itself, if the contents are needed for other purposes). If any of the property names or values are invalid, `null` is returned.
+
+Parameters (\*required) | Description
+-|-
+\*`data` | Embedded asset property name/value pairs.
+**Returns** |
+EmbeddedAsset&#124;null | The embedded asset, or `null` if the `data` was invalid.
+
 
 ## Properties
 The properties of the embedded asset model returned from the [get](#get) function.
@@ -53,7 +64,7 @@ Property (\*required) | Description
 `providerUrl` String | The URL of the provider.
 `providerIcons` Array&lt;[Image](#image)&gt; | List of all provider icons found for the embedded asset.
 `providerIcon` String | The URL of the main provider icon for the embedded asset.
-`publishedDate` String | The published date of the embedded asset.
+`publishedTime` String | The published time of the embedded asset.
 `license` String | The URL to the embedded asset license.
 `feeds` Array&lt;String&gt; | Links to any RSS/Atom feeds found from the URL.
 
@@ -152,20 +163,3 @@ Example Usage:
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
 {{ vid.getVideoId() }}
 ```
-
-## Upgrading from Craft 2
-
-Embedded assets from the Craft 2 version of the plugin are fully compatible with the Craft 3 version. However, most functions, properties and methods have been deprecated in favour of the above API. Your templates will continue to work but you will receive deprecation notices until you decide to change them. See the table below for all the changes:
-
-Type | Craft 2 | Craft 3 equivalent
--|-|-
-Function | `craft.embeddedAssets.isEmbedded(asset)` | `craft.embeddedAssets.get(asset)` then test whether the value is `null`
-Function | `craft.embeddedAssets.fromAsset(asset)` | `craft.embeddedAssets.get(asset)`
-Function | `craft.embeddedAssets.fromAssets(asset)` | Iterate your assets manually and call `craft.embeddedAssets.get(asset)` on each
-Property | `embeddedAsset.requestUrl` | `embeddedAsset.url`
-Property | `embeddedAsset.cacheAge` | *There is no equivalent*
-Property | `embeddedAsset.thumbnailUrl` | `embeddedAsset.image`
-Property | `embeddedAsset.thumbnailWidth` | `embeddedAsset.imageWidth`
-Property | `embeddedAsset.thumbnailHeight` | `embeddedAsset.imageHeight`
-Property | `embeddedAsset.html` | `embeddedAsset.code` as `embeddedAssets.html` has been slightly repurposed
-Property | `embeddedAsset.safeHtml` | `embeddedAsset.code` within an `embeddedAsset.isSafe` check, but `embeddedAsset.html` is preferred
