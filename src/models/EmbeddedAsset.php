@@ -140,37 +140,37 @@ class EmbeddedAsset extends Model implements JsonSerializable
 
     /**
      * @var string link|image|video\rich
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public string $type;
 
     /**
      * @var array of strings
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public array $tags;
 
     /**
      * @var array of images
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public array $images;
 
     /**
      * @var number
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public int $imageWidth;
 
     /**
      * @var number
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public int $imageHeight;
 
     /**
      * @var array of images
-     * @deprecated in 3.0.0
+     * @deprecated in 4.0.0
      */
     public array $providerIcons;
 
