@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where trying to save an embedded asset to a subfolder of a volume's filesystem would save the embedded asset in the filesystem's root folder instead
+
 ## 3.0.0 - 2022-05-05
 
 ### Added

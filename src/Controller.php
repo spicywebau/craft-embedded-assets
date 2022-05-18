@@ -50,7 +50,7 @@ class Controller extends BaseController
         $targetType = $requestService->getRequiredBodyParam('targetType');
         $targetUid = $requestService->getRequiredBodyParam('targetUid');
 
-        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
+        $folderCriteria = str_ends_with($targetType, 'folder') ? ['uid' => $targetUid] : [
             'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
             'parentId' => ':empty:',
         ];
@@ -113,7 +113,7 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
-        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
+        $folderCriteria = str_ends_with($targetType, 'folder') ? ['uid' => $targetUid] : [
             'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
             'parentId' => ':empty:',
         ];
