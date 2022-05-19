@@ -19,6 +19,7 @@ use Embed\Adapters\Adapter;
 use Embed\Embed;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
+use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
@@ -279,6 +280,45 @@ class Service extends Component
         $embeddedAsset = new EmbeddedAsset($array);
 
         return $embeddedAsset->validate() ? $embeddedAsset : null;
+    }
+
+    /**
+     * Refreshes an embedded asset with the current data from the embedded asset's URL.
+     *
+     * @param Asset $asset
+     * @param EmbeddedAsset|null $embeddedAsset
+     * @return EmbeddedAsset the refreshed embedded asset
+     * @throws RefreshException if the embedded asset could not be refreshed
+     * @since 3.0.2
+     */
+    public function refreshEmbeddedAsset(Asset $asset, ?EmbeddedAsset $embeddedAsset = null): EmbeddedAsset
+    {
+        if ($embeddedAsset === null) {
+            $embeddedAsset = $this->getEmbeddedAsset($asset) ?? throw new RefreshException('Asset is not an embedded asset');
+        }
+
+        $assetsService = Craft::$app->getAssets();
+        $elementsService = Craft::$app->getElements();
+        $folder = $asset->getFolder();
+        $newEmbeddedAsset = $this->requestUrl($embeddedAsset->url, false);
+        $newAsset = $this->createAsset($newEmbeddedAsset, $folder);
+        $result = $elementsService->saveElement($newAsset);
+
+        if (!$result) {
+            throw new RefreshException(implode('; ', $newAsset->getFirstErrors()));
+        }
+
+        $tempPath = $newAsset->getCopyOfFile();
+        $assetsService->replaceAssetFile($asset, $tempPath, $asset->filename);
+        $elementsService->deleteElement($newAsset);
+
+        // Replace the old cached data for the embedded asset
+        Craft::$app->getCache()->set(
+            $this->getCachedAssetKey($asset),
+            Json::encode($newEmbeddedAsset->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+        );
+
+        return $newEmbeddedAsset;
     }
 
     /**

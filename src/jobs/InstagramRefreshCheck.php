@@ -6,6 +6,7 @@ use Craft;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use craft\queue\BaseJob;
+use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 
 /**
@@ -36,14 +37,16 @@ class InstagramRefreshCheck extends BaseJob
     {
         // Check if the data was sent through, and if not, get it from the asset contents
         if ($this->embeddedAssetData === null) {
-            $this->embeddedAssetData = Json::decode($asset->getContents());
+            $embeddedAsset = EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
+        } else {
+            $embeddedAsset = EmbeddedAssets::$plugin->methods->createEmbeddedAsset($this->embeddedAssetData);
         }
 
-        $hasImageExpired = $this->_hasInstagramImageExpired($this->embeddedAssetData['image']);
+        $hasImageExpired = $this->_hasInstagramImageExpired($embeddedAsset->image);
         $this->setProgress($queue, 0.5);
 
         if ($hasImageExpired) {
-            $this->_updateInstagramFile($this->asset, $this->embeddedAssetData['url']);
+            $this->_updateInstagramFile($this->asset, $embeddedAsset);
         } else {
             // If it hasn't expired yet, update the date modified so it checks in another seven days
             $this->asset->dateModified = new \DateTime();
@@ -93,41 +96,21 @@ class InstagramRefreshCheck extends BaseJob
      * Refreshes an Instagram embedded asset with data from the given URL.
      *
      * @param Asset $asset
-     * @param string $url
+     * @param EmbeddedAsset $embeddedAsset
      */
-    private function _updateInstagramFile(Asset $asset, string $url)
+    private function _updateInstagramFile(Asset $asset, EmbeddedAsset $embeddedAsset)
     {
         // Fix URL in case we got a login URL and not an Instagram URL referring to a post
         // We add the post ID at the end
-        if (strpos($url, 'login') !== false) {
-            parse_str(parse_url($url)['query'], $params);
-            $url = "https://www.instagram.com" . $params['next'];
+        if (strpos($embeddedAsset->url, 'login') !== false) {
+            parse_str(parse_url($embeddedAsset->url)['query'], $params);
+            $embeddedAsset->url = "https://www.instagram.com" . $params['next'];
         }
 
-        // Get new data from the URL
-        $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url, false);
-
-        if ($newEmbeddedAsset) {
-            try {
-                $assetsService = Craft::$app->getAssets();
-                $elementsService = Craft::$app->getElements();
-
-                $folder = $assetsService->findFolder(['id' => $asset->folderId]);
-                $assetToReplace = EmbeddedAssets::$plugin->methods->createAsset($newEmbeddedAsset, $folder);
-                $elementsService->saveElement($assetToReplace);
-
-                $tempPath = $assetToReplace->getCopyOfFile();
-                $assetsService->replaceAssetFile($asset, $tempPath, $asset->filename);
-                $elementsService->deleteElement($assetToReplace);
-
-                // Replace the old cached data for the embedded asset
-                Craft::$app->getCache()->set(
-                    EmbeddedAssets::$plugin->methods->getCachedAssetKey($asset),
-                    Json::encode($newEmbeddedAsset->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-                );
-            } catch (\Throwable $e) {
-                Craft::warning("Couldn't refresh Instagram embedded asset with asset ID '{$asset->id}': " . $e->getMessage());
-            }
+        try {
+            EmbeddedAssets::$plugin->methods->refreshEmbeddedAsset($asset, $embeddedAsset);
+        } catch (\Throwable $e) {
+            Craft::warning("Couldn't refresh Instagram embedded asset with asset ID '{$asset->id}': " . $e->getMessage());
         }
     }
 }

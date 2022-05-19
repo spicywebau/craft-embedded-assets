@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\embeddedassets\Service::refreshEmbeddedAsset()`
+- Added `spicyweb\embeddedassets\errors\RefreshException`
+
 ## 3.0.1 - 2022-05-18
 
 ### Fixed

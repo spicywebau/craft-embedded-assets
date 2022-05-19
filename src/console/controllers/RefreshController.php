@@ -5,6 +5,7 @@ namespace spicyweb\embeddedassets\console\controllers;
 use Craft;
 use craft\console\Controller;
 use craft\elements\Asset;
+use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use yii\console\ExitCode;
 use yii\helpers\Console;
@@ -83,8 +84,6 @@ class RefreshController extends Controller
 
     private function _refresh(?array $volume, ?array $providers): int
     {
-        $assetsService = Craft::$app->getAssets();
-        $elementsService = Craft::$app->getElements();
         $embeddedAssets = [];
         $successCount = 0;
         $errorCount = 0;
@@ -121,26 +120,14 @@ class RefreshController extends Controller
         }
 
         foreach ($embeddedAssets as $assetId => $assetData) {
-            $assetToReplace = $assetData['asset'];
-            $embeddedAssetToReplace = $assetData['embeddedAsset'];
-            $this->stdout('Refreshing ' . $assetToReplace->getPath() . ' ... ');
-
-            $folder = $assetToReplace->getFolder();
-            $newEmbeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($embeddedAssetToReplace->url, false);
-            $newAsset = EmbeddedAssets::$plugin->methods->createAsset($newEmbeddedAsset, $folder);
-            $result = $elementsService->saveElement($newAsset);
-
-            if (!$result) {
-                $errorCount++;
-                $errors = $newAsset->getFirstErrors();
-                $this->stderr('Failed to save the Asset:' . PHP_EOL . implode(';' . PHP_EOL, $errors), Console::FG_RED);
-            } else {
-                $tempPath = $newAsset->getCopyOfFile();
-                $assetsService->replaceAssetFile($assetToReplace, $tempPath, $assetToReplace->filename);
-                $elementsService->deleteElement($newAsset);
-
+            try {
+                $this->stdout('Refreshing ' . $assetData['asset']->getPath() . ' ... ');
+                EmbeddedAssets::$plugin->methods->refreshEmbeddedAsset($assetData['asset'], $assetData['embeddedAsset']);
                 $successCount++;
                 $this->stdout('done.' . PHP_EOL);
+            } catch (RefreshException $e) {
+                $errorCount++;
+                $this->stderr('Failed to save the Asset: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             }
         }
 
