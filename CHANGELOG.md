@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added the `enableAutoRefresh` plugin setting (defaults to `true`) for controlling whether Instagram embedded assets are auto-refreshed
 - Added `spicyweb\embeddedassets\Service::refreshEmbeddedAsset()`
 - Added `spicyweb\embeddedassets\errors\RefreshException`
 

@@ -189,13 +189,18 @@ class Service extends Component
             return $this->embeddedAssetData[$asset->uid];
         }
 
+        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $embeddedAsset = null;
 
         try {
             $decodedJson = $this->_getAssetContents($asset);
 
             // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
-            if ((strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
+            if (
+                $pluginSettings->enableAutoRefresh
+                && strtolower($decodedJson['providerName']) === 'instagram'
+                && $this->_hasBeenWeekSince($asset->dateModified)
+            ) {
                 Craft::$app->queue->push(new InstagramRefreshCheck([
                     'asset' => $asset,
                     'embeddedAssetData' => $decodedJson,
@@ -203,7 +208,7 @@ class Service extends Component
             }
 
             // Make YouTube iframes use the nocookie embed URL if the relevant setting is enabled
-            if ($decodedJson['providerName'] === 'YouTube' && EmbeddedAssets::$plugin->getSettings()->useYouTubeNoCookie) {
+            if ($decodedJson['providerName'] === 'YouTube' && $pluginSettings->useYouTubeNoCookie) {
                 $decodedJson['code'] = preg_replace(
                     '/src="https?:\/\/www.youtube.com\/embed\/(.+)\?/',
                     'src="https://www.youtube-nocookie.com/embed/$1?',
@@ -212,7 +217,7 @@ class Service extends Component
             }
 
             // Make Vimeo iframes use the nocookie embed URL if the relevant setting is enabled
-            if ($decodedJson['providerName'] === 'Vimeo' && EmbeddedAssets::$plugin->getSettings()->disableVimeoTracking) {
+            if ($decodedJson['providerName'] === 'Vimeo' && $pluginSettings->disableVimeoTracking) {
                 $oldSrc = HtmlHelper::parseTagAttributes($decodedJson['code'])['src'];
                 $newSrc = HtmlHelper::decode(UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']));
                 $decodedJson['code'] = HtmlHelper::modifyTagAttributes($decodedJson['code'], ['src' => $newSrc]);

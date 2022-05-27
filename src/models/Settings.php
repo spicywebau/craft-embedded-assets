@@ -202,6 +202,12 @@ class Settings extends Model
     public bool $disableVimeoTracking = false;
 
     /**
+     * @var bool
+     * @since 3.0.2
+     */
+    public bool $enableAutoRefresh = true;
+
+    /**
      * @inheritdoc
      */
     protected function defineBehaviors(): array
@@ -225,7 +231,7 @@ class Settings extends Model
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
             ['cacheDuration', 'integer', 'min' => 0],
-            [['showThumbnailsInCp', 'useYouTubeNoCookie', 'disableVimeoTracking'], 'boolean'],
+            [['showThumbnailsInCp', 'useYouTubeNoCookie', 'disableVimeoTracking', 'enableAutoRefresh'], 'boolean'],
         ];
     }
 }
