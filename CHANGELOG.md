@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.2 - 2022-05-27
 
 ### Added
 - Added the `enableAutoRefresh` plugin setting (defaults to `true`) for controlling whether Instagram embedded assets are auto-refreshed
