@@ -31,6 +31,16 @@
 - Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
 - Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
 
+## 2.11.0 - 2022-06-15
+
+### Added
+- Added `spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage`
+- Added `spicyweb\embeddedassets\gql\types\EmbeddedAssetImage`
+- Added `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
+
+### Fixed
+- Fixed a bug where accessing embedded assets' `images` and `providerIcons` properties through GraphQL outside of dev mode would cause an error
+
 ## 2.10.7 - 2022-04-21
 
 ### Fixed

@@ -7,7 +7,6 @@ use craft\gql\base\InterfaceType;
 use craft\gql\base\SingularTypeInterface;
 use craft\gql\GqlEntityRegistry;
 use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetType;
 use spicyweb\embeddedassets\models\EmbeddedAsset as EmbeddedAssetModel;
@@ -64,38 +63,6 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
      */
     public static function getFieldDefinitions(): array
     {
-        $imageType = new ObjectType([
-            'name' => 'image',
-            'description' => 'Image data',
-            'fields' => [
-                'url' => [
-                    'name' => 'url',
-                    'type' => Type::string(),
-                    'description' => 'The URL of the image.',
-                ],
-                'width' => [
-                    'name' => 'width',
-                    'type' => Type::int(),
-                    'description' => 'The width of the image.',
-                ],
-                'height' => [
-                    'name' => 'height',
-                    'type' => Type::int(),
-                    'description' => 'The height of the image.',
-                ],
-                'size' => [
-                    'name' => 'size',
-                    'type' => Type::int(),
-                    'description' => 'The size of the image.',
-                ],
-                'mime' => [
-                    'name' => 'mime',
-                    'type' => Type::string(),
-                    'description' => 'The MIME type of the image.',
-                ],
-            ],
-        ]);
-
         return Craft::$app->getGql()->prepareFieldDefinitions([
             'title' => [
                 'name' => 'title',
@@ -129,8 +96,8 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
             ],
             'images' => [
                 'name' => 'images',
-                'type' => Type::listOf($imageType),
-                'description' => 'The images for the embedded asset.',
+                'type' => Type::listOf(EmbeddedAssetImage::getType()),
+                'description' => 'The images for the embedded asset.'
             ],
             'image' => [
                 'name' => 'image',
@@ -179,8 +146,8 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
             ],
             'providerIcons' => [
                 'name' => 'providerIcons',
-                'type' => Type::listOf($imageType),
-                'description' => 'The provider icons for the embedded asset.',
+                'type' => Type::listOf(EmbeddedAssetImage::getType()),
+                'description' => 'The provider icons for the embedded asset.'
             ],
             'providerIcon' => [
                 'name' => 'providerIcon',
