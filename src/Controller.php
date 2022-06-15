@@ -223,7 +223,7 @@ class Controller extends BaseController
 
         if (!$userTempFolder || $folder->id != $userTempFolder->id) {
             $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:' . $volume->uid);
+            $this->requirePermission('saveAssets:' . $volume->uid);
         }
 
         return $folder;
