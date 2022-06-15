@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.3 - 2022-06-15
+
+### Fixed
+- Fixed a bug where non-admin users who have the permission to save assets in a volume were unable to save embedded assets in that volume (thanks @aodihis)
+
 ## 3.0.2 - 2022-05-27
 
 ### Added
