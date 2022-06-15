@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.11.0 - 2022-06-15
 
 ### Added
 - Added `spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage`
