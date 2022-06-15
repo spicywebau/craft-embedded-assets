@@ -5,7 +5,7 @@
 ### Added
 - Added `spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage`
 - Added `spicyweb\embeddedassets\gql\types\EmbeddedAssetImage`
-- Added `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImage`
+- Added `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
 
 ### Fixed
 - Fixed a bug where accessing embedded assets' `images` and `providerIcons` properties through GraphQL outside of dev mode would cause an error
