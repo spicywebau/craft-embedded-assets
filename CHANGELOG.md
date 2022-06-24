@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.11.2 - 2022-06-24
 
 ### Fixed
 - Fixed a type error that could occur in version 2.11.1
