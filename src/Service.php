@@ -19,6 +19,7 @@ use Embed\Embed;
 use Embed\Adapters\Adapter;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
+use League\Flysystem\CorruptedPathDetected;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
@@ -323,7 +324,16 @@ class Service extends Component
         $fileName = str_replace('.', '', $fileName);
         $fileName = $fileName ?: 'embedded-asset';
         $fileName = StringHelper::safeTruncate($fileName, $pluginSettings->maxFileNameLength) . '.json';
-        $fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
+
+        try {
+            $fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
+        } catch (CorruptedPathDetected $e) {
+            // Try enforcing ASCII characters in the filename
+            return FileHelper::sanitizeFilename($fileName, [
+                'asciiOnly' => true,
+            ]);
+            $fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
+        }
 
         $asset = new Asset();
         $asset->title = StringHelper::safeTruncate($assetTitle, $pluginSettings->maxAssetNameLength);

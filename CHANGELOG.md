@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error that occurred when saving an embedded asset, if the embedded asset title (and therefore the filename) contained invalid characters
+
 ## 2.11.0 - 2022-06-15
 
 ### Added
