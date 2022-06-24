@@ -329,7 +329,7 @@ class Service extends Component
             $fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
         } catch (CorruptedPathDetected $e) {
             // Try enforcing ASCII characters in the filename
-            return FileHelper::sanitizeFilename($fileName, [
+            $fileName = FileHelper::sanitizeFilename($fileName, [
                 'asciiOnly' => true,
             ]);
             $fileName = $assetsService->getNameReplacementInFolder($fileName, $folder->id);
