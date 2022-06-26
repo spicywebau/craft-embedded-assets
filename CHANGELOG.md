@@ -41,6 +41,16 @@
 - Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
 - Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
 
+## 2.11.2 - 2022-06-24
+
+### Fixed
+- Fixed a type error that could occur in version 2.11.1
+
+## 2.11.1 - 2022-06-24
+
+### Fixed
+- Fixed an error that occurred when saving an embedded asset, if the embedded asset title (and therefore the filename) contained invalid characters
+
 ## 2.11.0 - 2022-06-15
 
 ### Added
