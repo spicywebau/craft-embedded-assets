@@ -31,7 +31,7 @@ class EmbeddedAsset extends ObjectType
     protected function resolve(mixed $source, array $arguments, mixed $context, ResolveInfo $resolveInfo): mixed
     {
         return match ($resolveInfo->fieldName) {
-            'iframeCode' => $source->getIframeCode($arguments['params'], $arguments['attributes'] ?? []),
+            'iframeCode' => $source->getIframeCode($arguments['params'] ?? [], $arguments['attributes'] ?? []),
             'iframeSrc' => $source->getIframeSrc($arguments['params']),
             default => parent::resolve($source, $arguments, $context, $resolveInfo),
         };

@@ -241,7 +241,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @param string[] $attributes Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
      * @return TwigMarkup
      */
-    public function getIframeCode(array $params, array $attributes = []): TwigMarkup
+    public function getIframeCode(array $params = [], array $attributes = []): TwigMarkup
     {
         if (!$this->_codeIsIframe()) {
             throw new Exception('The embedded asset code is not an iframe');
