@@ -237,17 +237,29 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Returns the iframe code with additional params passed to the source URL.
      *
      * @since 2.6.0
-     * @param array $params
+     * @param string[] $params Parameters to add to the iframe source URL, in the format `param` or `param=value`
+     * @param string[] $attributes Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
      * @return TwigMarkup
      */
-    public function getIframeCode(array $params): TwigMarkup
+    public function getIframeCode(array $params, array $attributes = []): TwigMarkup
     {
         if (!$this->_codeIsIframe()) {
             throw new Exception('The embedded asset code is not an iframe');
         }
 
         $newSrc = $this->_getIframeSrc($params, true);
-        $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
+        $tagAttributes = ['src' => $newSrc];
+
+        foreach ($attributes as $attribute) {
+            $splitAttr = explode('=', $attribute, 2);
+
+            // Ignore the `src` attribute
+            if ($splitAttr[0] !== 'src') {
+                $tagAttributes[$splitAttr[0]] = count($splitAttr) === 1 ? true : $splitAttr[1];
+            }
+        }
+
+        $code = HtmlHelper::modifyTagAttributes($this->code, $tagAttributes);
 
         return Template::raw($code);
     }

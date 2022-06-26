@@ -135,18 +135,22 @@ Example Usage:
 ### getIframeCode
 `getIframeCode(params)`
 
-If the embedded asset's `code` is an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL.
+If the embedded asset's `code` is an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL, or extra attributes added to the `<iframe>` element.
 
 Parameters (\*required) | Description
 -|-
-`params` Array | Array of params
+`params` Array | Parameters to add to the iframe source URL, in the format `param` or `param=value`
+`attributes` Array | Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
 **Returns** |
 [\Twig\Markup](#\Twig\Markup) | The code markup.
 
 Example Usage:
 ```twig
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
-{{ vid.getIframeCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+{{ vid.getIframeCode(
+    ['autoplay=1', 'controls=0', 'playsinline=1'],
+    ['loading=lazy']
+) }}
 ```
 
 ### getVideoId
