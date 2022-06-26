@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.4 - 2022-06-26
 
 ### Added
 - Added a second parameter (`$attributes`) to `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()`, for adding attributes to the iframe element, in the format `attribute` or `attribute=value`
