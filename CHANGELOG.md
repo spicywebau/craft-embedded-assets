@@ -44,6 +44,11 @@
 - Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
 - Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
 
+## 2.11.3 - 2022-06-30
+
+### Fixed
+- Fixed a bug where the 'Uploaded by' field would be empty for newly created embedded assets
+
 ## 2.11.2 - 2022-06-24
 
 ### Fixed
