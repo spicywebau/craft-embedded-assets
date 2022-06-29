@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where the 'Uploaded by' field would be empty for newly created embedded assets
+
 ## 2.11.2 - 2022-06-24
 
 ### Fixed

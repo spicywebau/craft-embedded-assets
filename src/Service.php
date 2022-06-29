@@ -341,6 +341,7 @@ class Service extends Component
         $asset->filename = $fileName;
         $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
+        $asset->uploaderId = Craft::$app->getUser()->getId();
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(Asset::SCENARIO_CREATE);
 
