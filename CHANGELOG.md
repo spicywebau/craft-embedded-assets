@@ -1,5 +1,7 @@
 # Changelog
 
+## 3.0.5 - 2022-08-30
+
 ### Added
 - Added the `$removeAttribuutes` argument to `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()`, for removing tag attributes from an iframe
 
