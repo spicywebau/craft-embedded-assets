@@ -199,6 +199,11 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
                         'type' => Type::listOf(Type::string()),
                         'description' => 'The attributes to add to the iframe element.',
                     ],
+                    'removeAttributes' => [
+                        'name' => 'removeAttributes',
+                        'type' => Type::listOf(Type::string()),
+                        'description' => 'The attributes to remove from the iframe element.',
+                    ],
                 ],
             ],
             'iframeSrc' => [

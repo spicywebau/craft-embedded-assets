@@ -141,6 +141,7 @@ Parameters (\*required) | Description
 -|-
 `params` Array | Parameters to add to the iframe source URL, in the format `param` or `param=value`
 `attributes` Array | Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
+`removeAttributes` Array | Attributes to remove from the iframe element
 **Returns** |
 [\Twig\Markup](#\Twig\Markup) | The code markup.
 
@@ -149,7 +150,8 @@ Example Usage:
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
 {{ vid.getIframeCode(
     ['autoplay=1', 'controls=0', 'playsinline=1'],
-    ['loading=lazy']
+    ['loading=lazy'],
+    ['frameborder']
 ) }}
 ```
 

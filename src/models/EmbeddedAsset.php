@@ -239,9 +239,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * @since 2.6.0
      * @param string[] $params Parameters to add to the iframe source URL, in the format `param` or `param=value`
      * @param string[] $attributes Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
+     * @param string[] $removeAttributes Attributes to remove from the iframe element
      * @return TwigMarkup
      */
-    public function getIframeCode(array $params = [], array $attributes = []): TwigMarkup
+    public function getIframeCode(array $params = [], array $attributes = [], array $removeAttributes = []): TwigMarkup
     {
         if (!$this->_codeIsIframe()) {
             throw new Exception('The embedded asset code is not an iframe');
@@ -256,6 +257,13 @@ class EmbeddedAsset extends Model implements JsonSerializable
             // Ignore the `src` attribute
             if ($splitAttr[0] !== 'src') {
                 $tagAttributes[$splitAttr[0]] = count($splitAttr) === 1 ? true : $splitAttr[1];
+            }
+        }
+
+        foreach ($removeAttributes as $attribute) {
+            // Ignore the `src` attribute
+            if ($attribute !== 'src') {
+                $tagAttributes[$attribute] = null;
             }
         }
 
