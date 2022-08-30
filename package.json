@@ -32,16 +32,16 @@
   },
   "homepage": "https://github.com/spicywebau/craft-embedded-assets#readme",
   "devDependencies": {
-    "@babel/core": "^7.17.2",
-    "@babel/preset-env": "^7.16.11",
-    "babel-loader": "^8.2.3",
-    "css-loader": "^6.6.0",
-    "node-sass": "^7.0.1",
-    "sass-loader": "^12.6.0",
-    "standard": "^16.0.4",
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "sass": "^1.54.6",
+    "sass-loader": "^13.0.2",
+    "standard": "^17.0.0",
     "style-loader": "^3.3.1",
-    "webpack": "^5.69.0",
-    "webpack-cli": "^4.9.2"
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   },
   "standard": {
     "ignore": [

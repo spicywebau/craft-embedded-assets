@@ -1,5 +1,8 @@
 # Changelog
 
+### Changed
+- Updated JavaScript dependencies
+
 ## 3.0.4 - 2022-06-26
 
 ### Added
