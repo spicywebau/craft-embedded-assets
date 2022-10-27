@@ -2,35 +2,19 @@
 
 namespace spicyweb\embeddedassets\assets;
 
-use craft\web\AssetBundle;
-use craft\web\assets\cp\CpAsset;
-
-/**
- * Class Main
- *
- * @package spicyweb\embeddedassets\assets
- * @author Spicy Web <craft@spicyweb.com.au>
- * @author Benjamin Fleming
- * @since 1.0.0
- */
-class Main extends AssetBundle
-{
-    public function init(): void
-    {
-        $this->sourcePath = '@spicyweb/embeddedassets/resources';
-        $this->depends = [CpAsset::class];
-        $this->js = ['main.js'];
-
-        parent::init();
-    }
-
+if (false) {
     /**
-     * @inheritdoc
+     * Class Main
+     *
+     * @package spicyweb\embeddedassets\assets
+     * @author Spicy Web <plugins@spicyweb.com.au>
+     * @author Benjamin Fleming
+     * @since 1.0.0
+     * @deprecated in 3.1.0 - use \spicyweb\embeddedassets\assets\main\MainAsset instead
      */
-    public function registerAssetFiles($view): void
+    class Main
     {
-        $view->registerTranslations('embeddedassets', ['Embed', 'Replace']);
-
-        parent::registerAssetFiles($view);
     }
 }
+
+class_exists(\spicyweb\embeddedassets\assets\main\MainAsset::class);

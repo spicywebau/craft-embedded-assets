@@ -4,8 +4,8 @@
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
   "main": "src/resources/main.js",
   "scripts": {
-    "build-dev": "./node_modules/.bin/webpack --config ./client/build/webpack.js --mode development",
-    "build": "./node_modules/.bin/standard && ./node_modules/.bin/webpack --config ./client/build/webpack.js --mode production"
+    "build-dev": "./node_modules/.bin/standard && ./node_modules/.bin/webpack --mode development",
+    "build": "./node_modules/.bin/standard && ./node_modules/.bin/webpack --mode production"
   },
   "repository": {
     "type": "git",

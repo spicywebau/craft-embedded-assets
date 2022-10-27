@@ -3,7 +3,7 @@ import Craft from 'craft'
 import Garnish from 'garnish'
 import Emitter from './Emitter'
 import Form from './Form'
-import { uniqueId } from '../utilities'
+import { uniqueId } from './utilities'
 
 export default class Modal extends Emitter {
   constructor (getActionTarget = () => {}) {

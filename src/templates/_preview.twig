@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>{{ embeddedAsset.title }}</title>
-	{% set previewJs = view.getAssetManager().getPublishedUrl('@spicyweb/embeddedassets/resources/preview.js', true) %}
+	{% set previewJs = view.getAssetManager().getPublishedUrl('@spicyweb/embeddedassets/assets/preview/dist/scripts/preview.js', true) %}
 	<script src="{{ previewJs }}"></script>
 	{% if callback is defined and callback %}
 		<script>EmbeddedAssetsPreview.addCallback('{{ callback|e('js') }}')</script>

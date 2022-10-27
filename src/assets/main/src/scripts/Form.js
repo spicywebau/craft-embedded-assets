@@ -2,7 +2,7 @@ import $ from 'jquery'
 import Craft from 'craft'
 import Emitter from './Emitter'
 import Preview from './Preview'
-import { uniqueId, isUrl } from '../utilities'
+import { uniqueId, isUrl } from './utilities'
 
 export default class Form extends Emitter {
   constructor (getActionTarget = () => {}) {

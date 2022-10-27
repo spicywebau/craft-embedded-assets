@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\embeddedassets\assets\main\MainAsset`
+- Added `spicyweb\embeddedassets\assets\preview\PreviewAsset`
+
+### Deprecated
+- Deprecated `spicyweb\embeddedassets\assets\Main`; use `spicyweb\embeddedassets\assets\main\MainAsset` instead
+- Deprecated `spicyweb\embeddedassets\assets\Preview`; use `spicyweb\embeddedassets\assets\preview\PreviewAsset` instead
+
 ## 3.0.5 - 2022-08-30
 
 ### Added

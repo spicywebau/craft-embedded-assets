@@ -1,8 +1,8 @@
-import './main.scss'
+import '../styles/main.scss'
 import $ from 'jquery'
 import Craft from 'craft'
-import EmbeddedAssets from './classes/EmbeddedAssets'
-import Button from './classes/Button'
+import EmbeddedAssets from './EmbeddedAssets'
+import Button from './Button'
 import { monkeypatch } from './utilities'
 
 const embeddedAssets = new EmbeddedAssets()

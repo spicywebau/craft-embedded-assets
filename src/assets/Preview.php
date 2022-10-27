@@ -2,23 +2,19 @@
 
 namespace spicyweb\embeddedassets\assets;
 
-use craft\web\AssetBundle;
-
-/**
- * Class Preview
- *
- * @package spicyweb\embeddedassets\assets
- * @author Spicy Web <craft@spicyweb.com.au>
- * @author Benjamin Fleming
- * @since 1.0.0
- */
-class Preview extends AssetBundle
-{
-    public function init(): void
+if (false) {
+    /**
+     * Class Preview
+     *
+     * @package spicyweb\embeddedassets\assets
+     * @author Spicy Web <plugins@spicyweb.com.au>
+     * @author Benjamin Fleming
+     * @since 1.0.0
+     * @deprecated in 3.1.0 - use \spicyweb\embeddedassets\assets\preview\PreviewAsset instead
+     */
+    class Preview
     {
-        $this->sourcePath = '@spicyweb/embeddedassets/resources';
-        $this->js = ['preview.js'];
-        
-        parent::init();
     }
 }
+
+class_exists(\spicyweb\embeddedassets\assets\preview\PreviewAsset::class);

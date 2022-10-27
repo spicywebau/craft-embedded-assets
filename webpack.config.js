@@ -3,12 +3,12 @@ const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   entry: {
-    main: path.resolve(__dirname, '../src/main.js'),
-    preview: path.resolve(__dirname, '../src/preview.js')
+    main: path.resolve(__dirname, 'src/assets/main/src/scripts/main.js'),
+    preview: path.resolve(__dirname, 'src/assets/preview/src/scripts/preview.js')
   },
   output: {
-    path: path.resolve(__dirname, '../../src/resources/'),
-    filename: '[name].js'
+    path: path.resolve(__dirname, 'src/assets/'),
+    filename: '[name]/dist/scripts/[name].js'
   },
   externals: {
     jquery: 'jQuery',

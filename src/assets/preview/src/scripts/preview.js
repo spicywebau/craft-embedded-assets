@@ -1,4 +1,4 @@
-import './preview.scss'
+import '../styles/preview.scss'
 
 window.EmbeddedAssetsPreview = {
 

@@ -2,7 +2,7 @@ import $ from 'jquery'
 import Craft from 'craft'
 import Garnish from 'garnish'
 import Emitter from './Emitter'
-import { uniqueId } from '../utilities'
+import { uniqueId } from './utilities'
 
 export default class Preview extends Emitter {
   constructor () {
