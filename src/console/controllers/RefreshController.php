@@ -2,7 +2,6 @@
 
 namespace spicyweb\embeddedassets\console\controllers;
 
-use Craft;
 use craft\console\Controller;
 use craft\elements\Asset;
 use spicyweb\embeddedassets\errors\RefreshException;

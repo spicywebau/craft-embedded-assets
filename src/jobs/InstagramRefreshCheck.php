@@ -4,7 +4,6 @@ namespace spicyweb\embeddedassets\jobs;
 
 use Craft;
 use craft\elements\Asset;
-use craft\helpers\Json;
 use craft\queue\BaseJob;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;

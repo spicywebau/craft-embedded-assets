@@ -38,7 +38,7 @@ class EmbeddedAssetImageType implements GeneratorInterface, SingleGeneratorInter
             'description' => 'Embedded asset image data',
             'fields' => function() use ($typeName) {
                 return Craft::$app->getGql()->prepareFieldDefinitions(EmbeddedAssetImageInterface::getFieldDefinitions(), $typeName);
-            }
+            },
         ]));
     }
 }

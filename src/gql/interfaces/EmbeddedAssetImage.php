@@ -3,8 +3,8 @@
 namespace spicyweb\embeddedassets\gql\interfaces;
 
 use Craft;
-use craft\gql\GqlEntityRegistry;
 use craft\gql\base\InterfaceType;
+use craft\gql\GqlEntityRegistry;
 use GraphQL\Type\Definition\InterfaceType as GqlInterfaceType;
 use GraphQL\Type\Definition\Type;
 use spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType;
@@ -38,7 +38,7 @@ class EmbeddedAssetImage extends InterfaceType
             'name' => static::getName(),
             'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all embedded asset images.',
-            'resolveType' => function ($value) {
+            'resolveType' => function($value) {
                 return 'EmbeddedAssetImage';
             },
         ]));
