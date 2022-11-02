@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## 3.1.0 - 2022-11-02
 
 ### Added
 - Added `spicyweb\embeddedassets\assets\main\MainAsset`
 - Added `spicyweb\embeddedassets\assets\preview\PreviewAsset`
 - Added `spicyweb\embeddedassets\errors\NotWhitelistedException`
-- Added `spicyweb\embeddedassets\models\Settings::$preventNonWhitelistedUploads` (defaults to `false`)
+- Added `spicyweb\embeddedassets\models\Settings::$preventNonWhitelistedUploads` (defaults to `false`, adds the ability to prevent the saving of embedded assets from providers that are not whitelisted in the plugin settings)
 
 ### Changed
 - Embedded Assets' JavaScript source has been converted to TypeScript
