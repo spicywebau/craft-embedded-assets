@@ -208,6 +208,12 @@ class Settings extends Model
     public bool $enableAutoRefresh = true;
 
     /**
+     * @var bool
+     * @since 3.1.0
+     */
+    public bool $preventNonWhitelistedUploads = false;
+
+    /**
      * @inheritdoc
      */
     protected function defineBehaviors(): array
@@ -231,7 +237,13 @@ class Settings extends Model
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
             ['cacheDuration', 'integer', 'min' => 0],
-            [['showThumbnailsInCp', 'useYouTubeNoCookie', 'disableVimeoTracking', 'enableAutoRefresh'], 'boolean'],
+            [[
+                'disableVimeoTracking',
+                'enableAutoRefresh',
+                'preventNonWhitelistedUploads',
+                'showThumbnailsInCp',
+                'useYouTubeNoCookie',
+            ], 'boolean'],
         ];
     }
 }

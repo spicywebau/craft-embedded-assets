@@ -19,6 +19,7 @@ use Embed\Adapters\Adapter;
 use Embed\Embed;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
+use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
@@ -54,20 +55,25 @@ class Service extends Component
      * @param string $url
      * @param bool $checkCache Whether to check for data associated with the URL that's been stored in Craft's cache
      * @return EmbeddedAsset
+     * @throws NotWhitelistedException if the `preventNonWhitelistedUploads` setting is enabled and the embedded asset
+     * provider is non-whitelisted.
      */
     public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
     {
+        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $cacheService = Craft::$app->getCache();
-
         $cacheKey = 'embeddedasset:' . $url;
         $embeddedAsset = $checkCache ? $cacheService->get($cacheKey) : null;
 
         if (!$embeddedAsset) {
-            $pluginSettings = EmbeddedAssets::$plugin->getSettings();
             $array = $this->_getDataFromAdapter($url);
             $embeddedAsset = $this->createEmbeddedAsset($array);
 
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
+        }
+
+        if ($pluginSettings->preventNonWhitelistedUploads && !$embeddedAsset->getIsSafe()) {
+            throw new NotWhitelistedException();
         }
 
         return $embeddedAsset;

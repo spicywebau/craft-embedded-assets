@@ -5,6 +5,8 @@
 ### Added
 - Added `spicyweb\embeddedassets\assets\main\MainAsset`
 - Added `spicyweb\embeddedassets\assets\preview\PreviewAsset`
+- Added `spicyweb\embeddedassets\errors\NotWhitelistedException`
+- Added `spicyweb\embeddedassets\models\Settings::$preventNonWhitelistedUploads` (defaults to `false`)
 
 ### Changed
 - Embedded Assets' JavaScript source has been converted to TypeScript
