@@ -49,6 +49,12 @@ export default class Form extends Emitter {
       }
     })
 
+    this.preview.on('blacklisted', (e: any) => {
+      if (e.url === this._url && this._state === 'requesting') {
+        this.setState('blacklisted')
+      }
+    })
+
     this.preview.on('timeout', (e: any) => {
       if (e.url === this._url && this._state === 'requesting') {
         Craft.cp.displayError(Craft.t('embeddedassets', 'Could not retrieve embed information.'))
@@ -171,6 +177,9 @@ export default class Form extends Emitter {
         break
       case 'requested':
         this.trigger('requested')
+        break
+      case 'blacklisted':
+        this.trigger('blacklisted')
         break
       case 'saving':
         this.trigger('saving')

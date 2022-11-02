@@ -73,7 +73,10 @@ class Service extends Component
         }
 
         if ($pluginSettings->preventNonWhitelistedUploads && !$embeddedAsset->getIsSafe()) {
-            throw new NotWhitelistedException();
+            throw new NotWhitelistedException(
+                Craft::t('embeddedassets', 'Tried to upload embedded asset with non-whitelisted provider'),
+                $embeddedAsset,
+            );
         }
 
         return $embeddedAsset;

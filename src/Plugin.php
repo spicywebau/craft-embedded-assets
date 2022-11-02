@@ -22,7 +22,7 @@ use craft\services\Gql;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\View;
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
-use spicyweb\embeddedassets\assets\Main as MainAsset;
+use spicyweb\embeddedassets\assets\main\MainAsset;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage as EmbeddedAssetImageInterface;
 use spicyweb\embeddedassets\gql\resolvers\EmbeddedAsset as EmbeddedAssetResolver;
@@ -139,9 +139,10 @@ class Plugin extends BasePlugin
             View::class,
             View::EVENT_BEFORE_RENDER_TEMPLATE,
             function(TemplateEvent $event) {
+                $prevent = $this->getSettings()->preventNonWhitelistedUploads ? 'true' : 'false';
                 $viewService = Craft::$app->getView();
                 $viewService->registerAssetBundle(MainAsset::class);
-                
+                $viewService->registerJs("EmbeddedAssets.preventNonWhitelistedUploads = $prevent");
                 $assetManagerService = Craft::$app->getAssetManager();
                 $this->defaultThumbnailUrl = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg',
                     true);

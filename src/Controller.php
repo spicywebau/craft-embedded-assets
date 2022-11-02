@@ -9,6 +9,7 @@ use craft\helpers\Json;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
+use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
@@ -178,7 +179,12 @@ class Controller extends BaseController
         $showContent = (bool)$requestService->getParam('showContent', true);
 
         if ($url) {
-            $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+            try {
+                $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+            } catch (NotWhitelistedException $e) {
+                // We'll still show the preview, we just won't allow saving it from the frontend
+                $embeddedAsset = $e->embeddedAsset;
+            }
         } else {
             if ($assetId) {
                 $asset = $assetsService->getAssetById($assetId);

@@ -2,6 +2,7 @@
 
 namespace spicyweb\embeddedassets\errors;
 
+use spicyweb\embeddedassets\models\EmbeddedAsset;
 use yii\base\Exception;
 
 /**
@@ -14,6 +15,23 @@ use yii\base\Exception;
  */
 class NotWhitelistedException extends Exception
 {
+    /**
+     * @var EmbeddedAsset
+     */
+    public EmbeddedAsset $embeddedAsset;
+
+    /**
+     * @param string $message
+     * @param EmbeddedAsset $embeddedAsset
+     * @param int $code
+     * @param Throwable|null $previous
+     */
+    public function __construct(string $message = '', EmbeddedAsset $embeddedAsset, int $code = 0, ?Throwable $previous = null)
+    {
+        $this->embeddedAsset = $embeddedAsset;
+        parent::__construct($message, $code, $previous);
+    }
+
     /**
      * @inheritdoc
      */

@@ -9,6 +9,7 @@ return [
     'Provider' => 'Provider',
     'Replace' => 'Replace',
     'Rich' => 'Rich',
+    'This embedded asset cannot be saved.' => 'This embedded asset cannot be saved.',
     'This information is coming from an untrusted source.' => 'This information is coming from an untrusted source.',
     'Video' => 'Video',
     'Use YouTube nocookie?' => 'Use YouTube nocookie?',

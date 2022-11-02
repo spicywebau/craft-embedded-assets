@@ -19,11 +19,11 @@ interface RequestSettings {
 export default class Preview extends Emitter {
   public $element: JQuery | null
   public $iframe: JQuery<HTMLIFrameElement>
-  private _$warningTrigger: JQuery | null
+  private _$warningTrigger?: JQuery | null
   private _height: number
   private _heightMonitor: number
   private _requestTimeout: NodeJS.Timeout
-  private _warningHud: GarnishHUD | null
+  private _warningHud?: GarnishHUD | null
 
   constructor () {
     super()
@@ -49,12 +49,12 @@ export default class Preview extends Emitter {
     this.$element?.remove()
     this.$element = null
 
-    if (this._$warningTrigger !== null) {
+    if (typeof this._$warningTrigger !== 'undefined' && this._$warningTrigger !== null) {
       this._$warningTrigger.remove()
       this._$warningTrigger = null
     }
 
-    if (this._warningHud !== null) {
+    if (typeof this._warningHud !== 'undefined' && this._warningHud !== null) {
       this._warningHud.hide()
       this._warningHud.$hud.remove()
       this._warningHud.$shade.remove()
@@ -95,7 +95,7 @@ export default class Preview extends Emitter {
       const width = $warning.outerWidth() as number
       const height = $warning.outerHeight() as number
 
-      if (this._$warningTrigger === null) {
+      if (typeof this._$warningTrigger === 'undefined' || this._$warningTrigger === null) {
         this._$warningTrigger = $('<div>').css({
           position: 'absolute',
           display: 'none'
@@ -112,9 +112,11 @@ export default class Preview extends Emitter {
         height: `${height}px`
       })
 
-      if (this._warningHud === null) {
+      if (typeof this._warningHud === 'undefined' || this._warningHud === null) {
         const untrustedSource = Craft.t('embeddedassets', 'This information is coming from an untrusted source.')
-        const securityMeasure = Craft.t('embeddedassets', 'As a security measure embed codes will not be shown.')
+        const securityMeasure = window.EmbeddedAssets.preventNonWhitelistedUploads
+          ? Craft.t('embeddedassets', 'This embedded asset cannot be saved.')
+          : Craft.t('embeddedassets', 'As a security measure embed codes will not be shown.')
         const $message = $(`
           <p><strong>${untrustedSource}</strong></p>
           <p>${securityMeasure}</p>
@@ -156,12 +158,10 @@ export default class Preview extends Emitter {
           this.trigger(trigger, parameters)
         }
 
+        const preventNonWhitelistedUploads = window.EmbeddedAssets.preventNonWhitelistedUploads
         window.EmbeddedAssetsPreviewMap?.set(
           reqSettings.callback as string,
-          () => {
-            this._setupWarning()
-            complete('load')
-          }
+          () => complete(this._setupWarning() && preventNonWhitelistedUploads ? 'blacklisted' : 'load')
         )
 
         this._requestTimeout = setTimeout(() => complete('timeout'), timeout)
@@ -205,14 +205,17 @@ export default class Preview extends Emitter {
     monitorHeight()
   }
 
-  private _setupWarning (): void {
+  private _setupWarning (): boolean {
     const $previewDocument = $(this.getDocument() ?? $())
     const $warning = $previewDocument.find('#warning')
+    const hasWarning = $warning.length > 0
 
-    if ($warning.length > 0) {
+    if (hasWarning) {
       // Just in case
       $warning.off('.embeddedassets')
       $warning.on('click.embeddedassets', () => this.showWarning())
     }
+
+    return hasWarning
   }
 }

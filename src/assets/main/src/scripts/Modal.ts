@@ -71,10 +71,12 @@ export default class Modal extends Emitter {
     this.form.on('idle', () => this.hideFooter())
     this.form.on('requesting', () => this.hideFooter())
     this.form.on('requested', () => this.showFooter())
+    this.form.on('blacklisted', () => this.hideFooter())
 
     this.form.on('idle', () => this.setSaving(false))
     this.form.on('requesting', () => this.setSaving(false))
     this.form.on('requested', () => this.setSaving(false))
+    this.form.on('blacklisted', () => this.setSaving(false))
     this.form.on('saving', () => this.setSaving())
     this.form.on('resize', () => this.hud?.updateSizeAndPosition())
   }

@@ -7,6 +7,7 @@ export default class EmbeddedAssets extends Emitter {
   public buttons: Button[]
   private _replaceAssetId: string
   private _currentGetActionTarget: Function
+  private _preventNonWhitelistedUploads?: boolean
 
   constructor () {
     super()
@@ -18,6 +19,17 @@ export default class EmbeddedAssets extends Emitter {
 
     this.modal.on('hide', () => this.buttons.forEach(b => b.setActive(false)))
     this.modal.on('save', (e: Event) => this.trigger('save', e))
+  }
+
+  public get preventNonWhitelistedUploads (): boolean {
+    return this._preventNonWhitelistedUploads ?? false
+  }
+
+  public set preventNonWhitelistedUploads (prevent: boolean) {
+    // Don't allow it to be reset
+    if (typeof this._preventNonWhitelistedUploads === 'undefined') {
+      this._preventNonWhitelistedUploads = prevent
+    }
   }
 
   public destroy (): void {
