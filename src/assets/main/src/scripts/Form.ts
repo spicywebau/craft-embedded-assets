@@ -1,14 +1,24 @@
-import $ from 'jquery'
-import Craft from 'craft'
+import * as $ from 'jquery'
 import Emitter from './Emitter'
 import Preview from './Preview'
+import { PreviewResizeEvent } from './events'
+import { PreviewResponse } from './responses'
 import { uniqueId, isUrl } from './utilities'
 
 export default class Form extends Emitter {
-  constructor (getActionTarget = () => {}) {
-    super()
+  public $body: JQuery | null
+  public $element: JQuery | null
+  public $input: JQuery | null
+  public preview: Preview
+  private _height: number
+  private _heightMonitor: number
+  private _replace: boolean
+  private _replaceAssetId: string
+  private _state: string = 'idle'
+  private _url: string = ''
 
-    this._getActionTarget = getActionTarget
+  constructor (private readonly _getActionTarget: Function = () => {}) {
+    super()
 
     const inputId = uniqueId()
     const bodyId = uniqueId()
@@ -31,15 +41,15 @@ export default class Form extends Emitter {
     this.$body = this.$element.find(`#${bodyId}`)
 
     this.preview = new Preview()
-    this.$body.prepend(this.preview.$element)
+    this.$body.prepend(this.preview.$element as JQuery)
 
-    this.preview.on('load', e => {
+    this.preview.on('load', (e: any) => {
       if (e.url === this._url && this._state === 'requesting') {
         this.setState('requested')
       }
     })
 
-    this.preview.on('timeout', e => {
+    this.preview.on('timeout', (e: any) => {
       if (e.url === this._url && this._state === 'requesting') {
         Craft.cp.displayError(Craft.t('embeddedassets', 'Could not retrieve embed information.'))
 
@@ -47,12 +57,12 @@ export default class Form extends Emitter {
       }
     })
 
-    this.preview.on('resize', e => this.$body.css('height', e.height + 'px'))
+    this.preview.on('resize', (e: PreviewResizeEvent) => this.$body?.css('height', `${e.height}px`))
 
-    this.$element.on('submit', e => {
+    this.$element.on('submit', (e) => {
       e.preventDefault()
 
-      const isSameUrl = this._url === this.$input.val()
+      const isSameUrl = this._url === this.$input?.val()
 
       if (this._state === 'idle' || (this._state !== 'saving' && !isSameUrl)) {
         this.request()
@@ -63,22 +73,20 @@ export default class Form extends Emitter {
 
     this.$input.on('change blur', () => this.request())
 
-    this.$input.on('paste', e => {
-      const clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData
-      const url = clipboardData.getData('text')
+    this.$input.on('paste', (e: JQueryEventObject) => {
+      const clipboardData = (e.originalEvent as ClipboardEvent).clipboardData
+      const url = clipboardData?.getData('text')
 
       this.request(url)
     })
 
     this._setupHeightMonitor()
-
-    this.setState('idle')
   }
 
-  destroy () {
+  public destroy (): void {
     this.preview.destroy()
 
-    this.$element.remove()
+    this.$element?.remove()
     this.$element = null
     this.$input = null
     this.$body = null
@@ -88,7 +96,7 @@ export default class Form extends Emitter {
     this.trigger('destroy')
   }
 
-  request (url = this.$input.val()) {
+  public request (url = this.$input?.val() as string): void {
     if (this._state !== 'saving' && this._url !== url) {
       this._url = url
 
@@ -101,43 +109,46 @@ export default class Form extends Emitter {
     }
   }
 
-  focus () {
-    this.$input[0].select()
-    this.$input[0].focus()
+  public focus (): void {
+    if (this.$input !== null) {
+      const $input = this.$input as JQuery<HTMLInputElement>
+      $input[0].select()
+      $input[0].focus()
+    }
   }
 
-  clear () {
-    this.$input.val('')
+  public clear (): void {
+    this.$input?.val('')
     this.trigger('clear')
     this.setState('idle')
   }
 
-  setReplace (replace, id) {
+  public setReplace (replace: boolean, id: string): void {
     this._replace = replace
     this._replaceAssetId = id
   }
 
-  save (url = this.$input.val(), actionTarget = this._getActionTarget()) {
+  public save (url = this.$input?.val() as string, actionTarget = this._getActionTarget()): void {
     const data = {
       ...actionTarget,
       url,
       assetId: this._replaceAssetId
     }
 
-    Craft.queue.push(() => new Promise((resolve, reject) => {
+    Craft.queue.push(async () => await new Promise((resolve, reject) => {
       Craft.sendActionRequest('POST', `embeddedassets/actions/${(this._replace ? 'replace' : 'save')}`, { data })
-        .then(response => {
-          if (this._state === 'saving' && response.data.success) {
+        .then((response: PreviewResponse) => {
+          if (this._state === 'saving' && typeof response.data?.success !== 'undefined') {
             this.clear()
             this.trigger('save', response.data.payload)
-            resolve()
+            resolve(undefined)
           } else {
-            if (response.data && response.data.error) {
+            if (typeof response.data?.error !== 'undefined') {
               Craft.cp.displayError(response.data.error)
             }
 
             this.setState('requested')
-            reject(new Error(response.data.error))
+            reject(new Error(response.data?.error))
           }
         })
         .catch(reject)
@@ -146,9 +157,9 @@ export default class Form extends Emitter {
     this.setState('saving')
   }
 
-  setState (state) {
+  public setState (state: string): void {
     this._state = state
-    this.$element.attr('data-state', state)
+    this.$element?.attr('data-state', state)
 
     switch (state) {
       case 'idle':
@@ -167,11 +178,11 @@ export default class Form extends Emitter {
     }
   }
 
-  _setupHeightMonitor () {
+  private _setupHeightMonitor (): void {
     this._height = 0
 
-    const monitorHeight = () => {
-      const height = this.$element.height()
+    const monitorHeight: () => void = () => {
+      const height = this.$element?.height() ?? 0
 
       if (this._height !== height) {
         this.trigger('resize', { prevHeight: this._height, height })

@@ -20,8 +20,11 @@ class MainAsset extends AssetBundle
         $this->depends = [
             CpAsset::class,
         ];
+        $this->css = [
+            'styles' . DIRECTORY_SEPARATOR . 'main.css',
+        ];
         $this->js = [
-            'scripts/main.js',
+            'scripts' . DIRECTORY_SEPARATOR . 'main.js',
         ];
 
         parent::init();

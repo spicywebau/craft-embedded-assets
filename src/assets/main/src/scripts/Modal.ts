@@ -1,21 +1,25 @@
-import $ from 'jquery'
-import Craft from 'craft'
-import Garnish from 'garnish'
+import * as $ from 'jquery'
 import Emitter from './Emitter'
 import Form from './Form'
 import { uniqueId } from './utilities'
 
 export default class Modal extends Emitter {
-  constructor (getActionTarget = () => {}) {
-    super()
+  public $cancel: JQuery
+  public $footer: JQuery | null
+  public $save: JQuery
+  public $spinner: JQuery
+  public form: Form | null
+  public hud: GarnishHUD | null
+  private readonly _monitor: number
 
-    this._getActionTarget = getActionTarget
+  constructor (private readonly _getActionTarget: Function = () => {}) {
+    super()
 
     this.form = null
     this.hud = null
   }
 
-  create ($target, settings = {}) {
+  public create ($target: JQuery, settings = {}): void {
     settings = Object.assign({
       hudClass: 'hud embedded-assets_hud',
       mainClass: 'embedded-assets_hud_main',
@@ -43,25 +47,25 @@ export default class Modal extends Emitter {
     this.$spinner = this.$footer.find(`#${spinnerId}`)
 
     this.form = new Form(this._getActionTarget)
-    this.hud = new Garnish.HUD($target, this.form.$element.add(this.$footer), settings)
+    this.hud = new Garnish.HUD($target, this.form.$element?.add(this.$footer) as JQuery, settings)
 
     this.trigger('create')
 
-    this.$save.on('click', e => this.$save.hasClass('disabled') && e.stopImmediatePropagation())
+    this.$save.on('click', (e) => this.$save.hasClass('disabled') && e.stopImmediatePropagation())
 
-    this.$cancel.on('click', () => this.form.clear())
-    this.$save.on('click', () => this.form.save())
-    this.form.on('submit', () => this.form.save())
+    this.$cancel.on('click', () => this.form?.clear())
+    this.$save.on('click', () => this.form?.save())
+    this.form.on('submit', () => this.form?.save())
 
-    this.form.on('save', e => this.trigger('save', e))
+    this.form.on('save', (e: any) => this.trigger('save', e))
     this.hud.on('show', () => this.trigger('show'))
     this.hud.on('hide', () => this.trigger('hide'))
 
     this.form.on('clear', () => this.hide())
     this.form.on('save', () => this.hide())
-    this.hud.on('show', () => this.form.request())
-    this.hud.on('show', () => this.form.focus())
-    this.hud.on('hide', () => this.form.setState('idle'))
+    this.hud.on('show', () => this.form?.request())
+    this.hud.on('show', () => this.form?.focus())
+    this.hud.on('hide', () => this.form?.setState('idle'))
 
     this.hideFooter()
     this.form.on('idle', () => this.hideFooter())
@@ -72,21 +76,21 @@ export default class Modal extends Emitter {
     this.form.on('requesting', () => this.setSaving(false))
     this.form.on('requested', () => this.setSaving(false))
     this.form.on('saving', () => this.setSaving())
-    this.form.on('resize', () => this.hud.updateSizeAndPosition())
+    this.form.on('resize', () => this.hud?.updateSizeAndPosition())
   }
 
-  destroy () {
-    if (this.$footer) {
+  public destroy (): void {
+    if (this.$footer !== null) {
       this.$footer.remove()
       this.$footer = null
     }
 
-    if (this.form) {
+    if (this.form !== null) {
       this.form.destroy()
       this.form = null
     }
 
-    if (this.hud) {
+    if (this.hud !== null) {
       this.hud.hide()
       this.hud.$hud.remove()
       this.hud.$shade.remove()
@@ -98,8 +102,8 @@ export default class Modal extends Emitter {
     this.trigger('destroy')
   }
 
-  show ($target, settings = {}, replace) {
-    if (this.hud) {
+  public show ($target: JQuery, settings = {}, replace: any): void {
+    if (this.hud !== null) {
       this.hud.setSettings(settings)
       this.hud.$trigger = $($target)
 
@@ -110,33 +114,27 @@ export default class Modal extends Emitter {
       }
     } else {
       this.create($target, settings)
-      this.form.focus()
+      // `this.create()` creates the form
+      this.form?.focus()
     }
 
     this.trigger('show')
   }
 
-  hide () {
-    if (this.hud) {
-      this.hud.hide()
-    }
-
+  public hide (): void {
+    this.hud?.hide()
     this.trigger('hide')
   }
 
-  hideFooter () {
-    if (this.hud) {
-      this.hud.$hud.removeClass('show-footer')
-    }
+  public hideFooter (): void {
+    this.hud?.$hud.removeClass('show-footer')
   }
 
-  showFooter () {
-    if (this.hud) {
-      this.hud.$hud.addClass('show-footer')
-    }
+  public showFooter (): void {
+    this.hud?.$hud.addClass('show-footer')
   }
 
-  setSaving (enabled = true) {
+  public setSaving (enabled = true): void {
     this.$save.toggleClass('disabled', enabled)
     this.$spinner.toggleClass('hidden', !enabled)
   }

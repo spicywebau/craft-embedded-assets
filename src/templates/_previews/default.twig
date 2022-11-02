@@ -1,3 +1,5 @@
+{% set previewCss = view.getAssetManager().getPublishedUrl('@spicyweb/embeddedassets/assets/preview/dist/styles/preview.css', true) %}
+<link rel="stylesheet" href="{{ previewCss }}">
 {% set previewJs = view.getAssetManager().getPublishedUrl('@spicyweb/embeddedassets/assets/preview/dist/scripts/preview.js', true) %}
 <script src="{{ previewJs }}"></script>
 

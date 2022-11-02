@@ -16,8 +16,11 @@ class PreviewAsset extends AssetBundle
     public function init(): void
     {
         $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . 'dist';
+        $this->css = [
+            'styles' . DIRECTORY_SEPARATOR . 'preview.css',
+        ];
         $this->js = [
-            'preview.js',
+            'scripts' . DIRECTORY_SEPARATOR . 'preview.js',
         ];
         
         parent::init();

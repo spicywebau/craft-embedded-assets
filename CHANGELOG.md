@@ -6,6 +6,9 @@
 - Added `spicyweb\embeddedassets\assets\main\MainAsset`
 - Added `spicyweb\embeddedassets\assets\preview\PreviewAsset`
 
+### Changed
+- Embedded Assets' JavaScript source has been converted to TypeScript
+
 ### Deprecated
 - Deprecated `spicyweb\embeddedassets\assets\Main`; use `spicyweb\embeddedassets\assets\main\MainAsset` instead
 - Deprecated `spicyweb\embeddedassets\assets\Preview`; use `spicyweb\embeddedassets\assets\preview\PreviewAsset` instead

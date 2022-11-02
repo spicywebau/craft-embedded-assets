@@ -1,9 +1,15 @@
 import '../styles/main.scss'
-import $ from 'jquery'
-import Craft from 'craft'
+import * as $ from 'jquery'
 import EmbeddedAssets from './EmbeddedAssets'
 import Button from './Button'
 import { monkeypatch } from './utilities'
+
+declare global {
+  interface Window {
+    EmbeddedAssets: EmbeddedAssets
+    EmbeddedAssetsPreviewMap?: Map<string, FrameRequestCallback>
+  }
+}
 
 const embeddedAssets = new EmbeddedAssets()
 
@@ -16,7 +22,7 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   const inModal = $uploadButton.closest('.modal').length > 0
 
   // Empty array just means no file type restrictions
-  const allowedAssetKinds = this.settings.criteria ? this.settings.criteria.kind : []
+  const allowedAssetKinds = this.settings.criteria?.kind ?? []
 
   let modalOrientations
 
@@ -30,14 +36,14 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
     modalOrientations = ['top', 'right', 'bottom', 'left']
   }
 
-  const showButtonIfJsonAllowed = (button, allowedKinds) => {
+  const showButtonIfJsonAllowed: (button: Button, allowedKinds: string | string[]) => void = (button, allowedKinds = []) => {
     if (typeof allowedKinds === 'string') {
       allowedKinds = [allowedKinds]
     }
 
     // We still need to check the array length, because `allowedKinds` will be an empty array if the
     // asset field had no restriction on allowed file types
-    if (allowedKinds && allowedKinds.length > 0 && allowedKinds.indexOf('json') === -1) {
+    if (allowedKinds.length > 0 && !allowedKinds.includes('json')) {
       button.hide()
     } else {
       button.show()
@@ -47,10 +53,10 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   showButtonIfJsonAllowed(button, allowedAssetKinds)
   replaceButton.hide()
 
-  const getActionTarget = () => {
+  const getActionTarget: () => Object = () => {
     const split = this.sourceKey.split(':')
 
-    if (split[split.length - 2]) {
+    if (typeof split[split.length - 2] !== 'undefined') {
       return {
         targetType: split[split.length - 2],
         targetUid: split[split.length - 1]
@@ -63,9 +69,9 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   embeddedAssets.addButton(button, modalOrientations, getActionTarget)
   embeddedAssets.addButton(replaceButton, modalOrientations, getActionTarget, true)
 
-  let idsToSelect = []
+  let idsToSelect: string[] = []
 
-  embeddedAssets.on('save', e => {
+  embeddedAssets.on('save', (e: any) => {
     idsToSelect.push(e.assetId)
     this.updateElements()
   })
@@ -78,13 +84,13 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
     replaceButton.hide()
   })
 
-  this.on('selectionChange', (e) => {
+  this.on('selectionChange', (e: any) => {
     const selectedItems = e.target.view.elementSelect.$selectedItems
 
-    if (selectedItems.length && selectedItems.length === 1) {
+    if (selectedItems.length === 1) {
       const findAssetEl = $(selectedItems[0]).find('[data-embedded-asset]')
 
-      if (findAssetEl.length) {
+      if (findAssetEl.length > 0) {
         button.hide()
         replaceButton.show()
 
