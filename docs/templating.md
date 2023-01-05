@@ -158,11 +158,11 @@ Example Usage:
 ### getVideoId
 `getVideoId()`
 
-Returns an embedded video's ID.
+Returns an embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
 
 Returns | Description
 -|-
-[String](#string)&#124;null | The video ID, or `null` if the embedded asset is not a video.
+[String](#string)&#124;null | The video ID, or `null` if the embedded asset is not a video from a supported provider.
 
 Example Usage:
 ```twig
