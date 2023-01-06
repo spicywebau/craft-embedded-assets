@@ -158,7 +158,7 @@ Example Usage:
 ### getVideoId
 `getVideoId()`
 
-Returns an embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
+Returns an embedded asset's video ID, if the embedded asset is a YouTube, Vimeo or Dailymotion video.
 
 Returns | Description
 -|-

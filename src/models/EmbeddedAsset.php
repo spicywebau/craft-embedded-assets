@@ -311,13 +311,17 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getVideoId(): ?string
     {
-        if ($this->type !== "video" || !in_array($this->providerName, ['YouTube', 'Vimeo'])) {
+        if ($this->type !== "video") {
             return null;
         }
 
         $url = explode('/', $this->getMatchedVideoUrl());
 
-        return explode('?', $url[4])[0];
+        return match ($this->providerName) {
+            'YouTube', 'Vimeo' => explode('?', $url[4])[0],
+            'Dailymotion' => explode('?', $url[5])[0],
+            default => null,
+        };
     }
 
     /**
