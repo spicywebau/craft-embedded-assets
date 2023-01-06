@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.1 - 2023-01-07
 
 ### Changed
 - `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoId()` now supports Dailymotion videos
