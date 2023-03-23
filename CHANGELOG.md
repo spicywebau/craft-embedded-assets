@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where some strings weren't translatable when they should have been
+
 ## 3.1.1 - 2023-01-07
 
 ### Changed

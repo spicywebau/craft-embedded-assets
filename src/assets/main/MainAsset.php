@@ -36,8 +36,10 @@ class MainAsset extends AssetBundle
     public function registerAssetFiles($view): void
     {
         $view->registerTranslations('embeddedassets', [
+            'As a security measure embed codes will not be shown.',
             'Embed',
             'Replace',
+            'This information is coming from an untrusted source.',
         ]);
 
         parent::registerAssetFiles($view);
