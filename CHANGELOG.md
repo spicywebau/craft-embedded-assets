@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a bug where some strings weren't translatable when they should have been
+- Fixed an error that occurred when trying to embed a TikTok asset
 
 ## 3.1.1 - 2023-01-07
 

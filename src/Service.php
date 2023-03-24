@@ -281,6 +281,11 @@ class Service extends Component
             $array['code'] = empty($code) ? null : Template::raw($code);
         }
 
+        // Attempts to extract missing dimensional properties from the embed code
+        $dimensions = $this->_getDimensions($array);
+        $array['width'] = $dimensions[0];
+        $array['height'] = $dimensions[1];
+
         // Sets aspect ratio if it's missing
         if (!isset($array['aspectRatio']) && isset($array['width']) && isset($array['height'])) {
             $array['aspectRatio'] = $array['height'] / $array['width'] * 100;
@@ -500,11 +505,12 @@ class Service extends Component
      * Gets the width/height of an embedded asset.
      * Attempts to extract missing dimensional properties from the embed code.
      *
-     * @param EmbeddedAsset $embeddedAsset
+     * @param array $array
      * @return array
      */
-    private function _getDimensions(EmbeddedAsset $embeddedAsset): array
+    private function _getDimensions(array $array): array
     {
+        $embeddedAsset = new EmbeddedAsset($array);
         $width = $embeddedAsset->width;
         $height = $embeddedAsset->height;
 
