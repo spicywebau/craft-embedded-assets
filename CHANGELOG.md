@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.11.4 - 2023-03-25
 
 ### Fixed
 - Fixed Craft 3.8 compatibility issues
