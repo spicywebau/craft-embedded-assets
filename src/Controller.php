@@ -200,7 +200,10 @@ class Controller extends BaseController
     private function _findFolder(string $folderId): VolumeFolder
     {
         $assetsService = Craft::$app->getAssets();
-        $folder = $assetsService->findFolder(['uid' => $folderId]);
+        $criteria = is_numeric($folderId)
+            ? ['id' => $folderId]
+            : ['uid' => $folderId];
+        $folder = $assetsService->findFolder($criteria);
 
         if (!$folder) {
             throw new BadRequestHttpException('The target folder provided for uploading is not valid');
