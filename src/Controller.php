@@ -49,12 +49,24 @@ class Controller extends BaseController
 
         $url = $requestService->getRequiredBodyParam('url');
         $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getRequiredBodyParam('targetUid');
+        $targetUid = $requestService->getBodyParam('targetUid');
+        $targetId = $requestService->getBodyParam('targetId');
 
-        $folderCriteria = str_ends_with($targetType, 'folder') ? ['uid' => $targetUid] : [
-            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
-            'parentId' => ':empty:',
-        ];
+        if (!$targetId && !$targetUid) {
+            throw new BadRequestHttpException('One of targetUid or targetId is required.');
+        }
+
+        $folderCriteria = [];
+
+        if ($targetId) {
+            $folderCriteria['id'] = $targetId;
+        } elseif (str_ends_with($targetType, 'folder')) {
+            $folderCriteria['uid'] = $targetUid;
+        } else {
+            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
+            $folderCriteria['parentId'] = ':empty:';
+        }
+
         $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
@@ -105,8 +117,13 @@ class Controller extends BaseController
 
         $url = $requestService->getRequiredParam('url');
         $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getRequiredBodyParam('targetUid');
+        $targetUid = $requestService->getBodyParam('targetUid');
+        $targetId = $requestService->getBodyParam('targetId');
         $assetId = $requestService->getRequiredParam('assetId');
+
+        if (!$targetId && !$targetUid) {
+            throw new BadRequestHttpException('One of targetUid or targetId is required.');
+        }
 
         $assetToReplace = null;
 
@@ -114,10 +131,17 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
-        $folderCriteria = str_ends_with($targetType, 'folder') ? ['uid' => $targetUid] : [
-            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
-            'parentId' => ':empty:',
-        ];
+        $folderCriteria = [];
+
+        if ($targetId) {
+            $folderCriteria['id'] = $targetId;
+        } elseif (str_ends_with($targetType, 'folder')) {
+            $folderCriteria['uid'] = $targetUid;
+        } else {
+            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
+            $folderCriteria['parentId'] = ':empty:';
+        }
+
         $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);

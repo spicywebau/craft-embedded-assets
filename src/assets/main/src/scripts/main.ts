@@ -18,6 +18,12 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   const replaceButton = new Button('Replace')
 
   const $uploadButton = this.$uploadButton
+
+  // If there's no upload button, there should be no embed button
+  if (typeof $uploadButton === 'undefined' || $uploadButton === null) {
+    return
+  }
+
   const inHeader = $uploadButton.closest('#header').length > 0
   const inModal = $uploadButton.closest('.modal').length > 0
 
@@ -54,6 +60,18 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   replaceButton.hide()
 
   const getActionTarget: () => Object = () => {
+    if (typeof this.sourcePath !== 'undefined') {
+      // Craft 4.4 subfolder compatibility
+      const currentFolder = this.sourcePath[this.sourcePath.length - 1]
+
+      if (typeof currentFolder.folderId !== 'undefined') {
+        return {
+          targetType: 'folder',
+          targetId: currentFolder.folderId
+        }
+      }
+    }
+
     const split = this.sourceKey.split(':')
 
     if (typeof split[split.length - 2] !== 'undefined') {
