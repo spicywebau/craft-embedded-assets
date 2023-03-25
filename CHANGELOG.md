@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.3 - 2023-03-25
 
 ### Fixed
 - Fixed Craft 4.4 compatibility issues
