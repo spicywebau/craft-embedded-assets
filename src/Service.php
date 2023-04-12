@@ -283,8 +283,8 @@ class Service extends Component
 
         // Attempts to extract missing dimensional properties from the embed code
         $dimensions = $this->_getDimensions($array);
-        $array['width'] = $dimensions[0];
-        $array['height'] = $dimensions[1];
+        $array['width'] = $dimensions[0] ?: null;
+        $array['height'] = $dimensions[1] ?: null;
 
         // Sets aspect ratio if it's missing
         if (!isset($array['aspectRatio']) && isset($array['width']) && isset($array['height'])) {
