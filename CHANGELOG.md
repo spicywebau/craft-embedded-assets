@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.4 - 2023-04-12
 
 ### Fixed
 - Fixed an error that occurred when trying to save a direct Vimeo URL as an embedded asset
