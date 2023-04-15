@@ -47,14 +47,14 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public string $type;
 
     /**
-     * @var array of strings
+     * @var string[]|null
      */
-    public array $tags;
+    public ?array $tags = null;
 
     /**
-     * @var array of URLs
+     * @var string|null
      */
-    public array $feeds;
+    public ?array $feeds = null;
 
     /**
      * @var array of images
@@ -109,12 +109,12 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @var array of images
      */
-    public array $providerIcons;
+    public ?array $providerIcons = null;
 
     /**
-     * @var string URL
+     * @var string|null URL
      */
-    public string $providerIcon;
+    public ?string $providerIcon = null;
 
     /**
      * @var string
@@ -127,14 +127,14 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public string $providerUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $publishedTime;
+    public ?string $publishedTime = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $license;
+    public ?string $license = null;
 
     /**
      * @return array

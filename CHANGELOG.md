@@ -5,6 +5,9 @@
 ### Added
 - Added French translations (thanks @scandella)
 
+### Fixed
+- Fixed an error that could occur when trying to load an embedded asset created on Craft 2
+
 ## 3.1.4 - 2023-04-12
 
 ### Fixed
