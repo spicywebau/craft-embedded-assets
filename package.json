@@ -1,6 +1,6 @@
 {
   "name": "craft-embedded-assets",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
   "private": true,
   "main": "webpack.config.js",

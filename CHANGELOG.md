@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.5 - 2023-04-15
 
 ### Added
 - Added French translations (thanks @scandella)
