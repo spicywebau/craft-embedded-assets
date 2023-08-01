@@ -4,6 +4,8 @@
 
 ### Changed
 - The default `whitelist` plugin setting now includes `wistia.com` and `wistia.net`
+- `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoId()` now supports Wistia videos
+- 
 
 ## 3.1.5 - 2023-04-15
 

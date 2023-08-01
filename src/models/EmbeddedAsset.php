@@ -304,10 +304,16 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Gets this embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
+     * Gets this embedded asset's video ID, if the embedded asset is from a supported provider.
+     *
+     * Providers supported by this method:
+     * - Dailymotion
+     * - Vimeo
+     * - Wistia
+     * - YouTube
      *
      * @since 2.2.3
-     * @return string|null the video ID, or null if the embedded asset is not a YouTube or Vimeo video
+     * @return string|null the video ID, or null if the embedded asset is not from a supported provider
      */
     public function getVideoId(): ?string
     {
@@ -320,6 +326,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
         return match ($this->providerName) {
             'YouTube', 'Vimeo' => explode('?', $url[4])[0],
             'Dailymotion' => explode('?', $url[5])[0],
+            'Wistia, Inc.' => $url[5],
             default => null,
         };
     }
