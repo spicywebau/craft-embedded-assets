@@ -118,7 +118,7 @@ Parameters (\*required) | Description
 ### getIframeSrc
 `getIframeSrc(params)`
 
-If the embedded asset's `code` is an `<iframe>`, returns the contents of the iframe's `src` attribute, optionally with extra parameters added to the URL.
+If the embedded asset's `code` contains an `<iframe>`, returns the contents of the iframe's `src` attribute, optionally with extra parameters added to the URL.
 
 Parameters (\*required) | Description
 -|-
@@ -135,7 +135,7 @@ Example Usage:
 ### getIframeCode
 `getIframeCode(params)`
 
-If the embedded asset's `code` is an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL, or extra attributes added to the `<iframe>` element.
+If the embedded asset's `code` contains an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL, or extra attributes added to the `<iframe>` element.
 
 Parameters (\*required) | Description
 -|-
@@ -158,7 +158,14 @@ Example Usage:
 ### getVideoId
 `getVideoId()`
 
-Returns an embedded asset's video ID, if the embedded asset is a YouTube, Vimeo or Dailymotion video.
+Returns an embedded asset's video ID, if the embedded asset is a video from a supported provider.
+
+Supported providers:
+
+- Dailymotion
+- Vimeo
+- Wistia
+- YouTube
 
 Returns | Description
 -|-
