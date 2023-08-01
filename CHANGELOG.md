@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- The default `whitelist` plugin setting now includes `wistia.com` and `wistia.net`
+
 ## 3.1.5 - 2023-04-15
 
 ### Added

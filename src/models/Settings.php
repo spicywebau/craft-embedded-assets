@@ -146,7 +146,11 @@ class Settings extends Model
         // Wikipedia
         'wikipedia.org',
         'wikimedia.org',
-        
+
+        // Wistia
+        'wistia.com',
+        'wistia.net',
+
         // WordPress
         'wordpress.com',
         
