@@ -226,8 +226,8 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getIframeSrc(array $params): string
     {
-        if (!$this->_codeIsIframe()) {
-            throw new Exception('The embedded asset code is not an iframe');
+        if (!$this->_codeHasIframe()) {
+            throw new Exception('The embedded asset code does not contain an iframe');
         }
 
         return $this->_getIframeSrc($params, true);
@@ -244,11 +244,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getIframeCode(array $params = [], array $attributes = [], array $removeAttributes = []): TwigMarkup
     {
-        if (!$this->_codeIsIframe()) {
-            throw new Exception('The embedded asset code is not an iframe');
-        }
-
-        $newSrc = $this->_getIframeSrc($params, true);
+        $newSrc = $this->getIframeSrc($params);
         $tagAttributes = ['src' => $newSrc];
 
         foreach ($attributes as $attribute) {
@@ -338,7 +334,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     private function _getIframeSrc(array $params, bool $overrideParams): string
     {
-        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], $overrideParams);
+        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->_codeIframe())['src'], $overrideParams);
     }
 
     /**
@@ -384,14 +380,24 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Returns whether this embedded asset's code is an iframe.
+     * Returns the first iframe in this embedded asset's code, if any.
      *
-     * @since 2.6.0
+     * @return string|null
+     */
+    private function _codeIframe(): ?string
+    {
+        preg_match_all('/<iframe (.+)><\/iframe>/', $this->code, $matches);
+        return !empty($matches[0]) ? $matches[0][0] : null;
+    }
+
+    /**
+     * Returns whether this embedded asset's code contains an iframe.
+     *
      * @return bool
      */
-    private function _codeIsIframe(): bool
+    private function _codeHasIframe(): bool
     {
-        return (bool)preg_match('/^<iframe (.+)><\/iframe>$/', $this->code);
+        return (bool)$this->_codeIframe();
     }
 
     /**
