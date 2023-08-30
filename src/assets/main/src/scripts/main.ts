@@ -60,7 +60,7 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   replaceButton.hide()
 
   const getActionTarget: () => Object = () => {
-    if (typeof this.sourcePath !== 'undefined') {
+    if (this.sourcePath?.length > 0 ?? false) {
       // Craft 4.4 subfolder compatibility
       const currentFolder = this.sourcePath[this.sourcePath.length - 1]
 

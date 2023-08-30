@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error that occurred when embedding using an assets field, if the field is set to restrict assets to a single location and the location uses variables
+
 ## 3.1.6 - 2023-08-01
 
 ### Changed
