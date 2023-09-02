@@ -103,7 +103,7 @@ monkeypatch(Craft.AssetIndex, 'init', function () {
   })
 
   this.on('selectionChange', (e: any) => {
-    const selectedItems = e.target.view.elementSelect.$selectedItems
+    const selectedItems = e.target.view?.elementSelect.$selectedItems ?? []
 
     if (selectedItems.length === 1) {
       const findAssetEl = $(selectedItems[0]).find('[data-embedded-asset]')
