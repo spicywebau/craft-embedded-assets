@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.1.8 - 2023-09-02
 
 ### Fixed
 - Fixed an error caused by Embedded Assets, that occurred when changing subfolders while browsing assets to add to a field
