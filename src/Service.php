@@ -144,7 +144,12 @@ class Service extends Component
         // TODO: remove this when we can upgrade to Embed v4, or if it's fixed in Embed v3
         // Embed data for Instagram is including the login URL (with otherwise correct data) in some cases
         // Or incorrectly resolving some Vimeo url's to inaccessible streaming urls
-        if ($adapter->url === 'https://www.instagram.com/accounts/login/' || preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url)) {
+        // Or incorrectly resolving some Sharepoint url's to inaccessible urls
+        if (
+            $adapter->url === 'https://www.instagram.com/accounts/login/' ||
+            preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url) ||
+            preg_match('/^https:\/\/.+\.sharepoint\.com\/:f:\/g/', $url)
+        ) {
             $adapter->url = (string)Url::create($url);
         }
 

@@ -109,6 +109,9 @@ class Settings extends Model
         // Kickstarter
         'kickstarter.com',
         
+        // Live
+        'live.com',
+
         // Meetup
         'meetup.com',
         'meetupstatic.com',
@@ -124,6 +127,9 @@ class Settings extends Model
         // Reddit
         'reddit.com',
         
+        // Sharepoint
+        'sharepoint.com',
+
         // SoundCloud
         'soundcloud.com',
 
