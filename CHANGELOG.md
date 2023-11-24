@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.9 - 2023-09-13
+## 3.1.9 - 2023-11-24
 
 ### Added
 - Added support for embedding OneDrive (live.com) and Sharepoint (sharepoint.com) URLs (thanks @boboldehampsink)
