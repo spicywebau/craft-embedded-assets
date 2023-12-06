@@ -101,7 +101,10 @@ class Plugin extends BasePlugin
             $this->_registerPreviewHandler();
             $this->_registerSaveListener();
             $this->_registerDeleteListener();
-            $this->_registerLink();
+
+            if ($this->getSettings()->showFieldLinkIcon) {
+                $this->_registerLink();
+            }
 
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
@@ -303,6 +306,10 @@ class Plugin extends BasePlugin
             function(RegisterElementHtmlAttributesEvent $event) {
                 if ($event->sender->kind === "json") {
                     $event->htmlAttributes['data-embedded-asset'] = null;
+
+                    if ($this->getSettings()->showFieldLinkIcon) {
+                        $event->htmlAttributes['data-embedded-asset-link'] = true;
+                    }
                 }
             }
         );
@@ -326,6 +333,10 @@ class Plugin extends BasePlugin
                 if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->getIsSafe()) {
                     // Setting `null` actually adds the attribute, but doesn't include a value
                     $event->htmlAttributes['data-embedded-asset'] = $embeddedAsset->aspectRatio;
+
+                    if ($this->getSettings()->showFieldLinkIcon) {
+                        $event->htmlAttributes['data-embedded-asset-link'] = true;
+                    }
                 }
             }
         );

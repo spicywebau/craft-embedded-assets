@@ -19,6 +19,7 @@ return [
     'Provider' => 'Provider',
     'Replace' => 'Replace',
     'Rich' => 'Rich',
+    'Show link icons on fields?' => 'Show link icons on fields?',
     'SoundCloud API Key' => 'SoundCloud API Key',
     'This embedded asset cannot be saved.' => 'This embedded asset cannot be saved.',
     'This information is coming from an untrusted source.' => 'This information is coming from an untrusted source.',
@@ -27,4 +28,5 @@ return [
     'Video' => 'Video',
     'Whether to force Vimeo video iframes to use the query parameter `dnt=1` to prevent tracking.' => 'Whether to force Vimeo video iframes to use the query parameter `dnt=1` to prevent tracking.',
     'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.' => 'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.',
+    'Whether to show icons linking to embedded asset URLs on asset fields.' => 'Whether to show icons linking to embedded asset URLs on asset fields.',
 ];

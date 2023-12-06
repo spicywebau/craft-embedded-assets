@@ -224,6 +224,12 @@ class Settings extends Model
     public bool $preventNonWhitelistedUploads = false;
 
     /**
+     * @var bool
+     * @since 3.2.0
+     */
+    public bool $showFieldLinkIcon = true;
+
+    /**
      * @inheritdoc
      */
     protected function defineBehaviors(): array
