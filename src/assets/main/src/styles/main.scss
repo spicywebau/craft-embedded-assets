@@ -186,3 +186,45 @@
 	max-width: 380px;
 	max-height: 190px;
 }
+
+[data-embedded-asset].removable {
+	.label {
+		body.ltr & {
+			padding-right: 40px;
+		}
+
+		body.rtl & {
+			padding-left: 40px;
+		}
+	}
+
+	.link {
+		position: absolute;
+
+		body.ltr & {
+			right: 25px;
+		}
+
+		body.rtl & {
+			left: 25px;
+			transform: rotateY(180deg);
+		}
+
+		&::before {
+			content: 'share';
+			color: var(--ui-control-color);
+		}
+
+		&:hover::before {
+			color: var(--link-color);
+		}
+	}
+
+	&.large .link {
+		bottom: 7px;
+	}
+
+	&:not(.large) .link {
+		top: calc(50% - 11px);
+	}
+}

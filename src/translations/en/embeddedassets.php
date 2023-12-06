@@ -23,6 +23,7 @@ return [
     'This embedded asset cannot be saved.' => 'This embedded asset cannot be saved.',
     'This information is coming from an untrusted source.' => 'This information is coming from an untrusted source.',
     'Use YouTube nocookie?' => 'Use YouTube nocookie?',
+    'View' => 'View',
     'Video' => 'Video',
     'Whether to force Vimeo video iframes to use the query parameter `dnt=1` to prevent tracking.' => 'Whether to force Vimeo video iframes to use the query parameter `dnt=1` to prevent tracking.',
     'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.' => 'Whether to force YouTube video iframes to use the `youtube-nocookie.com` domain.',

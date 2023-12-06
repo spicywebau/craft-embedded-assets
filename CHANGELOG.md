@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added an icon to link to embedded asset URLs when an embedded asset is selected in an assets field (inspired by the Embedded Assets Link plugin for Craft 3)
+
 ## 3.1.9 - 2023-11-24
 
 ### Added
