@@ -109,6 +109,9 @@ class Settings extends Model
         // Kickstarter
         'kickstarter.com',
         
+        // Live
+        'live.com',
+
         // Meetup
         'meetup.com',
         'meetupstatic.com',
@@ -124,6 +127,9 @@ class Settings extends Model
         // Reddit
         'reddit.com',
         
+        // Sharepoint
+        'sharepoint.com',
+
         // SoundCloud
         'soundcloud.com',
 
@@ -146,7 +152,11 @@ class Settings extends Model
         // Wikipedia
         'wikipedia.org',
         'wikimedia.org',
-        
+
+        // Wistia
+        'wistia.com',
+        'wistia.net',
+
         // WordPress
         'wordpress.com',
         
@@ -202,6 +212,24 @@ class Settings extends Model
     public bool $disableVimeoTracking = false;
 
     /**
+     * @var bool
+     * @since 3.0.2
+     */
+    public bool $enableAutoRefresh = true;
+
+    /**
+     * @var bool
+     * @since 3.1.0
+     */
+    public bool $preventNonWhitelistedUploads = false;
+
+    /**
+     * @var bool
+     * @since 3.2.0
+     */
+    public bool $showFieldLinkIcon = true;
+
+    /**
      * @inheritdoc
      */
     protected function defineBehaviors(): array
@@ -225,7 +253,13 @@ class Settings extends Model
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
             ['cacheDuration', 'integer', 'min' => 0],
-            [['showThumbnailsInCp', 'useYouTubeNoCookie', 'disableVimeoTracking'], 'boolean'],
+            [[
+                'disableVimeoTracking',
+                'enableAutoRefresh',
+                'preventNonWhitelistedUploads',
+                'showThumbnailsInCp',
+                'useYouTubeNoCookie',
+            ], 'boolean'],
         ];
     }
 }

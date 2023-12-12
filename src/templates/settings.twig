@@ -88,6 +88,14 @@
 		on: settings.disableVimeoTracking,
 	}) }}
 
+	{{ forms.lightswitchField({
+		label: 'Show link icons on fields?'|t('embeddedassets'),
+		instructions: 'Whether to show icons linking to embedded asset URLs on asset fields.'|t('embeddedassets'),
+		id: 'showFieldLinkIcon',
+		name: 'showFieldLinkIcon',
+		on: settings.showFieldLinkIcon,
+	}) }}
+
 	{{ forms.editableTableField({
 		label: "Parameters"|t('embeddedassets'),
 		instructions: "List of extra parameters and their values to be sent when retrieving embed data."|t('embeddedassets'),

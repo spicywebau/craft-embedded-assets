@@ -118,7 +118,7 @@ Parameters (\*required) | Description
 ### getIframeSrc
 `getIframeSrc(params)`
 
-If the embedded asset's `code` is an `<iframe>`, returns the contents of the iframe's `src` attribute, optionally with extra parameters added to the URL.
+If the embedded asset's `code` contains an `<iframe>`, returns the contents of the iframe's `src` attribute, optionally with extra parameters added to the URL.
 
 Parameters (\*required) | Description
 -|-
@@ -135,28 +135,41 @@ Example Usage:
 ### getIframeCode
 `getIframeCode(params)`
 
-If the embedded asset's `code` is an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL.
+If the embedded asset's `code` contains an `<iframe>`, returns the iframe code, optionally with extra parameters added to the URL, or extra attributes added to the `<iframe>` element.
 
 Parameters (\*required) | Description
 -|-
-`params` Array | Array of params
+`params` Array | Parameters to add to the iframe source URL, in the format `param` or `param=value`
+`attributes` Array | Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
+`removeAttributes` Array | Attributes to remove from the iframe element
 **Returns** |
 [\Twig\Markup](#\Twig\Markup) | The code markup.
 
 Example Usage:
 ```twig
 {% set vid = craft.embeddedAssets.get(entry.vid.one()) %}
-{{ vid.getIframeCode(['autoplay=1', 'controls=0', 'playsinline=1']) }}
+{{ vid.getIframeCode(
+    ['autoplay=1', 'controls=0', 'playsinline=1'],
+    ['loading=lazy'],
+    ['frameborder']
+) }}
 ```
 
 ### getVideoId
 `getVideoId()`
 
-Returns an embedded video's ID.
+Returns an embedded asset's video ID, if the embedded asset is a video from a supported provider.
+
+Supported providers:
+
+- Dailymotion
+- Vimeo
+- Wistia
+- YouTube
 
 Returns | Description
 -|-
-[String](#string)&#124;null | The video ID, or `null` if the embedded asset is not a video.
+[String](#string)&#124;null | The video ID, or `null` if the embedded asset is not a video from a supported provider.
 
 Example Usage:
 ```twig

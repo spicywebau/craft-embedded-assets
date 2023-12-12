@@ -1,0 +1,44 @@
+name: Bug Report
+description: Let us know about a problem with Embedded Assets
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please check to make sure your bug hasn't already been reported before proceeding.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: Details of the bug you've encountered.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Instructions that can be followed to reliably reproduce the bug.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      description: What should be expected to happen instead of the buggy behaviour, if not already covered in the above sections.
+  - type: input
+    id: embedded-assets-version
+    attributes:
+      label: Embedded Assets version
+    validations:
+      required: true
+  - type: input
+    id: craft-cms-version
+    attributes:
+      label: Craft CMS version
+    validations:
+      required: true

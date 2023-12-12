@@ -18,6 +18,9 @@ use DOMDocument;
 use Embed\Embed;
 use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
+use Embed\Http\Url;
+use spicyweb\embeddedassets\errors\NotWhitelistedException;
+use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
@@ -52,11 +55,13 @@ class Service extends Component
      * @param string $url
      * @param bool $checkCache Whether to check for data associated with the URL that's been stored in Craft's cache
      * @return EmbeddedAsset
+     * @throws NotWhitelistedException if the `preventNonWhitelistedUploads` setting is enabled and the embedded asset
+     * provider is non-whitelisted.
      */
     public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
     {
+        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $cacheService = Craft::$app->getCache();
-
         $cacheKey = 'embeddedasset:' . $url;
         $embeddedAsset = $checkCache ? $cacheService->get($cacheKey) : null;
 
@@ -66,6 +71,13 @@ class Service extends Component
             $embeddedAsset = $this->createEmbeddedAsset($array);
 
             $cacheService->set($cacheKey, $embeddedAsset, $pluginSettings->cacheDuration);
+        }
+
+        if ($pluginSettings->preventNonWhitelistedUploads && !$embeddedAsset->getIsSafe()) {
+            throw new NotWhitelistedException(
+                Craft::t('embeddedassets', 'Tried to upload embedded asset with non-whitelisted provider'),
+                $embeddedAsset,
+            );
         }
 
         return $embeddedAsset;
@@ -138,7 +150,11 @@ class Service extends Component
         $array = $this->_convertFromExtractor($embedData);
 
         // Embed data for Vimeo is incorrectly resolving some URLs to inaccessible streaming URLs
-        if (preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url)) {
+        // Or incorrectly resolving some Sharepoint url's to inaccessible urls
+        if (
+            preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url) ||
+            preg_match('/^https:\/\/.+\.sharepoint\.com\/:f:\/g/', $url)
+        ) {
             $array['url'] = $url;
         }
 
@@ -192,13 +208,18 @@ class Service extends Component
             return $this->embeddedAssetData[$asset->uid];
         }
 
+        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $embeddedAsset = null;
 
         try {
             $decodedJson = $this->_getAssetContents($asset);
 
             // Automatic refreshing of Instagram embedded assets every seven days, see issue #114 for why
-            if ((strtolower($decodedJson['providerName']) === 'instagram') && $this->_hasBeenWeekSince($asset->dateModified)) {
+            if (
+                $pluginSettings->enableAutoRefresh
+                && strtolower($decodedJson['providerName']) === 'instagram'
+                && $this->_hasBeenWeekSince($asset->dateModified)
+            ) {
                 Craft::$app->queue->push(new InstagramRefreshCheck([
                     'asset' => $asset,
                     'embeddedAssetData' => $decodedJson,
@@ -206,7 +227,7 @@ class Service extends Component
             }
 
             // Make YouTube iframes use the nocookie embed URL if the relevant setting is enabled
-            if ($decodedJson['providerName'] === 'YouTube' && EmbeddedAssets::$plugin->getSettings()->useYouTubeNoCookie) {
+            if ($decodedJson['providerName'] === 'YouTube' && $pluginSettings->useYouTubeNoCookie) {
                 $decodedJson['code'] = preg_replace(
                     '/src="https?:\/\/www.youtube.com\/embed\/(.+)\?/',
                     'src="https://www.youtube-nocookie.com/embed/$1?',
@@ -215,7 +236,7 @@ class Service extends Component
             }
 
             // Make Vimeo iframes use the nocookie embed URL if the relevant setting is enabled
-            if ($decodedJson['providerName'] === 'Vimeo' && EmbeddedAssets::$plugin->getSettings()->disableVimeoTracking) {
+            if ($decodedJson['providerName'] === 'Vimeo' && $pluginSettings->disableVimeoTracking) {
                 $oldSrc = HtmlHelper::parseTagAttributes($decodedJson['code'])['src'];
                 $newSrc = HtmlHelper::decode(UrlHelper::urlWithParams($oldSrc, ['dnt' => '1']));
                 $decodedJson['code'] = HtmlHelper::modifyTagAttributes($decodedJson['code'], ['src' => $newSrc]);
@@ -270,6 +291,11 @@ class Service extends Component
             $array['code'] = empty($code) ? null : Template::raw($code);
         }
 
+        // Attempts to extract missing dimensional properties from the embed code
+        $dimensions = $this->_getDimensions($array);
+        $array['width'] = $dimensions[0] ?: null;
+        $array['height'] = $dimensions[1] ?: null;
+
         // Sets aspect ratio if it's missing
         if (!isset($array['aspectRatio']) && isset($array['width']) && isset($array['height'])) {
             $array['aspectRatio'] = $array['height'] / $array['width'] * 100;
@@ -283,6 +309,45 @@ class Service extends Component
         $embeddedAsset = new EmbeddedAsset($array);
 
         return $embeddedAsset->validate() ? $embeddedAsset : null;
+    }
+
+    /**
+     * Refreshes an embedded asset with the current data from the embedded asset's URL.
+     *
+     * @param Asset $asset
+     * @param EmbeddedAsset|null $embeddedAsset
+     * @return EmbeddedAsset the refreshed embedded asset
+     * @throws RefreshException if the embedded asset could not be refreshed
+     * @since 3.0.2
+     */
+    public function refreshEmbeddedAsset(Asset $asset, ?EmbeddedAsset $embeddedAsset = null): EmbeddedAsset
+    {
+        if ($embeddedAsset === null) {
+            $embeddedAsset = $this->getEmbeddedAsset($asset) ?? throw new RefreshException('Asset is not an embedded asset');
+        }
+
+        $assetsService = Craft::$app->getAssets();
+        $elementsService = Craft::$app->getElements();
+        $folder = $asset->getFolder();
+        $newEmbeddedAsset = $this->requestUrl($embeddedAsset->url, false);
+        $newAsset = $this->createAsset($newEmbeddedAsset, $folder);
+        $result = $elementsService->saveElement($newAsset);
+
+        if (!$result) {
+            throw new RefreshException(implode('; ', $newAsset->getFirstErrors()));
+        }
+
+        $tempPath = $newAsset->getCopyOfFile();
+        $assetsService->replaceAssetFile($asset, $tempPath, $asset->filename);
+        $elementsService->deleteElement($newAsset);
+
+        // Replace the old cached data for the embedded asset
+        Craft::$app->getCache()->set(
+            $this->getCachedAssetKey($asset),
+            Json::encode($newEmbeddedAsset->jsonSerialize(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+        );
+
+        return $newEmbeddedAsset;
     }
 
     /**
@@ -321,6 +386,7 @@ class Service extends Component
         $asset->filename = $fileName;
         $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
+        $asset->uploaderId = Craft::$app->getUser()->getId();
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(Asset::SCENARIO_CREATE);
 
@@ -449,11 +515,12 @@ class Service extends Component
      * Gets the width/height of an embedded asset.
      * Attempts to extract missing dimensional properties from the embed code.
      *
-     * @param EmbeddedAsset $embeddedAsset
+     * @param array $array
      * @return array
      */
-    private function _getDimensions(EmbeddedAsset $embeddedAsset): array
+    private function _getDimensions(array $array): array
     {
+        $embeddedAsset = new EmbeddedAsset($array);
         $width = $embeddedAsset->width;
         $height = $embeddedAsset->height;
 

@@ -44,7 +44,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @var array of URLs
      */
-    public array $feeds;
+    public ?array $feeds = null;
 
     /**
      * @var string URL
@@ -84,7 +84,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     /**
      * @var string URL
      */
-    public string $providerIcon;
+    public ?string $providerIcon = null;
 
     /**
      * @var string
@@ -97,14 +97,14 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public string $providerUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $publishedTime;
+    public ?string $publishedTime = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $license;
+    public ?string $license = null;
 
     /**
      * @var string
@@ -263,8 +263,8 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getIframeSrc(array $params): string
     {
-        if (!$this->_codeIsIframe()) {
-            throw new Exception('The embedded asset code is not an iframe');
+        if (!$this->_codeHasIframe()) {
+            throw new Exception('The embedded asset code does not contain an iframe');
         }
 
         return $this->_getIframeSrc($params, true);
@@ -274,17 +274,33 @@ class EmbeddedAsset extends Model implements JsonSerializable
      * Returns the iframe code with additional params passed to the source URL.
      *
      * @since 2.6.0
-     * @param array $params
+     * @param string[] $params Parameters to add to the iframe source URL, in the format `param` or `param=value`
+     * @param string[] $attributes Attributes to add to the iframe element, in the format `attribute` or `attribute=value`
+     * @param string[] $removeAttributes Attributes to remove from the iframe element
      * @return TwigMarkup
      */
-    public function getIframeCode(array $params): TwigMarkup
+    public function getIframeCode(array $params = [], array $attributes = [], array $removeAttributes = []): TwigMarkup
     {
-        if (!$this->_codeIsIframe()) {
-            throw new Exception('The embedded asset code is not an iframe');
+        $newSrc = $this->getIframeSrc($params);
+        $tagAttributes = ['src' => $newSrc];
+
+        foreach ($attributes as $attribute) {
+            $splitAttr = explode('=', $attribute, 2);
+
+            // Ignore the `src` attribute
+            if ($splitAttr[0] !== 'src') {
+                $tagAttributes[$splitAttr[0]] = count($splitAttr) === 1 ? true : $splitAttr[1];
+            }
         }
 
-        $newSrc = $this->_getIframeSrc($params, true);
-        $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
+        foreach ($removeAttributes as $attribute) {
+            // Ignore the `src` attribute
+            if ($attribute !== 'src') {
+                $tagAttributes[$attribute] = null;
+            }
+        }
+
+        $code = HtmlHelper::modifyTagAttributes($this->code, $tagAttributes);
 
         return Template::raw($code);
     }
@@ -321,20 +337,31 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Gets this embedded asset's video ID, if the embedded asset is a YouTube or Vimeo video.
+     * Gets this embedded asset's video ID, if the embedded asset is from a supported provider.
+     *
+     * Providers supported by this method:
+     * - Dailymotion
+     * - Vimeo
+     * - Wistia
+     * - YouTube
      *
      * @since 2.2.3
-     * @return string|null the video ID, or null if the embedded asset is not a YouTube or Vimeo video
+     * @return string|null the video ID, or null if the embedded asset is not from a supported provider
      */
     public function getVideoId(): ?string
     {
-        if ($this->type !== "video" || !in_array($this->providerName, ['YouTube', 'Vimeo'])) {
+        if ($this->type !== "video") {
             return null;
         }
 
         $url = explode('/', $this->getMatchedVideoUrl());
 
-        return explode('?', $url[4])[0];
+        return match ($this->providerName) {
+            'YouTube', 'Vimeo' => explode('?', $url[4])[0],
+            'Dailymotion' => explode('?', $url[5])[0],
+            'Wistia, Inc.' => $url[5],
+            default => null,
+        };
     }
 
     /**
@@ -344,7 +371,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     private function _getIframeSrc(array $params, bool $overrideParams): string
     {
-        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->code)['src'], $overrideParams);
+        return $this->_addParamsToUrl($params, HtmlHelper::parseTagAttributes($this->_codeIframe())['src'], $overrideParams);
     }
 
     /**
@@ -390,14 +417,24 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Returns whether this embedded asset's code is an iframe.
+     * Returns the first iframe in this embedded asset's code, if any.
      *
-     * @since 2.6.0
+     * @return string|null
+     */
+    private function _codeIframe(): ?string
+    {
+        preg_match_all('/<iframe (.+)><\/iframe>/', $this->code, $matches);
+        return !empty($matches[0]) ? $matches[0][0] : null;
+    }
+
+    /**
+     * Returns whether this embedded asset's code contains an iframe.
+     *
      * @return bool
      */
-    private function _codeIsIframe(): bool
+    private function _codeHasIframe(): bool
     {
-        return (bool)preg_match('/^<iframe (.+)><\/iframe>$/', $this->code);
+        return (bool)$this->_codeIframe();
     }
 
     /**

@@ -1,5 +1,111 @@
 # Changelog
 
+## 3.2.0 - 2023-12-06
+
+### Added
+- Added an icon to link to embedded asset URLs when an embedded asset is selected in an assets field (inspired by the Embedded Assets Link plugin for Craft 3)
+- Added the `showFieldLinkIcon` plugin setting (defaults to `true`) to control whether or not to show field link icons
+
+## 3.1.9 - 2023-11-24
+
+### Added
+- Added support for embedding OneDrive (live.com) and Sharepoint (sharepoint.com) URLs (thanks @boboldehampsink)
+
+## 3.1.8 - 2023-09-02
+
+### Fixed
+- Fixed an error caused by Embedded Assets, that occurred when changing subfolders while browsing assets to add to a field
+
+## 3.1.7 - 2023-08-30
+
+### Fixed
+- Fixed an error that occurred when embedding using an assets field, if the field is set to restrict assets to a single location and the location uses variables
+
+## 3.1.6 - 2023-08-01
+
+### Changed
+- The default `whitelist` plugin setting now includes `wistia.com` and `wistia.net`
+- `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()` now supports Wistia videos
+- `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeSrc()` now supports Wistia videos
+- `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoId()` now supports Wistia videos
+
+## 3.1.5 - 2023-04-15
+
+### Added
+- Added French translations (thanks @scandella)
+
+### Fixed
+- Fixed an error that could occur when trying to load an embedded asset created on Craft 2
+
+## 3.1.4 - 2023-04-12
+
+### Fixed
+- Fixed an error that occurred when trying to save a direct Vimeo URL as an embedded asset
+
+## 3.1.3 - 2023-03-25
+
+### Fixed
+- Fixed Craft 4.4 compatibility issues
+
+## 3.1.2 - 2023-03-25
+
+### Fixed
+- Fixed a bug where some strings weren't translatable when they should have been
+- Fixed an error that occurred when trying to embed a TikTok asset
+
+## 3.1.1 - 2023-01-07
+
+### Changed
+- `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoId()` now supports Dailymotion videos
+
+## 3.1.0 - 2022-11-02
+
+### Added
+- Added `spicyweb\embeddedassets\assets\main\MainAsset`
+- Added `spicyweb\embeddedassets\assets\preview\PreviewAsset`
+- Added `spicyweb\embeddedassets\errors\NotWhitelistedException`
+- Added `spicyweb\embeddedassets\models\Settings::$preventNonWhitelistedUploads` (defaults to `false`, adds the ability to prevent the saving of embedded assets from providers that are not whitelisted in the plugin settings)
+
+### Changed
+- Embedded Assets' JavaScript source has been converted to TypeScript
+
+### Deprecated
+- Deprecated `spicyweb\embeddedassets\assets\Main`; use `spicyweb\embeddedassets\assets\main\MainAsset` instead
+- Deprecated `spicyweb\embeddedassets\assets\Preview`; use `spicyweb\embeddedassets\assets\preview\PreviewAsset` instead
+
+## 3.0.5 - 2022-08-30
+
+### Added
+- Added the `$removeAttributes` argument to `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()`, for removing tag attributes from an iframe
+
+### Changed
+- Updated JavaScript dependencies
+
+## 3.0.4 - 2022-06-26
+
+### Added
+- Added a second parameter (`$attributes`) to `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()`, for adding attributes to the iframe element, in the format `attribute` or `attribute=value`
+
+### Changed
+- The first parameter (`$params`) to `spicyweb\embeddedassets\models\EmbeddedAsset::getIframeCode()` is no longer required
+
+## 3.0.3 - 2022-06-15
+
+### Fixed
+- Fixed a bug where non-admin users who have the permission to save assets in a volume were unable to save embedded assets in that volume (thanks @aodihis)
+
+## 3.0.2 - 2022-05-27
+
+### Added
+- Added the `enableAutoRefresh` plugin setting (defaults to `true`) for controlling whether Instagram embedded assets are auto-refreshed
+- Added `spicyweb\embeddedassets\Service::refreshEmbeddedAsset()`
+- Added `spicyweb\embeddedassets\errors\RefreshException`
+
+## 3.0.1 - 2022-05-18
+
+### Fixed
+- Fixed a bug where trying to save an embedded asset to a subfolder of a volume's filesystem would save the embedded asset in the filesystem's root folder instead
+
 ## 3.0.0 - 2022-05-05
 
 ### Added
@@ -18,6 +124,36 @@
 - Removed `spicyweb\embeddedassets\Variable::fromAsset()`; use `get()` instead
 - Removed `spicyweb\embeddedassets\Variable::fromAssets()`; iterate your assets manually and call `get()` on each instead
 - Removed `spicyweb\embeddedassets\Variable::isEmbedded()`; use `get()` instead
+
+## 2.11.4 - 2023-03-25
+
+### Fixed
+- Fixed Craft 3.8 compatibility issues
+
+## 2.11.3 - 2022-06-30
+
+### Fixed
+- Fixed a bug where the 'Uploaded by' field would be empty for newly created embedded assets
+
+## 2.11.2 - 2022-06-24
+
+### Fixed
+- Fixed a type error that could occur in version 2.11.1
+
+## 2.11.1 - 2022-06-24
+
+### Fixed
+- Fixed an error that occurred when saving an embedded asset, if the embedded asset title (and therefore the filename) contained invalid characters
+
+## 2.11.0 - 2022-06-15
+
+### Added
+- Added `spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage`
+- Added `spicyweb\embeddedassets\gql\types\EmbeddedAssetImage`
+- Added `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
+
+### Fixed
+- Fixed a bug where accessing embedded assets' `images` and `providerIcons` properties through GraphQL outside of dev mode would cause an error
 
 ## 2.10.7 - 2022-04-21
 

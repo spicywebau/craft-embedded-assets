@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "strictNullChecks": true
+  },
+  "files": [
+    "src/assets/main/src/scripts/Button.ts",
+    "src/assets/main/src/scripts/EmbeddedAssets.ts",
+    "src/assets/main/src/scripts/Emitter.ts",
+    "src/assets/main/src/scripts/events.ts",
+    "src/assets/main/src/scripts/Form.ts",
+    "src/assets/main/src/scripts/main.ts",
+    "src/assets/main/src/scripts/Modal.ts",
+    "src/assets/main/src/scripts/Preview.ts",
+    "src/assets/main/src/scripts/responses.ts",
+    "src/assets/main/src/scripts/utilities.ts",
+    "src/assets/main/src/scripts/types/Craft.d.ts",
+    "src/assets/main/src/scripts/types/Garnish.d.ts",
+    "src/assets/preview/src/scripts/preview.ts"
+  ]
+}

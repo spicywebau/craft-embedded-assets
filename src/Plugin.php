@@ -8,6 +8,7 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
 use craft\events\DefineAssetThumbUrlEvent;
+use craft\events\DefineElementInnerHtmlEvent;
 use craft\events\DefineGqlTypeFieldsEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
@@ -15,6 +16,8 @@ use craft\events\RegisterGqlTypesEvent;
 use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\TemplateEvent;
 use craft\gql\TypeManager;
+use craft\helpers\Cp;
+use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 use craft\services\Assets;
@@ -22,8 +25,9 @@ use craft\services\Gql;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\View;
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
-use spicyweb\embeddedassets\assets\Main as MainAsset;
+use spicyweb\embeddedassets\assets\main\MainAsset;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
+use spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage as EmbeddedAssetImageInterface;
 use spicyweb\embeddedassets\gql\resolvers\EmbeddedAsset as EmbeddedAssetResolver;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\models\Settings;
@@ -98,6 +102,10 @@ class Plugin extends BasePlugin
             $this->_registerSaveListener();
             $this->_registerDeleteListener();
 
+            if ($this->getSettings()->showFieldLinkIcon) {
+                $this->_registerLink();
+            }
+
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
                 $this->_configureAssetIndexAttributes();
@@ -138,9 +146,10 @@ class Plugin extends BasePlugin
             View::class,
             View::EVENT_BEFORE_RENDER_TEMPLATE,
             function(TemplateEvent $event) {
+                $prevent = $this->getSettings()->preventNonWhitelistedUploads ? 'true' : 'false';
                 $viewService = Craft::$app->getView();
                 $viewService->registerAssetBundle(MainAsset::class);
-                
+                $viewService->registerJs("EmbeddedAssets.preventNonWhitelistedUploads = $prevent");
                 $assetManagerService = Craft::$app->getAssetManager();
                 $this->defaultThumbnailUrl = $assetManagerService->getPublishedUrl('@spicyweb/embeddedassets/resources/default-thumb.svg',
                     true);
@@ -169,6 +178,7 @@ class Plugin extends BasePlugin
             Gql::EVENT_REGISTER_GQL_TYPES,
             function(RegisterGqlTypesEvent $event) {
                 $event->types[] = EmbeddedAssetInterface::class;
+                $event->types[] = EmbeddedAssetImageInterface::class;
             }
         );
         Event::on(
@@ -261,6 +271,31 @@ class Plugin extends BasePlugin
     }
 
     /**
+     * Adds link icons to embedded assets in asset fields.
+     */
+    private function _registerLink(): void
+    {
+        Event::on(
+            Cp::class,
+            Cp::EVENT_DEFINE_ELEMENT_INNER_HTML,
+            function(DefineElementInnerHtmlEvent $event) {
+                if (
+                    !$event->element instanceof Asset ||
+                    ($embeddedAsset = $this->methods->getEmbeddedAsset($event->element)) === null
+                ) {
+                    return;
+                }
+
+                $event->innerHtml .= Html::tag('a', '', [
+                    'class' => 'icon link',
+                    'href' => $embeddedAsset->url,
+                    'title' => Craft::t('embeddedassets', 'View'),
+                ]);
+            }
+        );
+    }
+
+    /**
      * Adds new and modifies existing asset table attributes in the control panel.
      */
     private function _configureAssetIndexAttributesNoThumbnail(): void
@@ -271,6 +306,10 @@ class Plugin extends BasePlugin
             function(RegisterElementHtmlAttributesEvent $event) {
                 if ($event->sender->kind === "json") {
                     $event->htmlAttributes['data-embedded-asset'] = null;
+
+                    if ($this->getSettings()->showFieldLinkIcon) {
+                        $event->htmlAttributes['data-embedded-asset-link'] = true;
+                    }
                 }
             }
         );
@@ -294,6 +333,10 @@ class Plugin extends BasePlugin
                 if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->getIsSafe()) {
                     // Setting `null` actually adds the attribute, but doesn't include a value
                     $event->htmlAttributes['data-embedded-asset'] = $embeddedAsset->aspectRatio;
+
+                    if ($this->getSettings()->showFieldLinkIcon) {
+                        $event->htmlAttributes['data-embedded-asset-link'] = true;
+                    }
                 }
             }
         );

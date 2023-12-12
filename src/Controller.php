@@ -9,6 +9,7 @@ use craft\helpers\Json;
 use craft\models\VolumeFolder;
 use craft\web\Controller as BaseController;
 use spicyweb\embeddedassets\assets\Preview as PreviewAsset;
+use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
@@ -48,12 +49,24 @@ class Controller extends BaseController
 
         $url = $requestService->getRequiredBodyParam('url');
         $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getRequiredBodyParam('targetUid');
+        $targetUid = $requestService->getBodyParam('targetUid');
+        $targetId = $requestService->getBodyParam('targetId');
 
-        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
-            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
-            'parentId' => ':empty:',
-        ];
+        if (!$targetId && !$targetUid) {
+            throw new BadRequestHttpException('One of targetUid or targetId is required.');
+        }
+
+        $folderCriteria = [];
+
+        if ($targetId) {
+            $folderCriteria['id'] = $targetId;
+        } elseif (str_ends_with($targetType, 'folder')) {
+            $folderCriteria['uid'] = $targetUid;
+        } else {
+            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
+            $folderCriteria['parentId'] = ':empty:';
+        }
+
         $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
@@ -104,8 +117,13 @@ class Controller extends BaseController
 
         $url = $requestService->getRequiredParam('url');
         $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getRequiredBodyParam('targetUid');
+        $targetUid = $requestService->getBodyParam('targetUid');
+        $targetId = $requestService->getBodyParam('targetId');
         $assetId = $requestService->getRequiredParam('assetId');
+
+        if (!$targetId && !$targetUid) {
+            throw new BadRequestHttpException('One of targetUid or targetId is required.');
+        }
 
         $assetToReplace = null;
 
@@ -113,10 +131,17 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
-        $folderCriteria = $targetType === 'folder' ? ['uid' => $targetUid] : [
-            'volumeId' => Db::idByUid(Table::VOLUMES, $targetUid),
-            'parentId' => ':empty:',
-        ];
+        $folderCriteria = [];
+
+        if ($targetId) {
+            $folderCriteria['id'] = $targetId;
+        } elseif (str_ends_with($targetType, 'folder')) {
+            $folderCriteria['uid'] = $targetUid;
+        } else {
+            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
+            $folderCriteria['parentId'] = ':empty:';
+        }
+
         $folder = $this->_findFolder($folderCriteria);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
@@ -178,7 +203,12 @@ class Controller extends BaseController
         $showContent = (bool)$requestService->getParam('showContent', true);
 
         if ($url) {
-            $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+            try {
+                $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
+            } catch (NotWhitelistedException $e) {
+                // We'll still show the preview, we just won't allow saving it from the frontend
+                $embeddedAsset = $e->embeddedAsset;
+            }
         } else {
             if ($assetId) {
                 $asset = $assetsService->getAssetById($assetId);
@@ -223,7 +253,7 @@ class Controller extends BaseController
 
         if (!$userTempFolder || $folder->id != $userTempFolder->id) {
             $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
-            $this->requirePermission('saveAssetInVolume:' . $volume->uid);
+            $this->requirePermission('saveAssets:' . $volume->uid);
         }
 
         return $folder;
