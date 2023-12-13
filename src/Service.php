@@ -19,6 +19,7 @@ use Embed\Embed;
 use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
+use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
@@ -131,22 +132,22 @@ class Service extends Component
             $event = new BeforeCreateAdapterEvent([
                 'url' => $url,
                 'options' => $settings,
-                'dispatcherConfig' => $dispatcherConfig,
+                // 'dispatcherConfig' => $dispatcherConfig,
             ]);
             $this->trigger(self::EVENT_BEFORE_CREATE_ADAPTER, $event);
             $settings = $event->options;
-            $dispatcherConfig = $event->dispatcherConfig;
+            // $dispatcherConfig = $event->dispatcherConfig;
         }
 
+        // Set our internal adapters
         $embed = new Embed();
+        $factory = $embed->getExtractorFactory();
+        $factory->addAdapter('pbs.org', PbsExtractor::class);
+        $factory->addAdapter('nhpbs.org', PbsExtractor::class);
+
+        // Now get the embed data
         $embed->setSettings($settings);
         $embedData = $embed->get($url);
-
-        // Check for PBS videos
-        if (($pbsCode = $this->_getPbsEmbedCode($embedData)) !== null) {
-            $embedData->code = $pbsCode;
-        }
-
         $array = $this->_convertFromExtractor($embedData);
 
         // Embed data for Vimeo is incorrectly resolving some URLs to inaccessible streaming URLs
@@ -302,7 +303,7 @@ class Service extends Component
         }
 
         // Correct invalid types to similar, valid types
-        if ($array['type'] === 'photo') {
+        if (isset($array['type']) && $array['type'] === 'photo') {
             $array['type'] = 'image';
         }
 
@@ -627,16 +628,16 @@ class Service extends Component
             'description' => $extractor->description,
             'url' => (string)$extractor->url,
             'image' => (string)$extractor->image,
-            'code' => Template::raw($extractor->code->html ?: ''),
-            'width' => $extractor->code->width,
-            'height' => $extractor->code->height,
-            'aspectRatio' => $extractor->code->ratio,
+            'code' => Template::raw($extractor->code?->html ?: ''),
+            'width' => $extractor->code?->width,
+            'height' => $extractor->code?->height,
+            'aspectRatio' => $extractor->code?->ratio,
             'authorName' => $extractor->authorName,
             'authorUrl' => (string)$extractor->authorUrl,
             'providerName' => $extractor->providerName,
             'providerUrl' => (string)$extractor->providerUrl,
             'providerIcon' => (string)$extractor->icon,
-            'publishedTime' => $extractor->publishedTime->format('Y-m-d'),
+            'publishedTime' => $extractor->publishedTime?->format('Y-m-d'),
             'license' => $extractor->license,
             'feeds' => array_map(function ($feed) { return (string)$feed; }, $extractor->feeds),
 
@@ -739,30 +740,5 @@ class Service extends Component
     private function _hasBeenWeekSince(DateTimeInterface $dateModified): bool
     {
         return $dateModified->diff(new DateTimeImmutable())->d >= 7;
-    }
-
-    private function _isProviderPbs(Extractor $extractor): bool
-    {
-        $pbsUrls = ['https://pbs.org', 'https://nhpbs.org'];
-
-        return in_array($extractor->providerUrl, $pbsUrls);
-    }
-
-    private function _getPbsEmbedCode(Extractor $extractor): ?string
-    {
-        if (!$this->_isProviderPbs($extractor)) {
-            return null;
-        }
-
-        $extractorContent = $extractor->getResponse()->getContent();
-        $matches = [];
-
-        if (preg_match('/&lt;iframe(.+)iframe&gt;/i', $extractorContent, $matches)) {
-            if (preg_match('/https:\\/\\/player.pbs.org\\/viralplayer\\/([0-9]+)\\//i', $matches[0])) {
-                return htmlspecialchars_decode($matches[0], ENT_QUOTES | ENT_HTML5);
-            }
-        }
-
-        return null;
     }
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
+- Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
+
 ## 3.2.0 - 2023-12-06
 
 ### Added
