@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Added
+- Added `spicyweb\embeddedassets\adapters\akamai\Extractor`
+- Added `spicyweb\embeddedassets\adapters\akamai\detectors\Title`
+- Added `spicyweb\embeddedassets\adapters\akamai\detectors\Url`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
 

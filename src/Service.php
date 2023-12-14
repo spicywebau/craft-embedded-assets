@@ -19,6 +19,7 @@ use Embed\Embed;
 use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
+use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
@@ -142,6 +143,7 @@ class Service extends Component
         // Set our internal adapters
         $embed = new Embed();
         $factory = $embed->getExtractorFactory();
+        $factory->addAdapter('akamaized.net', AkamaiExtractor::class);
         $factory->addAdapter('pbs.org', PbsExtractor::class);
         $factory->addAdapter('nhpbs.org', PbsExtractor::class);
 
@@ -150,10 +152,8 @@ class Service extends Component
         $embedData = $embed->get($url);
         $array = $this->_convertFromExtractor($embedData);
 
-        // Embed data for Vimeo is incorrectly resolving some URLs to inaccessible streaming URLs
         // Or incorrectly resolving some Sharepoint url's to inaccessible urls
         if (
-            preg_match('/^https:\/\/player\.vimeo\.com\/(external|progressive_redirect)/', $url) ||
             preg_match('/^https:\/\/.+\.sharepoint\.com\/:f:\/g/', $url)
         ) {
             $array['url'] = $url;
