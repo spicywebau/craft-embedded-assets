@@ -2,9 +2,8 @@
 
 namespace spicyweb\embeddedassets\adapters\akamai;
 
-use Embed\Extractor as BaseExtractor;
-use spicyweb\embeddedassets\adapters\akamai\detectors\Title;
 use spicyweb\embeddedassets\adapters\akamai\detectors\Url;
+use spicyweb\embeddedassets\adapters\default\Extractor as BaseExtractor;
 
 /**
  * Embed extractor class for Akamai.
@@ -18,8 +17,7 @@ class Extractor extends BaseExtractor
     public function createCustomDetectors(): array
     {
         return [
-            'title' => new Title($this),
             'url' => new Url($this),
-        ];
+        ] + parent::createCustomDetectors();
     }
 }

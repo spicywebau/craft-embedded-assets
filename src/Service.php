@@ -20,6 +20,7 @@ use Embed\Extractor;
 use Embed\Http\CurlDispatcher;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
+use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
@@ -146,6 +147,7 @@ class Service extends Component
         $factory->addAdapter('akamaized.net', AkamaiExtractor::class);
         $factory->addAdapter('pbs.org', PbsExtractor::class);
         $factory->addAdapter('nhpbs.org', PbsExtractor::class);
+        $factory->setDefault(DefaultExtractor::class);
 
         // Now get the embed data
         $embed->setSettings($settings);

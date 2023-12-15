@@ -2,7 +2,7 @@
 
 namespace spicyweb\embeddedassets\adapters\pbs;
 
-use Embed\Extractor as BaseExtractor;
+use spicyweb\embeddedassets\adapters\default\Extractor as BaseExtractor;
 use spicyweb\embeddedassets\adapters\pbs\detectors\Code;
 
 /**
@@ -18,6 +18,6 @@ class Extractor extends BaseExtractor
     {
         return [
             'code' => new Code($this),
-        ];
+        ] + parent::createCustomDetectors();
     }
 }
