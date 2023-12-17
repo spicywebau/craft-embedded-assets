@@ -24,7 +24,7 @@ use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
-use spicyweb\embeddedassets\events\BeforeCreateAdapterEvent;
+use spicyweb\embeddedassets\events\BeforeRequestEvent;
 use spicyweb\embeddedassets\jobs\InstagramRefreshCheck;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\Plugin as EmbeddedAssets;
@@ -45,10 +45,10 @@ use yii\base\InvalidArgumentException;
 class Service extends Component
 {
     /**
-     * @event BeforeCreateAdapterEvent The event that is triggered before creating an Embed adapter.
-     * @since 2.8.0
+     * @event BeforeRequestEvent The event that is triggered before a request is made.
+     * @since 4.0.0
      */
-    public const EVENT_BEFORE_CREATE_ADAPTER = 'beforeCreateAdapter';
+    public const EVENT_BEFORE_REQUEST = 'beforeRequest';
 
     private array $embeddedAssetData = [];
 
@@ -126,31 +126,28 @@ class Service extends Component
             $settings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
         }*/
 
-        // TODO
+        // TODO: figure out how we can set the referrer
         // $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
 
-        // Allow other plugins/modules to add options
-        if ($this->hasEventHandlers(self::EVENT_BEFORE_CREATE_ADAPTER)) {
-            $event = new BeforeCreateAdapterEvent([
-                'url' => $url,
-                'options' => $settings,
-                // 'dispatcherConfig' => $dispatcherConfig,
-            ]);
-            $this->trigger(self::EVENT_BEFORE_CREATE_ADAPTER, $event);
-            $settings = $event->options;
-            // $dispatcherConfig = $event->dispatcherConfig;
-        }
-
-        // Set our internal adapters
+        // Set our internal adapters and settings
         $embed = new Embed();
         $factory = $embed->getExtractorFactory();
         $factory->addAdapter('akamaized.net', AkamaiExtractor::class);
         $factory->addAdapter('pbs.org', PbsExtractor::class);
         $factory->addAdapter('nhpbs.org', PbsExtractor::class);
         $factory->setDefault(DefaultExtractor::class);
+        $embed->setSettings($settings);
+
+        // Allow other plugins/modules to modify the Embed object
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_REQUEST)) {
+            $event = new BeforeRequestEvent([
+                'url' => $url,
+                'embed' => $embed,
+            ]);
+            $this->trigger(self::EVENT_BEFORE_REQUEST, $event);
+        }
 
         // Now get the embed data
-        $embed->setSettings($settings);
         $embedData = $embed->get($url);
         $array = $this->_convertFromExtractor($embedData);
 

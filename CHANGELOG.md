@@ -9,6 +9,12 @@
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Title`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
+- Added `spicyweb\embeddedassets\events\BeforeRequestEvent`
+- Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST`
+
+### Removed
+- Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
+- Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
 
 ## 3.2.0 - 2023-12-06
 
