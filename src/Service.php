@@ -17,7 +17,8 @@ use DateTimeInterface;
 use DOMDocument;
 use Embed\Embed;
 use Embed\Extractor;
-use Embed\Http\CurlDispatcher;
+use Embed\Http\Crawler;
+use Embed\Http\CurlClient;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
@@ -89,7 +90,7 @@ class Service extends Component
     private function _getDataFromEmbed(string $url): array
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
-        $settings = [
+        $embedSettings = [
             // TODO remove these settings, no longer available in Embed 4
             // 'min_image_width' => $pluginSettings->minImageSize,
             // 'min_image_height' => $pluginSettings->minImageSize,
@@ -100,52 +101,68 @@ class Service extends Component
             foreach ($pluginSettings->parameters as $parameter) {
                 $param = $parameter['param'];
                 $value = $parameter['value'];
-                $settings['oembed:query_parameters'][$param] = $value;
+                $embedSettings['oembed:query_parameters'][$param] = $value;
             }
         }
 
         /* TODO, not currently available in Embed 4
         if ($pluginSettings->embedlyKey) {
-            // $settings['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
+            // $embedSettings['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
         }
         if ($pluginSettings->iframelyKey) {
-            $settings['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
+            $embedSettings['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
         }
         if ($pluginSettings->googleKey) {
-            $settings['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
+            $embedSettings['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
         }
         if ($pluginSettings->soundcloudKey) {
-            $settings['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
+            $embedSettings['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
         }
         */
         if ($pluginSettings->facebookKey) {
-            $settings['facebook:token'] = Craft::parseEnv($pluginSettings->facebookKey);
+            $embedSettings['facebook:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }
         // TODO
         /*if ($pluginSettings->instagramKey) {
-            $settings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
+            $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
         }*/
 
         // TODO: figure out how we can set the referrer
         // $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
 
-        // Set our internal adapters and settings
-        $embed = new Embed();
-        $factory = $embed->getExtractorFactory();
-        $factory->addAdapter('akamaized.net', AkamaiExtractor::class);
-        $factory->addAdapter('pbs.org', PbsExtractor::class);
-        $factory->addAdapter('nhpbs.org', PbsExtractor::class);
-        $factory->setDefault(DefaultExtractor::class);
-        $embed->setSettings($settings);
+        $clientSettings = [];
+        $adapters = [
+            'akamaized.net' => AkamaiExtractor::class,
+            'pbs.org' => PbsExtractor::class,
+            'nhpbs.org' => PbsExtractor::class,
+        ];
 
-        // Allow other plugins/modules to modify the Embed object
+        // Allow other plugins/modules to modify the settings
         if ($this->hasEventHandlers(self::EVENT_BEFORE_REQUEST)) {
             $event = new BeforeRequestEvent([
                 'url' => $url,
-                'embed' => $embed,
+                'adapters' => $adapters,
+                'clientSettings' => $clientSettings,
+                'embedSettings' => $embedSettings,
             ]);
             $this->trigger(self::EVENT_BEFORE_REQUEST, $event);
+            $adapters = $event->adapters;
+            $clientSettings = $event->clientSettings;
+            $embedSettings = $event->embedSettings;
         }
+
+        // Create the Embed object, set the adapters and settings
+        $client = new CurlClient();
+        $client->setSettings($clientSettings);
+        $embed = new Embed(new Crawler($client));
+        $factory = $embed->getExtractorFactory();
+
+        foreach ($adapters as $host => $class) {
+            $factory->addAdapter($host, $class);
+        }
+
+        $factory->setDefault(DefaultExtractor::class);
+        $embed->setSettings($embedSettings);
 
         // Now get the embed data
         $embedData = $embed->get($url);
