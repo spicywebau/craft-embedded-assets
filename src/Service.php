@@ -128,9 +128,6 @@ class Service extends Component
             $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
         }*/
 
-        // TODO: figure out how we can set the referrer
-        // $dispatcherConfig = $pluginSettings->referer ? [CURLOPT_REFERER => Craft::parseEnv($pluginSettings->referer)] : [];
-
         $clientSettings = [];
         $adapters = [
             'akamaized.net' => AkamaiExtractor::class,
@@ -138,25 +135,32 @@ class Service extends Component
             'nhpbs.org' => PbsExtractor::class,
             'sharepoint.com' => SharepointExtractor::class,
         ];
+        $headers = array_filter([
+            'Referer' => $pluginSettings->referer ? Craft::parseEnv($pluginSettings->referer) : null,
+        ]);
 
         // Allow other plugins/modules to modify the settings
         if ($this->hasEventHandlers(self::EVENT_BEFORE_REQUEST)) {
-            $event = new BeforeRequestEvent([
-                'url' => $url,
-                'adapters' => $adapters,
-                'clientSettings' => $clientSettings,
-                'embedSettings' => $embedSettings,
-            ]);
+            $event = new BeforeRequestEvent(compact(
+                'adapters',
+                'clientSettings',
+                'embedSettings',
+                'headers',
+                'url',
+            ));
             $this->trigger(self::EVENT_BEFORE_REQUEST, $event);
             $adapters = $event->adapters;
             $clientSettings = $event->clientSettings;
             $embedSettings = $event->embedSettings;
+            $headers = $event->headers;
         }
 
         // Create the Embed object, set the adapters and settings
         $client = new CurlClient();
         $client->setSettings($clientSettings);
-        $embed = new Embed(new Crawler($client));
+        $crawler = new Crawler($client);
+        $crawler->addDefaultHeaders($headers);
+        $embed = new Embed($crawler);
         $factory = $embed->getExtractorFactory();
 
         foreach ($adapters as $host => $class) {

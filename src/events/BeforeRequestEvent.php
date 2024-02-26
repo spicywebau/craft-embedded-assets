@@ -34,4 +34,9 @@ class BeforeRequestEvent extends Event
      * @see https://github.com/oscarotero/Embed/tree/v4.4.10#settings
      */
     public array $embedSettings;
+
+    /**
+     * @var array Request headers
+     */
+    public array $headers;
 }
