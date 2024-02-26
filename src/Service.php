@@ -23,6 +23,7 @@ use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
+use spicyweb\embeddedassets\adapters\sharepoint\Extractor as SharepointExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
 use spicyweb\embeddedassets\errors\RefreshException;
 use spicyweb\embeddedassets\events\BeforeRequestEvent;
@@ -135,6 +136,7 @@ class Service extends Component
             'akamaized.net' => AkamaiExtractor::class,
             'pbs.org' => PbsExtractor::class,
             'nhpbs.org' => PbsExtractor::class,
+            'sharepoint.com' => SharepointExtractor::class,
         ];
 
         // Allow other plugins/modules to modify the settings
@@ -166,16 +168,8 @@ class Service extends Component
 
         // Now get the embed data
         $embedData = $embed->get($url);
-        $array = $this->_convertFromExtractor($embedData);
 
-        // Or incorrectly resolving some Sharepoint url's to inaccessible urls
-        if (
-            preg_match('/^https:\/\/.+\.sharepoint\.com\/:f:\/g/', $url)
-        ) {
-            $array['url'] = $url;
-        }
-
-        return $array;
+        return $this->_convertFromExtractor($embedData);
     }
 
     /**
