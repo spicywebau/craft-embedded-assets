@@ -12,7 +12,11 @@
 - Added `spicyweb\embeddedassets\adapters\sharepoint\Extractor`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\detectors\Url`
 - Added `spicyweb\embeddedassets\events\BeforeRequestEvent`
+- Added `spicyweb\embeddedassets\models\EmbeddedAsset::$keywords`
 - Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST`
+
+### Deprecated
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`; use `$keywords` instead
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
