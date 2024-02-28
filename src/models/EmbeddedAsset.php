@@ -259,7 +259,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
             [['keywords', 'images', 'providerIcons', 'tags'], 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
             [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
-            ['providerIcons', 'each', 'rule' => [ImageValidator::class]],
             ['code', TwigMarkupValidator::class],
         ];
     }
