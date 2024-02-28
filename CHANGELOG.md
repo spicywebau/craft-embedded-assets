@@ -17,7 +17,7 @@
 
 ### Changed
 - Now requires Craft CMS 4.7.0 or later Craft CMS 4 releases
-- Upgraded from Embed 3 to Embed 4
+- Upgraded from Embed 3 to Embed 4 (requires at least 4.4.10)
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created embedded assets
