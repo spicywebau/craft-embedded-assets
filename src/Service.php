@@ -493,12 +493,10 @@ class Service extends Component
     {
         if ($embeddedAsset->code && $embeddedAsset->getIsSafe()) {
             $html = $embeddedAsset->code;
+        } elseif ($embeddedAsset->type !== 'link' && $embeddedAsset->image) {
+            $html = Template::raw("<img src=\"$embeddedAsset->image\" alt=\"$embeddedAsset->title\" width=\"$embeddedAsset->imageWidth\" height=\"$embeddedAsset->imageHeight\">");
         } else {
-            if ($embeddedAsset->type !== 'link' && $embeddedAsset->image) {
-                $html = Template::raw("<img src=\"$embeddedAsset->image\" alt=\"$embeddedAsset->title\" width=\"$embeddedAsset->imageWidth\" height=\"$embeddedAsset->imageHeight\">");
-            } else {
-                $html = Template::raw("<a href=\"$embeddedAsset->url\" target=\"_blank\" rel=\"noopener\">$embeddedAsset->title</a>");
-            }
+            $html = Template::raw("<a href=\"$embeddedAsset->url\" target=\"_blank\" rel=\"noopener\">$embeddedAsset->title</a>");
         }
 
         return $html;

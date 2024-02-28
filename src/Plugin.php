@@ -435,7 +435,9 @@ class Plugin extends BasePlugin
                 }
                 break;
             case 'kind':
-                $html = $embeddedAsset->type ? Craft::t('embeddedassets', ucfirst($embeddedAsset->type)) : null;
+                $html = $embeddedAsset->type
+                    ? Craft::t('embeddedassets', ucfirst($embeddedAsset->type))
+                    : Craft::t('embeddedassets', 'Embedded asset');
                 break;
             case 'width':
                 $html = $embeddedAsset->imageWidth ? $embeddedAsset->imageWidth . 'px' : null;

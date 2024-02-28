@@ -195,6 +195,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
             'key' => 'EmbeddedAsset::tags',
             'message' => 'The `tags` embedded asset property has been deprecated, due to being removed in Embed 4. Use `keywords` instead.',
         ],
+        'type' => [
+            'key' => 'EmbeddedAsset::type',
+            'message' => 'The `type` embedded asset property has been deprecated, due to being removed in Embed 4.',
+        ],
     ];
 
     /**
@@ -227,7 +231,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
         }
 
         // Deprecated properties for which there is no re-setting of data
-        foreach (['imageHeight', 'imageWidth'] as $prop) {
+        foreach (['imageHeight', 'imageWidth', 'type'] as $prop) {
             if (isset($config[$prop])) {
                 $deprecator->log(
                     static::$_deprecatedProperties[$prop]['key'],
@@ -370,37 +374,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
-     * Returns the URL with additional params passed. Has to be type of video.
-     *
-     * @since 2.0.8
-     * @param array $params
-     * @return string|null
-     */
-    public function getVideoUrl(array $params): ?string
-    {
-        return $this->type === 'video' && is_array($params) ? $this->_getIframeSrc($params, false) : null;
-    }
-
-    /**
-     * Returns the raw code with additional params passed. Has to be type of video.
-     *
-     * @since 2.0.8
-     * @param array $params
-     * @return TwigMarkup
-     */
-    public function getVideoCode(array $params): TwigMarkup
-    {
-        if ($this->type !== 'video') {
-            throw new Exception('Tried to call getVideoCode() on an embedded asset with a type other than video');
-        }
-
-        $newSrc = $this->_getIframeSrc($params, false);
-        $code = HtmlHelper::modifyTagAttributes($this->code, ['src' => $newSrc]);
-
-        return Template::raw($code);
-    }
-
-    /**
      * Gets this embedded asset's video ID, if the embedded asset is from a supported provider.
      *
      * Providers supported by this method:
@@ -414,10 +387,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public function getVideoId(): ?string
     {
-        if ($this->type !== "video") {
-            return null;
-        }
-
         $url = explode('/', $this->getMatchedVideoUrl());
 
         return match ($this->providerName) {

@@ -29,9 +29,12 @@
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`, due to being removed in Embed 4; use `$image` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons`, due to being removed in Embed 4; use `$providerIcon` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`, due to being removed in Embed 4; use `$keywords` instead
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$type`, due to being removed in Embed 4
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoCode()`; use `getIframeCode()` instead
+- Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
 
 ## 3.2.0 - 2023-12-06

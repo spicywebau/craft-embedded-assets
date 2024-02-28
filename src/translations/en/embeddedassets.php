@@ -7,6 +7,7 @@ return [
     'Disable tracking on Vimeo iframes?' => 'Disable tracking on Vimeo iframes?',
     'Domain to set as HTTP Referer, e.g. `https://domain.com`' => 'Domain to set as HTTP Referer, e.g. `https://domain.com`',
     'Embed' => 'Embed',
+    'Embedded asset' => 'Embedded asset',
     'embed.ly API Key' => 'embed.ly API Key',
     'Facebook Graph API Key' => 'Facebook Graph API Key',
     'Google API Key' => 'Google API Key',
