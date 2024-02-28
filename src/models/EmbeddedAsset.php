@@ -196,6 +196,19 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public function __construct($config = [])
     {
         static::_initDeprecatedProperties();
+        $deprecator = Craft::$app->getDeprecator();
+
+        if (isset($config['images'])) {
+            $deprecator->log(
+                'EmbeddedAsset::images',
+                'The `images` embedded asset property has been deprecated. Use `image` instead.',
+            );
+            $config['images'] = array_map(
+                fn($image) => is_array($image) ? $image['url'] : $image,
+                $config['images'],
+            );
+        }
+
         parent::__construct($config);
     }
 
@@ -271,10 +284,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
                 'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
-            ['tags', 'each', 'rule' => [StringValidator::class]],
+            [['keywords', 'images'], 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
             [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
-            [['images', 'providerIcons'], 'each', 'rule' => [ImageValidator::class]],
+            ['providerIcons', 'each', 'rule' => [ImageValidator::class]],
             ['code', TwigMarkupValidator::class],
         ];
     }

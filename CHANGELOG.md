@@ -15,7 +15,11 @@
 - Added `spicyweb\embeddedassets\models\EmbeddedAsset::$keywords`
 - Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST`
 
+### Changed
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data
+
 ### Deprecated
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`; use `$image` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`; use `$keywords` instead
 
 ### Removed
