@@ -187,6 +187,10 @@ class EmbeddedAsset extends Model implements JsonSerializable
             'key' => 'EmbeddedAsset::images',
             'message' => 'The `images` embedded asset property has been deprecated, due to being removed in Embed 4. Use `image` instead.',
         ],
+        'providerIcons' => [
+            'key' => 'EmbeddedAsset::providerIcons',
+            'message' => 'The `providerIcons` embedded asset property has been deprecated, due to being removed in Embed 4. Use `providerIcon` instead.',
+        ],
         'tags' => [
             'key' => 'EmbeddedAsset::tags',
             'message' => 'The `tags` embedded asset property has been deprecated, due to being removed in Embed 4. Use `keywords` instead.',
@@ -200,15 +204,18 @@ class EmbeddedAsset extends Model implements JsonSerializable
     {
         $deprecator = Craft::$app->getDeprecator();
 
-        if (isset($config['images'])) {
-            $deprecator->log(
-                static::$_deprecatedProperties['images']['key'],
-                static::$_deprecatedProperties['images']['message'],
-            );
-            $config['images'] = array_map(
-                fn($image) => is_array($image) ? $image['url'] : $image,
-                $config['images'],
-            );
+        // Deprecated image array properties
+        foreach (['images', 'providerIcons'] as $prop) {
+            if (isset($config[$prop])) {
+                $deprecator->log(
+                    static::$_deprecatedProperties[$prop]['key'],
+                    static::$_deprecatedProperties[$prop]['message'],
+                );
+                $config[$prop] = array_map(
+                    fn($image) => is_array($image) ? $image['url'] : $image,
+                    $config[$prop],
+                );
+            }
         }
 
         if (isset($config['tags'])) {

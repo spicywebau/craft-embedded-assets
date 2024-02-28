@@ -20,12 +20,14 @@
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created or refreshed embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created or refreshed embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created or refreshed embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created or refreshed embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$tags` will not be set on newly created or refreshed embedded assets
 
 ### Deprecated
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight`, due to being removed in Embed 4
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth`, due to being removed in Embed 4
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`, due to being removed in Embed 4; use `$image` instead
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons`, due to being removed in Embed 4; use `$providerIcon` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`, due to being removed in Embed 4; use `$keywords` instead
 
 ### Removed
