@@ -177,11 +177,6 @@ class Settings extends Model
     /**
      * @var int
      */
-    public int $minImageSize = 16;
-    
-    /**
-     * @var int
-     */
     public int $maxAssetNameLength = 50;
     
     /**

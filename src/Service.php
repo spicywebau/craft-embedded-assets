@@ -92,9 +92,6 @@ class Service extends Component
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $embedSettings = [
-            // TODO remove these settings, no longer available in Embed 4
-            // 'min_image_width' => $pluginSettings->minImageSize,
-            // 'min_image_height' => $pluginSettings->minImageSize,
             'oembed:query_parameters' => [],
         ];
 
@@ -612,21 +609,6 @@ class Service extends Component
         }
 
         return $selectedImage;
-    }
-
-    /**
-     * Helper method for filtering images to some minimum size.
-     * Used to filter out small images that likely are absolutely useless.
-     *
-     * @param array $image
-     * @return bool
-     */
-    private function _isImageLargeEnough(array $image): bool
-    {
-        $pluginSettings = EmbeddedAssets::$plugin->getSettings();
-        $minImageSize = $pluginSettings->minImageSize;
-
-        return $image['width'] >= $minImageSize && $image['height'] >= $minImageSize;
     }
 
     /**
