@@ -103,20 +103,18 @@ class Service extends Component
             }
         }
 
-        /* TODO, not currently available in Embed 4
         if ($pluginSettings->embedlyKey) {
-            // $embedSettings['oembed']['embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
+            $embedSettings['oembed:embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
         }
         if ($pluginSettings->iframelyKey) {
-            $embedSettings['oembed']['iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
+            $embedSettings['oembed:iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
         }
         if ($pluginSettings->googleKey) {
-            $embedSettings['google'] = ['key' => Craft::parseEnv($pluginSettings->googleKey)];
+            $embedSettings['google:key'] = Craft::parseEnv($pluginSettings->googleKey);
         }
         if ($pluginSettings->soundcloudKey) {
-            $embedSettings['soundcloud'] = ['key' => Craft::parseEnv($pluginSettings->soundcloudKey)];
+            $embedSettings['soundcloud:key'] = Craft::parseEnv($pluginSettings->soundcloudKey);
         }
-        */
         if ($pluginSettings->facebookKey) {
             $embedSettings['facebook:token'] = $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }
