@@ -185,11 +185,11 @@ class EmbeddedAsset extends Model implements JsonSerializable
         ],
         'images' => [
             'key' => 'EmbeddedAsset::images',
-            'message' => 'The `images` embedded asset property has been deprecated. Use `image` instead.',
+            'message' => 'The `images` embedded asset property has been deprecated, due to being removed in Embed 4. Use `image` instead.',
         ],
         'tags' => [
             'key' => 'EmbeddedAsset::tags',
-            'message' => 'The `tags` embedded asset property has been deprecated. Use `keywords` instead.',
+            'message' => 'The `tags` embedded asset property has been deprecated, due to being removed in Embed 4. Use `keywords` instead.',
         ],
     ];
 
