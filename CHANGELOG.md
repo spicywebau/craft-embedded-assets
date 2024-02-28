@@ -17,11 +17,11 @@
 
 ### Changed
 - Upgraded from Embed 3 to Embed 4
-- `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created or refreshed embedded assets
-- `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created or refreshed embedded assets
-- `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created or refreshed embedded assets
-- `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created or refreshed embedded assets
-- `spicyweb\embeddedassets\models\EmbeddedAsset::$tags` will not be set on newly created or refreshed embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created embedded assets
+- `spicyweb\embeddedassets\models\EmbeddedAsset::$tags` will not be set on newly created embedded assets
 
 ### Deprecated
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight`, due to being removed in Embed 4

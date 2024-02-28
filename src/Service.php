@@ -345,6 +345,12 @@ class Service extends Component
         $elementsService = Craft::$app->getElements();
         $folder = $asset->getFolder();
         $newEmbeddedAsset = $this->requestUrl($embeddedAsset->url, false);
+
+        // Retain deprecated property values not supported by Embed 4
+        foreach (['imageHeight', 'imageWidth', 'images', 'providerIcons', 'tags', 'type'] as $prop) {
+            $newEmbeddedAsset->{$prop} = $embeddedAsset->{$prop};
+        }
+
         $newAsset = $this->createAsset($newEmbeddedAsset, $folder);
         $result = $elementsService->saveElement($newAsset);
 
