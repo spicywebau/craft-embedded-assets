@@ -168,40 +168,34 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public ?array $providerIcons = null;
 
-    private static array $_deprecatedProperties;
+    /**
+     * @var array of strings
+     * @deprecated in 4.0.0
+     */
+    public ?array $tags = null;
 
-    public static function propertyIsDeprecated($name): bool
-    {
-        static::_initDeprecatedProperties();
-        return isset(static::$_deprecatedProperties[$name]);
-    }
-
-    private static function _initDeprecatedProperties(): void
-    {
-        if (!isset(static::$_deprecatedProperties)) {
-            static::$_deprecatedProperties = [
-                'tags' => [
-                    'key' => 'EmbeddedAsset::tags',
-                    'message' => 'The `tags` embedded asset property has been deprecated. Use `keywords` instead.',
-                    'getFn' => fn(EmbeddedAsset $embeddedAsset) => $embeddedAsset->keywords,
-                    'setFn' => fn(EmbeddedAsset $embeddedAsset, array $value) => $embeddedAsset->keywords = $value,
-                ],
-            ];
-        }
-    }
+    private static array $_deprecatedProperties = [
+        'images' => [
+            'key' => 'EmbeddedAsset::images',
+            'message' => 'The `images` embedded asset property has been deprecated. Use `image` instead.'
+        ],
+        'tags' => [
+            'key' => 'EmbeddedAsset::tags',
+            'message' => 'The `tags` embedded asset property has been deprecated. Use `keywords` instead.',
+        ],
+    ];
 
     /**
      * @inheritdoc
      */
     public function __construct($config = [])
     {
-        static::_initDeprecatedProperties();
         $deprecator = Craft::$app->getDeprecator();
 
         if (isset($config['images'])) {
             $deprecator->log(
-                'EmbeddedAsset::images',
-                'The `images` embedded asset property has been deprecated. Use `image` instead.',
+                static::$_deprecatedProperties['images']['key'],
+                static::$_deprecatedProperties['images']['message'],
             );
             $config['images'] = array_map(
                 fn($image) => is_array($image) ? $image['url'] : $image,
@@ -209,62 +203,15 @@ class EmbeddedAsset extends Model implements JsonSerializable
             );
         }
 
+        if (isset($config['tags'])) {
+            $deprecator->log(
+                static::$_deprecatedProperties['tags']['key'],
+                static::$_deprecatedProperties['tags']['message'],
+            );
+            $config['keywords'] = $config['tags'];
+        }
+
         parent::__construct($config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __call($name, $params)
-    {
-        // Is the requested property deprecated?
-        if (isset(static::$_deprecatedProperties[$name])) {
-            return $this->{$name};
-        }
-
-        return parent::__call($name, $params);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __get($name)
-    {
-        // Is the requested property deprecated?
-        if (isset(static::$_deprecatedProperties[$name])) {
-            $deprecationData = static::$_deprecatedProperties[$name];
-            Craft::$app->getDeprecator()->log($deprecationData['key'], $deprecationData['message']);
-
-            // Does the property have a get replacement function declared?
-            if (isset($deprecationData['getFn'])) {
-                // Prioritise the original property if it still exists and is set, though
-                return property_exists(static::class, $name)
-                    ? parent::__get($name) ?? $deprecationData['getFn']($this)
-                    : $deprecationData['getFn']($this);
-            }
-        }
-
-        return parent::__get($name);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __set($name, $value)
-    {
-        // Is the requested property deprecated?
-        if (isset(static::$_deprecatedProperties[$name])) {
-            $deprecationData = static::$_deprecatedProperties[$name];
-            Craft::$app->getDeprecator()->log($deprecationData['key'], $deprecationData['message']);
-
-            // Does the property have a set replacement function declared?
-            if (isset($deprecationData['setFn'])) {
-                $deprecationData['setFn']($this, $value);
-                return;
-            }
-        }
-
-        parent::__set($name, $value);
     }
 
     /**
