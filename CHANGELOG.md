@@ -16,6 +16,7 @@
 - Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST`
 
 ### Changed
+- Now requires Craft CMS 4.7.0 or later Craft CMS 4 releases
 - Upgraded from Embed 3 to Embed 4
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created embedded assets
