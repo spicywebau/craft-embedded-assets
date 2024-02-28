@@ -36,6 +36,7 @@
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoCode()`; use `getIframeCode()` instead
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
+- Removed `spicyweb\embeddedassets\validators\Image`
 
 ## 3.2.0 - 2023-12-06
 
