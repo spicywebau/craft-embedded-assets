@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.0-beta.1 - 2024-02-28
 
 ### Added
 - Added `spicyweb\embeddedassets\adapters\akamai\Extractor`

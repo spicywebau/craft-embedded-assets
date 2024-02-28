@@ -1,7 +1,7 @@
 {
   "name": "spicyweb/craft-embedded-assets",
   "description": "Manage YouTube videos, Instagram photos, Twitter posts and more as first class assets",
-  "version": "3.2.0",
+  "version": "4.0.0-beta.1",
   "type": "craft-plugin",
   "keywords": [
     "cms",
@@ -24,8 +24,8 @@
   "support": {
     "issues": "https://github.com/spicywebau/craft-embedded-assets/issues",
     "source": "https://github.com/spicywebau/craft-embedded-assets",
-    "docs": "https://github.com/spicywebau/craft-embedded-assets/blob/3.2.0/README.md",
-    "rss": "https://github.com/spicywebau/craft-embedded-assets/commits/3.x.atom"
+    "docs": "https://github.com/spicywebau/craft-embedded-assets/blob/4.0.0-beta.1/README.md",
+    "rss": "https://github.com/spicywebau/craft-embedded-assets/commits/4.x.atom"
   },
   "require": {
     "craftcms/cms": "^4.7.0",
@@ -48,8 +48,8 @@
     "name": "Embedded Assets",
     "schemaVersion": "1.0.0",
     "class": "spicyweb\\embeddedassets\\Plugin",
-    "changelogUrl": "https://github.com/spicywebau/craft-embedded-assets/blob/3.x/CHANGELOG.md",
-    "downloadUrl": "https://github.com/spicywebau/craft-embedded-assets/archive/3.2.0.zip"
+    "changelogUrl": "https://github.com/spicywebau/craft-embedded-assets/blob/4.x/CHANGELOG.md",
+    "downloadUrl": "https://github.com/spicywebau/craft-embedded-assets/archive/4.0.0-beta.1.zip"
   },
   "config": {
     "allow-plugins": {
