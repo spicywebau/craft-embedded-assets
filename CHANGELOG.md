@@ -16,6 +16,7 @@
 - Added `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST`
 
 ### Changed
+- Upgraded from Embed 3 to Embed 4
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight` will not be set on newly created or refreshed embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth` will not be set on newly created or refreshed embedded assets
 - `spicyweb\embeddedassets\models\EmbeddedAsset::$images` now returns an array of image URLs, rather than an array of key/value pairs representing image data, and will not be set on newly created or refreshed embedded assets
@@ -24,8 +25,8 @@
 ### Deprecated
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$imageHeight`, due to being removed in Embed 4
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$imageWidth`, due to being removed in Embed 4
-- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`; use `$image` instead
-- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`; use `$keywords` instead
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`, due to being removed in Embed 4; use `$image` instead
+- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`, due to being removed in Embed 4; use `$keywords` instead
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
