@@ -175,9 +175,17 @@ class EmbeddedAsset extends Model implements JsonSerializable
     public ?array $tags = null;
 
     private static array $_deprecatedProperties = [
+        'imageHeight' => [
+            'key' => 'EmbeddedAsset::imageHeight',
+            'message' => 'The `imageHeight` embedded asset property has been deprecated, due to being removed in Embed 4.',
+        ],
+        'imageWidth' => [
+            'key' => 'EmbeddedAsset::imageWidth',
+            'message' => 'The `imageWidth` embedded asset property has been deprecated, due to being removed in Embed 4.',
+        ],
         'images' => [
             'key' => 'EmbeddedAsset::images',
-            'message' => 'The `images` embedded asset property has been deprecated. Use `image` instead.'
+            'message' => 'The `images` embedded asset property has been deprecated. Use `image` instead.',
         ],
         'tags' => [
             'key' => 'EmbeddedAsset::tags',
@@ -211,6 +219,16 @@ class EmbeddedAsset extends Model implements JsonSerializable
             $config['keywords'] = $config['tags'];
         }
 
+        // Deprecated properties for which there is no re-setting of data
+        foreach (['imageHeight', 'imageWidth'] as $prop) {
+            if (isset($config[$prop])) {
+                $deprecator->log(
+                    static::$_deprecatedProperties[$prop]['key'],
+                    static::$_deprecatedProperties[$prop]['message'],
+                );
+            }
+        }
+
         parent::__construct($config);
     }
 
@@ -231,7 +249,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
                 'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
-            [['keywords', 'images'], 'each', 'rule' => [StringValidator::class]],
+            [['keywords', 'images', 'tags'], 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
             [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
             ['providerIcons', 'each', 'rule' => [ImageValidator::class]],
