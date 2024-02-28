@@ -27,7 +27,6 @@ use craft\web\View;
 use spicyweb\embeddedassets\assetpreviews\EmbeddedAsset as EmbeddedAssetPreview;
 use spicyweb\embeddedassets\assets\main\MainAsset;
 use spicyweb\embeddedassets\gql\interfaces\EmbeddedAsset as EmbeddedAssetInterface;
-use spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage as EmbeddedAssetImageInterface;
 use spicyweb\embeddedassets\gql\resolvers\EmbeddedAsset as EmbeddedAssetResolver;
 use spicyweb\embeddedassets\models\EmbeddedAsset;
 use spicyweb\embeddedassets\models\Settings;
@@ -178,7 +177,6 @@ class Plugin extends BasePlugin
             Gql::EVENT_REGISTER_GQL_TYPES,
             function(RegisterGqlTypesEvent $event) {
                 $event->types[] = EmbeddedAssetInterface::class;
-                $event->types[] = EmbeddedAssetImageInterface::class;
             }
         );
         Event::on(

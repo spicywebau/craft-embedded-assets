@@ -33,6 +33,9 @@
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
+- Removed `spicyweb\embeddedassets\gql\interfaces\EmbeddedAssetImage`
+- Removed `spicyweb\embeddedassets\gql\types\EmbeddedAssetImage`
+- Removed `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoCode()`; use `getIframeCode()` instead
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead

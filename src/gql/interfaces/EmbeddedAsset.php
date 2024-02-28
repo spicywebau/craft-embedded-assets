@@ -96,7 +96,7 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
             ],
             'images' => [
                 'name' => 'images',
-                'type' => Type::listOf(EmbeddedAssetImage::getType()),
+                'type' => Type::listOf(Type::string()),
                 'description' => 'The images for the embedded asset.',
             ],
             'image' => [
@@ -146,7 +146,7 @@ class EmbeddedAsset extends InterfaceType implements SingularTypeInterface
             ],
             'providerIcons' => [
                 'name' => 'providerIcons',
-                'type' => Type::listOf(EmbeddedAssetImage::getType()),
+                'type' => Type::listOf(Type::string()),
                 'description' => 'The provider icons for the embedded asset.',
             ],
             'providerIcon' => [
