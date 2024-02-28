@@ -121,12 +121,8 @@ class Service extends Component
         }
         */
         if ($pluginSettings->facebookKey) {
-            $embedSettings['facebook:token'] = Craft::parseEnv($pluginSettings->facebookKey);
+            $embedSettings['facebook:token'] = $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }
-        // TODO
-        /*if ($pluginSettings->instagramKey) {
-            $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->instagramKey);
-        }*/
 
         $clientSettings = [];
         $adapters = [
