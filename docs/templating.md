@@ -49,7 +49,7 @@ Property (\*required) | Description
 \*`url` String | The URL of the embedded asset.
 \*`type` String | The type of the embedded asset. Possible values are `'link'`, `'image'`, `'video'`, and `'rich'`
 `tags` Array&lt;String&gt; | The keywords or tags for the embedded asset.
-`images` Array&lt;[Image](#image)&gt; | List of all images found for the embedded asset.
+`images` Array&lt;String&gt; | List of all images found for the embedded asset.
 `image` String | The URL of the main image for the embedded asset.
 `imageWidth` Number | The width of the main image.
 `imageHeight` Number | The height of the main image.
@@ -62,23 +62,11 @@ Property (\*required) | Description
 `authorUrl` String | The URL of the author.
 `providerName` String | The name of the embedded assets provider (eg. `'YouTube'`).
 `providerUrl` String | The URL of the provider.
-`providerIcons` Array&lt;[Image](#image)&gt; | List of all provider icons found for the embedded asset.
+`providerIcons` Array&lt;String&gt; | List of all provider icons found for the embedded asset.
 `providerIcon` String | The URL of the main provider icon for the embedded asset.
 `publishedTime` String | The published time of the embedded asset.
 `license` String | The URL to the embedded asset license.
 `feeds` Array&lt;String&gt; | Links to any RSS/Atom feeds found from the URL.
-
-### Image
-
-This is just a plain object with the following keys:
-
-Key (\*required) | Description
--|-
-\*`url` String | The URL of the image.
-\*`width` Number | The width of the image.
-\*`height` Number | The height of the image.
-\*`size` Number | The size of the image.
-`mime` String | The MIME type of  the image (eg. `'image/jpeg'`).
 
 
 ## Methods
