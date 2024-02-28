@@ -256,7 +256,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
                 'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
-            [['keywords', 'images', 'tags'], 'each', 'rule' => [StringValidator::class]],
+            [['keywords', 'images', 'providerIcons', 'tags'], 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
             [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
             ['providerIcons', 'each', 'rule' => [ImageValidator::class]],
