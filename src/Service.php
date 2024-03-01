@@ -112,9 +112,6 @@ class Service extends Component
         if ($pluginSettings->googleKey) {
             $embedSettings['google:key'] = Craft::parseEnv($pluginSettings->googleKey);
         }
-        if ($pluginSettings->soundcloudKey) {
-            $embedSettings['soundcloud:key'] = Craft::parseEnv($pluginSettings->soundcloudKey);
-        }
         if ($pluginSettings->facebookKey) {
             $embedSettings['facebook:token'] = $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Removed
+- Removed `spicyweb\embeddedassets\models\Settings::$soundcloudKey`
+
 ## 5.0.0-beta.1 - 2024-03-01
 
 > {note} See also the 4.0.0-beta.1 release notes

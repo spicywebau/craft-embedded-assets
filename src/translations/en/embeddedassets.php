@@ -21,7 +21,6 @@ return [
     'Replace' => 'Replace',
     'Rich' => 'Rich',
     'Show link icons on fields?' => 'Show link icons on fields?',
-    'SoundCloud API Key' => 'SoundCloud API Key',
     'This embedded asset cannot be saved.' => 'This embedded asset cannot be saved.',
     'This information is coming from an untrusted source.' => 'This information is coming from an untrusted source.',
     'Use YouTube nocookie?' => 'Use YouTube nocookie?',

@@ -19,7 +19,6 @@ return [
     'Provider' => 'Fournisseur',
     'Replace' => 'Remplace',
     'Rich' => 'Riche',
-    'SoundCloud API Key' => ' Clef API pour SoundCloud ',
     'This embedded asset cannot be saved.' => 'Impossible de sauvegarder cette ressource externe.',
     'This information is coming from an untrusted source.' => 'Ces données proviennent d’une source non fiable.',
     'Use YouTube nocookie?' => 'Utiliser "YouTube nocookie" ?',
