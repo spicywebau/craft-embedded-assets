@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added Craft 5 compatibility
+
+### Changed
+- Links to embedded assets on asset fields can no longer be disabled, and have been moved into the fields' action menus
+
+### Removed
+- Removed Craft 4 compatibility
+- Removed `spicyweb\embeddedassets\models\Settings::$showFieldLinkIcon`
+
 ## 4.0.0-beta.1 - 2024-02-28
 
 ### Added

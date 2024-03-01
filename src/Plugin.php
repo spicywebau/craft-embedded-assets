@@ -8,16 +8,14 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\elements\Asset;
 use craft\events\DefineAssetThumbUrlEvent;
-use craft\events\DefineElementInnerHtmlEvent;
+use craft\events\DefineAttributeHtmlEvent;
 use craft\events\DefineGqlTypeFieldsEvent;
+use craft\events\DefineMenuItemsEvent;
 use craft\events\RegisterElementHtmlAttributesEvent;
 use craft\events\RegisterElementTableAttributesEvent;
 use craft\events\RegisterGqlTypesEvent;
-use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\events\TemplateEvent;
 use craft\gql\TypeManager;
-use craft\helpers\Cp;
-use craft\helpers\Html;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 use craft\services\Assets;
@@ -100,10 +98,7 @@ class Plugin extends BasePlugin
             $this->_registerPreviewHandler();
             $this->_registerSaveListener();
             $this->_registerDeleteListener();
-
-            if ($this->getSettings()->showFieldLinkIcon) {
-                $this->_registerLink();
-            }
+            $this->_registerLink();
 
             // if showThumbnailsInCp is set to true add in the asset index attribute for the thumbnails
             if ($this->getSettings()->showThumbnailsInCp) {
@@ -269,26 +264,30 @@ class Plugin extends BasePlugin
     }
 
     /**
-     * Adds link icons to embedded assets in asset fields.
+     * Adds link actions to embedded assets in asset field action menus.
      */
     private function _registerLink(): void
     {
         Event::on(
-            Cp::class,
-            Cp::EVENT_DEFINE_ELEMENT_INNER_HTML,
-            function(DefineElementInnerHtmlEvent $event) {
+            Element::class,
+            Element::EVENT_DEFINE_ACTION_MENU_ITEMS,
+            function(DefineMenuItemsEvent $event) {
                 if (
-                    !$event->element instanceof Asset ||
-                    ($embeddedAsset = $this->methods->getEmbeddedAsset($event->element)) === null
+                    !$event->sender instanceof Asset ||
+                    ($embeddedAsset = $this->methods->getEmbeddedAsset($event->sender)) === null
                 ) {
                     return;
                 }
 
-                $event->innerHtml .= Html::tag('a', '', [
-                    'class' => 'icon link',
-                    'href' => $embeddedAsset->url,
-                    'title' => Craft::t('embeddedassets', 'View'),
-                ]);
+                $event->items[] = [
+                    'id' => 'view-embedded',
+                    'icon' => 'share',
+                    'label' => Craft::t('embeddedassets', 'View embedded asset'),
+                    'url' => $embeddedAsset->url,
+                    'attributes' => [
+                        'target' => '_blank',
+                    ],
+                ];
             }
         );
     }
@@ -304,10 +303,6 @@ class Plugin extends BasePlugin
             function(RegisterElementHtmlAttributesEvent $event) {
                 if ($event->sender->kind === "json") {
                     $event->htmlAttributes['data-embedded-asset'] = null;
-
-                    if ($this->getSettings()->showFieldLinkIcon) {
-                        $event->htmlAttributes['data-embedded-asset-link'] = true;
-                    }
                 }
             }
         );
@@ -331,10 +326,6 @@ class Plugin extends BasePlugin
                 if ($embeddedAsset && $embeddedAsset->code && $embeddedAsset->getIsSafe()) {
                     // Setting `null` actually adds the attribute, but doesn't include a value
                     $event->htmlAttributes['data-embedded-asset'] = $embeddedAsset->aspectRatio;
-
-                    if ($this->getSettings()->showFieldLinkIcon) {
-                        $event->htmlAttributes['data-embedded-asset-link'] = true;
-                    }
                 }
             }
         );
@@ -353,8 +344,8 @@ class Plugin extends BasePlugin
         
         Event::on(
             Asset::class,
-            Asset::EVENT_SET_TABLE_ATTRIBUTE_HTML,
-            function(SetElementTableAttributeHtmlEvent $event) use ($newAttributes) {
+            Asset::EVENT_DEFINE_ATTRIBUTE_HTML,
+            function(DefineAttributeHtmlEvent $event) use ($newAttributes) {
                 // Prevent new table attributes from causing server errors
                 if (array_key_exists($event->attribute, $newAttributes)) {
                     $event->html = '';
