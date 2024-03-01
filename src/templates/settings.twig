@@ -39,18 +39,6 @@
 	}) }}
 
 	{{ forms.autosuggestField({
-		label: "SoundCloud API Key"|t('embeddedassets'),
-		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
-			api: '[SoundCloud API](https://developers.soundcloud.com/docs/api/guide)',
-		}),
-		id: 'soundcloudKey',
-		name: 'soundcloudKey',
-		value: settings.soundcloudKey,
-		errors: settings.getErrors('soundcloudKey'),
-		suggestEnvVars: true
-	}) }}
-
-	{{ forms.autosuggestField({
 		label: "Facebook Graph API Key"|t('embeddedassets'),
 		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
 			api: '[Facebook Graph API](https://developers.facebook.com/docs/graph-api)',
