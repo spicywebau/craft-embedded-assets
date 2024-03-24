@@ -112,7 +112,7 @@ class Service extends Component
         if ($pluginSettings->googleKey) {
             $embedSettings['google:key'] = Craft::parseEnv($pluginSettings->googleKey);
         }
-        if ($pluginSettings->facebookKey) {
+                if ($pluginSettings->facebookKey) {
             $embedSettings['facebook:token'] = $embedSettings['instagram:token'] = Craft::parseEnv($pluginSettings->facebookKey);
         }
 
@@ -199,10 +199,10 @@ class Service extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \craft\errors\AssetException
      */
-    public function getEmbeddedAsset(Asset $asset): ?EmbeddedAsset
+    public function getEmbeddedAsset(?Asset $asset): ?EmbeddedAsset
     {
         // Embedded assets are just JSON files, so clearly if this isn't a JSON file it can't be an embedded asset
-        if ($asset->kind !== Asset::KIND_JSON) {
+        if ($asset?->kind !== Asset::KIND_JSON) {
             return null;
         }
 

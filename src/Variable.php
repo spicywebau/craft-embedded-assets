@@ -24,7 +24,7 @@ class Variable
      * @param Asset $asset
      * @return EmbeddedAsset|null
      */
-    public function get(Asset $asset): ?EmbeddedAsset
+    public function get(?Asset $asset): ?EmbeddedAsset
     {
         return EmbeddedAssets::$plugin->methods->getEmbeddedAsset($asset);
     }
