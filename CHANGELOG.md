@@ -14,6 +14,11 @@
 - Added `spicyweb\embeddedassets\adapters\default\Extractor`
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Title`
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Type`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\Extractor`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\ProviderName`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Title`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Type`

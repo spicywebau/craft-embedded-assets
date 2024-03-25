@@ -23,6 +23,7 @@ use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
 use spicyweb\embeddedassets\adapters\default\detectors\Type as TypeDetector;
+use spicyweb\embeddedassets\adapters\googlemaps\Extractor as GoogleMapsExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\adapters\sharepoint\Extractor as SharepointExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
@@ -124,6 +125,14 @@ class Service extends Component
             'nhpbs.org' => PbsExtractor::class,
             'sharepoint.com' => SharepointExtractor::class,
         ];
+
+        if (
+            preg_match('/:\/\/maps.google.([a-z\.]+)\/?/', $url, $matches) ||
+            preg_match('/:\/\/www.google.([a-z\.]+)\/maps\/?/', $url, $matches)
+        ) {
+            $adapters['google.' . $matches[1]] = GoogleMapsExtractor::class;
+        }
+
         $headers = array_filter([
             'Referer' => $pluginSettings->referer ? Craft::parseEnv($pluginSettings->referer) : null,
         ]);
