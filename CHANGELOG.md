@@ -12,6 +12,7 @@
 - Added `spicyweb\embeddedassets\adapters\akamai\detectors\Url`
 - Added `spicyweb\embeddedassets\adapters\default\Extractor`
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Title`
+- Added `spicyweb\embeddedassets\adapters\default\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\Extractor`
@@ -35,7 +36,6 @@
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`, due to being removed in Embed 4; use `$image` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons`, due to being removed in Embed 4; use `$providerIcon` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`, due to being removed in Embed 4; use `$keywords` instead
-- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$type`, due to being removed in Embed 4
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead

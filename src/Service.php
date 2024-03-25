@@ -22,6 +22,7 @@ use Embed\Http\CurlClient;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
+use spicyweb\embeddedassets\adapters\default\detectors\Type as TypeDetector;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\adapters\sharepoint\Extractor as SharepointExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
@@ -156,6 +157,7 @@ class Service extends Component
         }
 
         $factory->setDefault(DefaultExtractor::class);
+        $factory->addDetector('type', TypeDetector::class);
         $embed->setSettings($embedSettings);
 
         // Now get the embed data
@@ -618,6 +620,7 @@ class Service extends Component
             'title' => $extractor->title,
             'description' => $extractor->description,
             'url' => (string)$extractor->url,
+            'type' => $extractor->type,
             'image' => (string)$extractor->image,
             'code' => Template::raw($extractor->code?->html ?: ''),
             'width' => $extractor->code?->width,

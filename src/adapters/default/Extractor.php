@@ -4,6 +4,7 @@ namespace spicyweb\embeddedassets\adapters\default;
 
 use Embed\Extractor as BaseExtractor;
 use spicyweb\embeddedassets\adapters\default\detectors\Title;
+use spicyweb\embeddedassets\adapters\default\detectors\Type;
 
 /**
  * Default Embed extractor class for Embedded Assets.
@@ -18,6 +19,7 @@ class Extractor extends BaseExtractor
     {
         return [
             'title' => new Title($this),
+            'type' => new Type($this),
         ];
     }
 }
