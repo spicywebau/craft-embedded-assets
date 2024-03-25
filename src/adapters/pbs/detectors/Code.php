@@ -16,15 +16,10 @@ class Code extends BaseCodeDetector
 {
     public function detect(): ?EmbedCode
     {
-        $extractorHtml = (string)$this->extractor->getResponse()->getBody();
-        $matches = [];
+        $iframe = $this->extractor->getIframe();
 
-        if (preg_match('/&lt;iframe(.+)iframe&gt;/i', $extractorHtml, $matches)) {
-            if (preg_match('/https:\\/\\/player.pbs.org\\/viralplayer\\/([0-9]+)\\//i', $matches[0])) {
-                return new EmbedCode(htmlspecialchars_decode($matches[0], ENT_QUOTES | ENT_HTML5));
-            }
-        }
-
-        return parent::detect();
+        return $iframe !== null
+            ? new EmbedCode(htmlspecialchars_decode($iframe, ENT_QUOTES | ENT_HTML5))
+            : parent::detect();
     }
 }

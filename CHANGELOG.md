@@ -15,6 +15,7 @@
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\pbs\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\Extractor`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\detectors\Url`
 - Added `spicyweb\embeddedassets\events\BeforeRequestEvent`

@@ -15,6 +15,6 @@ class Type extends Detector
 {
     public function detect(): ?string
     {
-        return $this->extractor->getOEmbed()->str('type');
+        return $this->extractor->getOEmbed()->str('type') ?: 'link';
     }
 }
