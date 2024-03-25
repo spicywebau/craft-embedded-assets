@@ -7,7 +7,7 @@ use spicyweb\embeddedassets\adapters\default\detectors\Type as BaseType;
 /**
  * Embed type detector class for PBS websites.
  *
- * @package spicyweb\embeddedassets\adapters\default\detectors
+ * @package spicyweb\embeddedassets\adapters\pbs\detectors
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 4.0.0
  */
