@@ -9,6 +9,7 @@
 
 ### Added
 - Added `spicyweb\embeddedassets\adapters\akamai\Extractor`
+- Added `spicyweb\embeddedassets\adapters\akamai\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\akamai\detectors\Url`
 - Added `spicyweb\embeddedassets\adapters\default\Extractor`
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Title`

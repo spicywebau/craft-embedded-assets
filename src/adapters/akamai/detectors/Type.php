@@ -2,22 +2,21 @@
 
 namespace spicyweb\embeddedassets\adapters\akamai\detectors;
 
-use Embed\Detectors\Url as BaseUrlDetector;
-use Psr\Http\Message\UriInterface;
+use spicyweb\embeddedassets\adapters\default\detectors\Type as BaseType;
 
 /**
- * Embed URL detector class for Akamai.
+ * Embed type detector class for Akamai.
  *
  * @package spicyweb\embeddedassets\adapters\akamai\detectors
  * @author Spicy Web <plugins@spicyweb.com.au>
  * @since 4.0.0
  */
-class Url extends BaseUrlDetector
+class Type extends BaseType
 {
-    public function detect(): UriInterface
+    public function detect(): ?string
     {
         return $this->extractor->isVimeo()
-            ? $this->extractor->getRequest()->getUri()
+            ? 'video'
             : parent::detect();
     }
 }
