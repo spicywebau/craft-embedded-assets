@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.0.0-beta.1 - 2024-03-01
+## 5.0.0 - 2024-03-27
 
 ### Added
 - Added Craft 5 compatibility
