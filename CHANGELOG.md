@@ -1,11 +1,6 @@
 # Changelog
 
-## Unreleased
-
-### Removed
-- Removed `spicyweb\embeddedassets\models\Settings::$soundcloudKey`
-
-## 4.0.0-beta.1 - 2024-02-28
+## 4.0.0 - 2024-03-26
 
 ### Added
 - Added `spicyweb\embeddedassets\adapters\akamai\Extractor`
@@ -54,6 +49,7 @@
 - Removed `spicyweb\embeddedassets\models\Settings::$embedlyKey`
 - Removed `spicyweb\embeddedassets\models\Settings::$iframelyKey`
 - Removed `spicyweb\embeddedassets\models\Settings::$minImageSize`, due to the Embed 3 parameters it was used for being removed in Embed 4
+- Removed `spicyweb\embeddedassets\models\Settings::$soundcloudKey`
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
 - Removed `spicyweb\embeddedassets\validators\Image`
 
