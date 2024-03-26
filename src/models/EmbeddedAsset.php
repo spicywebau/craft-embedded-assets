@@ -139,8 +139,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
     // Deprecated properties (removed from Embed 4)
 
     /**
-     * @var string link|image|video\rich
-     * @deprecated in 4.0.0
+     * @var string link|image|video|rich
      */
     public ?string $type = null;
 
@@ -195,10 +194,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
             'key' => 'EmbeddedAsset::tags',
             'message' => 'The `tags` embedded asset property has been deprecated, due to being removed in Embed 4. Use `keywords` instead.',
         ],
-        'type' => [
-            'key' => 'EmbeddedAsset::type',
-            'message' => 'The `type` embedded asset property has been deprecated, due to being removed in Embed 4.',
-        ],
     ];
 
     /**
@@ -231,7 +226,7 @@ class EmbeddedAsset extends Model implements JsonSerializable
         }
 
         // Deprecated properties for which there is no re-setting of data
-        foreach (['imageHeight', 'imageWidth', 'type'] as $prop) {
+        foreach (['imageHeight', 'imageWidth'] as $prop) {
             if (isset($config[$prop])) {
                 $deprecator->log(
                     static::$_deprecatedProperties[$prop]['key'],

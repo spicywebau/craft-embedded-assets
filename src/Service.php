@@ -22,6 +22,8 @@ use Embed\Http\CurlClient;
 use Embed\Http\Url;
 use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
+use spicyweb\embeddedassets\adapters\default\detectors\Type as TypeDetector;
+use spicyweb\embeddedassets\adapters\googlemaps\Extractor as GoogleMapsExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\adapters\sharepoint\Extractor as SharepointExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
@@ -103,12 +105,6 @@ class Service extends Component
             }
         }
 
-        if ($pluginSettings->embedlyKey) {
-            $embedSettings['oembed:embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
-        }
-        if ($pluginSettings->iframelyKey) {
-            $embedSettings['oembed:iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
-        }
         if ($pluginSettings->googleKey) {
             $embedSettings['google:key'] = Craft::parseEnv($pluginSettings->googleKey);
         }
@@ -123,6 +119,14 @@ class Service extends Component
             'nhpbs.org' => PbsExtractor::class,
             'sharepoint.com' => SharepointExtractor::class,
         ];
+
+        if (
+            preg_match('/:\/\/maps.google.([a-z\.]+)\/?/', $url, $matches) ||
+            preg_match('/:\/\/www.google.([a-z\.]+)\/maps\/?/', $url, $matches)
+        ) {
+            $adapters['google.' . $matches[1]] = GoogleMapsExtractor::class;
+        }
+
         $headers = array_filter([
             'Referer' => $pluginSettings->referer ? Craft::parseEnv($pluginSettings->referer) : null,
         ]);
@@ -156,6 +160,7 @@ class Service extends Component
         }
 
         $factory->setDefault(DefaultExtractor::class);
+        $factory->addDetector('type', TypeDetector::class);
         $embed->setSettings($embedSettings);
 
         // Now get the embed data
@@ -618,6 +623,7 @@ class Service extends Component
             'title' => $extractor->title,
             'description' => $extractor->description,
             'url' => (string)$extractor->url,
+            'type' => $extractor->type,
             'image' => (string)$extractor->image,
             'code' => Template::raw($extractor->code?->html ?: ''),
             'width' => $extractor->code?->width,

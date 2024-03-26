@@ -1,13 +1,6 @@
 # Changelog
 
-## Unreleased
-
-### Removed
-- Removed `spicyweb\embeddedassets\models\Settings::$soundcloudKey`
-
 ## 5.0.0-beta.1 - 2024-03-01
-
-> {note} See also the 4.0.0-beta.1 release notes
 
 ### Added
 - Added Craft 5 compatibility
@@ -19,15 +12,23 @@
 - Removed Craft 4 compatibility
 - Removed `spicyweb\embeddedassets\models\Settings::$showFieldLinkIcon`
 
-## 4.0.0-beta.1 - 2024-02-28
+## 4.0.0 - 2024-03-26
 
 ### Added
 - Added `spicyweb\embeddedassets\adapters\akamai\Extractor`
+- Added `spicyweb\embeddedassets\adapters\akamai\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\akamai\detectors\Url`
 - Added `spicyweb\embeddedassets\adapters\default\Extractor`
 - Added `spicyweb\embeddedassets\adapters\default\detectors\Title`
+- Added `spicyweb\embeddedassets\adapters\default\detectors\Type`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\Extractor`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\ProviderName`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Title`
+- Added `spicyweb\embeddedassets\adapters\googlemaps\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\pbs\Extractor`
 - Added `spicyweb\embeddedassets\adapters\pbs\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\pbs\detectors\Type`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\Extractor`
 - Added `spicyweb\embeddedassets\adapters\sharepoint\detectors\Url`
 - Added `spicyweb\embeddedassets\events\BeforeRequestEvent`
@@ -49,7 +50,6 @@
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$images`, due to being removed in Embed 4; use `$image` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$providerIcons`, due to being removed in Embed 4; use `$providerIcon` instead
 - Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$tags`, due to being removed in Embed 4; use `$keywords` instead
-- Deprecated `spicyweb\embeddedassets\models\EmbeddedAsset::$type`, due to being removed in Embed 4
 
 ### Removed
 - Removed `spicyweb\embeddedassets\events\BeforeCreateAdapterEvent`; use `spicyweb\embeddedassets\events\BeforeRequestEvent` instead
@@ -58,7 +58,10 @@
 - Removed `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoCode()`; use `getIframeCode()` instead
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
+- Removed `spicyweb\embeddedassets\models\Settings::$embedlyKey`
+- Removed `spicyweb\embeddedassets\models\Settings::$iframelyKey`
 - Removed `spicyweb\embeddedassets\models\Settings::$minImageSize`, due to the Embed 3 parameters it was used for being removed in Embed 4
+- Removed `spicyweb\embeddedassets\models\Settings::$soundcloudKey`
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
 - Removed `spicyweb\embeddedassets\validators\Image`
 

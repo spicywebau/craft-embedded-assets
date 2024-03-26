@@ -21,16 +21,6 @@ class Settings extends Model
     /**
      * @var string
      */
-    public string $embedlyKey = '';
-    
-    /**
-     * @var string
-     */
-    public string $iframelyKey = '';
-    
-    /**
-     * @var string
-     */
     public string $googleKey = '';
     
     /**
@@ -221,7 +211,7 @@ class Settings extends Model
         return [
             'parser' => [
                 'class' => EnvAttributeParserBehavior::class,
-                'attributes' => ['embedlyKey', 'iframelyKey', 'googleKey', 'facebookKey', 'referer'],
+                'attributes' => ['googleKey', 'facebookKey', 'referer'],
             ],
         ];
     }
@@ -232,7 +222,7 @@ class Settings extends Model
     protected function defineRules(): array
     {
         return [
-            [['embedlyKey', 'iframelyKey', 'googleKey', 'facebookKey', 'referer'], StringValidator::class],
+            [['googleKey', 'facebookKey', 'referer'], StringValidator::class],
             ['parameters', 'each', 'rule' => [ParameterValidator::class]],
             [['whitelist', 'extraWhitelist'], 'each', 'rule' => [StringValidator::class]],
             [['maxAssetNameLength', 'maxFileNameLength'], 'integer', 'min' => 10],
