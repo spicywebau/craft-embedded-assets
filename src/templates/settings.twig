@@ -3,30 +3,6 @@
 <div class="settings">
 
 	{{ forms.autosuggestField({
-		label: "embed.ly API Key"|t('embeddedassets'),
-		instructions: "An {api} key to be used as a fallback data provider."|t('embeddedassets', {
-			api: '[embed.ly API](http://docs.embed.ly/docs/embedly-api)',
-		}),
-		id: 'embedlyKey',
-		name: 'embedlyKey',
-		value: settings.embedlyKey,
-		errors: settings.getErrors('embedlyKey'),
-		suggestEnvVars: true
-	}) }}
-
-	{{ forms.autosuggestField({
-		label: "iFramely API Key"|t('embeddedassets'),
-		instructions: "An {api} key to be used as a fallback data provider."|t('embeddedassets', {
-			api: '[iFramely API](https://iframely.com/docs/iframely-api)',
-		}),
-		id: 'iframelyKey',
-		name: 'iframelyKey',
-		value: settings.iframelyKey,
-		errors: settings.getErrors('iframelyKey'),
-		suggestEnvVars: true
-	}) }}
-
-	{{ forms.autosuggestField({
 		label: "Google API Key"|t('embeddedassets'),
 		instructions: "A {api} key to be used as a fallback data provider."|t('embeddedassets', {
 			api: '[Google API](https://developers.google.com/maps/documentation/embed/guide)',

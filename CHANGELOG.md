@@ -51,6 +51,8 @@
 - Removed `spicyweb\embeddedassets\gql\types\generators\EmbeddedAssetImageType`
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoCode()`; use `getIframeCode()` instead
 - Removed `spicyweb\embeddedassets\models\EmbeddedAsset::getVideoUrl()`; use `getIframeSrc()` instead
+- Removed `spicyweb\embeddedassets\models\Settings::$embedlyKey`
+- Removed `spicyweb\embeddedassets\models\Settings::$iframelyKey`
 - Removed `spicyweb\embeddedassets\models\Settings::$minImageSize`, due to the Embed 3 parameters it was used for being removed in Embed 4
 - Removed `spicyweb\embeddedassets\Service::EVENT_BEFORE_CREATE_ADAPTER`; use `spicyweb\embeddedassets\Service::EVENT_BEFORE_REQUEST` instead
 - Removed `spicyweb\embeddedassets\validators\Image`

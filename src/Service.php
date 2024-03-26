@@ -105,12 +105,6 @@ class Service extends Component
             }
         }
 
-        if ($pluginSettings->embedlyKey) {
-            $embedSettings['oembed:embedly_key'] = Craft::parseEnv($pluginSettings->embedlyKey);
-        }
-        if ($pluginSettings->iframelyKey) {
-            $embedSettings['oembed:iframely_key'] = Craft::parseEnv($pluginSettings->iframelyKey);
-        }
         if ($pluginSettings->googleKey) {
             $embedSettings['google:key'] = Craft::parseEnv($pluginSettings->googleKey);
         }
