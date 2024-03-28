@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.1 - 2024-03-28
 
 ### Added
 - Added `spicyweb\embeddedassets\models\EmbeddedAsset::deprecatedProperties()`
