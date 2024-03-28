@@ -12,6 +12,14 @@
 - Removed Craft 4 compatibility
 - Removed `spicyweb\embeddedassets\models\Settings::$showFieldLinkIcon`
 
+## 4.0.1 - 2024-03-28
+
+### Added
+- Added `spicyweb\embeddedassets\models\EmbeddedAsset::deprecatedProperties()`
+
+### Changed
+- Deprecation warnings for deprecated embedded asset properties will now only be logged for front-end requests
+
 ## 4.0.0 - 2024-03-26
 
 ### Added
