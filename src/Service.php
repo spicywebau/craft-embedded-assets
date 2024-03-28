@@ -289,7 +289,10 @@ class Service extends Component
         }
 
         foreach (array_keys($array) as $key) {
-            if (!property_exists(EmbeddedAsset::class, $key)) {
+            if (
+                !property_exists(EmbeddedAsset::class, $key) &&
+                !in_array($key, EmbeddedAsset::deprecatedProperties())
+            ) {
                 return null;
             }
         }

@@ -136,42 +136,37 @@ class EmbeddedAsset extends Model implements JsonSerializable
      */
     public $redirect;
 
-    // Deprecated properties (removed from Embed 4)
-
     /**
      * @var string link|image|video|rich
      */
     public ?string $type = null;
 
-    /**
-     * @var array of images
-     * @deprecated in 4.0.0
-     */
-    public ?array $images = null;
-
-    /**
-     * @var number
-     * @deprecated in 4.0.0
-     */
-    public ?int $imageWidth = null;
-
-    /**
-     * @var number
-     * @deprecated in 4.0.0
-     */
-    public ?int $imageHeight = null;
+    // Deprecated properties (removed from Embed 4)
 
     /**
      * @var array of images
-     * @deprecated in 4.0.0
      */
-    public ?array $providerIcons = null;
+    private ?array $_images = null;
+
+    /**
+     * @var number
+     */
+    private ?int $_imageWidth = null;
+
+    /**
+     * @var number
+     */
+    private ?int $_imageHeight = null;
+
+    /**
+     * @var array of images
+     */
+    private ?array $_providerIcons = null;
 
     /**
      * @var array of strings
-     * @deprecated in 4.0.0
      */
-    public ?array $tags = null;
+    private ?array $_tags = null;
 
     private static array $_deprecatedProperties = [
         'imageHeight' => [
@@ -197,6 +192,15 @@ class EmbeddedAsset extends Model implements JsonSerializable
     ];
 
     /**
+     * @return string[] containing deprecated embedded asset properties
+     * @since 4.0.1
+     */
+    public static function deprecatedProperties(): array
+    {
+        return array_keys(static::$_deprecatedProperties);
+    }
+
+    /**
      * @inheritdoc
      */
     public function __construct($config = [])
@@ -206,10 +210,6 @@ class EmbeddedAsset extends Model implements JsonSerializable
         // Deprecated image array properties
         foreach (['images', 'providerIcons'] as $prop) {
             if (isset($config[$prop])) {
-                $deprecator->log(
-                    static::$_deprecatedProperties[$prop]['key'],
-                    static::$_deprecatedProperties[$prop]['message'],
-                );
                 $config[$prop] = array_map(
                     fn($image) => is_array($image) ? $image['url'] : $image,
                     $config[$prop],
@@ -218,24 +218,53 @@ class EmbeddedAsset extends Model implements JsonSerializable
         }
 
         if (isset($config['tags'])) {
-            $deprecator->log(
-                static::$_deprecatedProperties['tags']['key'],
-                static::$_deprecatedProperties['tags']['message'],
-            );
             $config['keywords'] = $config['tags'];
         }
 
-        // Deprecated properties for which there is no re-setting of data
-        foreach (['imageHeight', 'imageWidth'] as $prop) {
-            if (isset($config[$prop])) {
-                $deprecator->log(
-                    static::$_deprecatedProperties[$prop]['key'],
-                    static::$_deprecatedProperties[$prop]['message'],
+        parent::__construct($config);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __call($name, $params)
+    {
+        return in_array($name, static::deprecatedProperties())
+            ? static::__get($name)
+            : parent::__call($name, $params);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __get($name)
+    {
+        if (in_array($name, static::deprecatedProperties())) {
+            // Only log a deprecation warning if it's a front-end request
+            if (!Craft::$app->getRequest()->getIsCpRequest()) {
+                Craft::$app->getDeprecator()->log(
+                    static::$_deprecatedProperties[$name]['key'],
+                    static::$_deprecatedProperties[$name]['message'],
                 );
             }
+
+            return $this->{"_$name"};
         }
 
-        parent::__construct($config);
+        return parent::__get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __set($name, $value)
+    {
+        if (in_array($name, static::deprecatedProperties())) {
+            $this->{"_$name"} = $value;
+        } else {
+            parent::__set($name, $value);
+        }
+
     }
 
     /**
@@ -255,9 +284,9 @@ class EmbeddedAsset extends Model implements JsonSerializable
                 'defaultScheme' => 'https',
             ],
             ['type', 'in', 'range' => ['link', 'image', 'video', 'rich']],
-            [['keywords', 'images', 'providerIcons', 'tags'], 'each', 'rule' => [StringValidator::class]],
+            [['keywords'], 'each', 'rule' => [StringValidator::class]],
             [['feeds'], 'each', 'rule' => [UrlValidator::class]],
-            [['width', 'height', 'aspectRatio', 'imageWidth', 'imageHeight'], 'number', 'min' => 0],
+            [['width', 'height', 'aspectRatio'], 'number', 'min' => 0],
             ['code', TwigMarkupValidator::class],
         ];
     }

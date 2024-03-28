@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\embeddedassets\models\EmbeddedAsset::deprecatedProperties()`
+
+### Changed
+- Deprecation warnings for deprecated embedded asset properties will now only be logged for front-end requests
+
 ## 4.0.0 - 2024-03-26
 
 ### Added
