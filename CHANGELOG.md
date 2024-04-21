@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\Extractor`
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Type`
+
+### Changed
+- The default value for `spicyweb\embeddedassets\models\Settings::$whitelist` now includes `'openstreetmap.org'`
+
 ## 4.0.1 - 2024-03-28
 
 ### Added

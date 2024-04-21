@@ -24,6 +24,7 @@ use spicyweb\embeddedassets\adapters\akamai\Extractor as AkamaiExtractor;
 use spicyweb\embeddedassets\adapters\default\Extractor as DefaultExtractor;
 use spicyweb\embeddedassets\adapters\default\detectors\Type as TypeDetector;
 use spicyweb\embeddedassets\adapters\googlemaps\Extractor as GoogleMapsExtractor;
+use spicyweb\embeddedassets\adapters\openstreetmap\Extractor as OpenStreetMapExtractor;
 use spicyweb\embeddedassets\adapters\pbs\Extractor as PbsExtractor;
 use spicyweb\embeddedassets\adapters\sharepoint\Extractor as SharepointExtractor;
 use spicyweb\embeddedassets\errors\NotWhitelistedException;
@@ -117,6 +118,7 @@ class Service extends Component
             'akamaized.net' => AkamaiExtractor::class,
             'pbs.org' => PbsExtractor::class,
             'nhpbs.org' => PbsExtractor::class,
+            'openstreetmap.org' => OpenStreetMapExtractor::class,
             'sharepoint.com' => SharepointExtractor::class,
         ];
 

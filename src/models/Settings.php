@@ -104,6 +104,9 @@ class Settings extends Model
         // Netflix
         'netflix.com',
 
+        // OpenStreetMap
+        'openstreetmap.org',
+
         // PBS and affiliates
         // TODO: add more affiliates as I find them
         'pbs.org',
