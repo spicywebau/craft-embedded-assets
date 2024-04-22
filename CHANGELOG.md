@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.1.0 - 2024-04-22
 
 ### Added
 - Added `spicyweb\embeddedassets\adapters\bluesky\Extractor`
