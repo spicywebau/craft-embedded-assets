@@ -20,6 +20,18 @@
 - Removed Craft 4 compatibility
 - Removed `spicyweb\embeddedassets\models\Settings::$showFieldLinkIcon`
 
+## 4.1.0 - 2024-04-22
+
+### Added
+- Added `spicyweb\embeddedassets\adapters\bluesky\Extractor`
+- Added `spicyweb\embeddedassets\adapters\bluesky\OEmbed`
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\Extractor`
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Code`
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Type`
+
+### Changed
+- The default value for `spicyweb\embeddedassets\models\Settings::$whitelist` now includes `'bsky.app'`, `'bsky.social'`, and `'openstreetmap.org'`
+
 ## 4.0.1 - 2024-03-28
 
 ### Added
