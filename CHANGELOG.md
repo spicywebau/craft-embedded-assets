@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.0 - 2024-04-22
+
+### Added
+- Added `spicyweb\embeddedassets\adapters\bluesky\Extractor` (previously added in 4.1.0)
+- Added `spicyweb\embeddedassets\adapters\bluesky\OEmbed` (previously added in 4.1.0)
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\Extractor` (previously added in 4.1.0)
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Code` (previously added in 4.1.0)
+- Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Type` (previously added in 4.1.0)
+
 ## 5.0.1 - 2024-03-28
 
 ### Added
