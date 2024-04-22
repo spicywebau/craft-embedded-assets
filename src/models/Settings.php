@@ -54,7 +54,11 @@ class Settings extends Model
         
         // Baidu
         'baidu.com',
-        
+
+        // Bluesky
+        'bsky.app',
+        'bsky.social',
+
         // CollegeHumor
         'collegehumor.com',
         
