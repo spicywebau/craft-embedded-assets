@@ -9,6 +9,9 @@
 - Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Code` (previously added in 4.1.0)
 - Added `spicyweb\embeddedassets\adapters\openstreetmap\detectors\Type` (previously added in 4.1.0)
 
+### Changed
+- The default value for `spicyweb\embeddedassets\models\Settings::$whitelist` now includes `'bsky.app'`, `'bsky.social'`, and `'openstreetmap.org'` (previously changed in 4.1.0)
+
 ## 5.0.1 - 2024-03-28
 
 ### Added
