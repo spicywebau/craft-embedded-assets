@@ -37,6 +37,7 @@ use yii\base\Event;
  * @author Spicy Web <craft@spicyweb.com.au>
  * @author Benjamin Fleming
  * @since 1.0.0
+ * @property-read Service $methods
  */
 class Plugin extends BasePlugin
 {
