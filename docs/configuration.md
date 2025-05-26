@@ -90,14 +90,6 @@ Available in the control panel: yes (HTTP Referer)
 
 Sets a `Referer` HTTP header on the request. By default, no `Referer` header is sent by curl. In some cases, it is necessary to add this header. For example, Vimeo videos with [domain-level privacy](https://developer.vimeo.com/api/oembed/videos#embedding-videos-with-domain-privacy) require this to be set.
 
-## `showFieldLinkIcon`
-
-Type: `bool`
-Default: `true`
-Available in the control panel: yes (Show link icons on fields?)
-
-Whether to show icons linking to embedded asset URLs on asset fields.
-
 ## `showThumbnailsInCp`
 
 Type: `bool`
