@@ -64,11 +64,11 @@ class Service extends Component
      *
      * @param string $url
      * @param bool $checkCache Whether to check for data associated with the URL that's been stored in Craft's cache
-     * @return EmbeddedAsset
+     * @return EmbeddedAsset|null
      * @throws NotWhitelistedException if the `preventNonWhitelistedUploads` setting is enabled and the embedded asset
      * provider is non-whitelisted.
      */
-    public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
+    public function requestUrl(string $url, bool $checkCache = true): ?EmbeddedAsset
     {
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $cacheService = Craft::$app->getCache();
