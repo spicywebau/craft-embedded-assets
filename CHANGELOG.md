@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error that occurred when trying to create a YouTube embedded asset using the `youtu.be` domain
+
 ## 5.4.3 - 2025-02-11
 
 ### Changed

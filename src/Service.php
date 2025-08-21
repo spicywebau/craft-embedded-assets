@@ -70,6 +70,11 @@ class Service extends Component
      */
     public function requestUrl(string $url, bool $checkCache = true): EmbeddedAsset
     {
+        // youtu.be links returning supported browser page instead of the video page
+        if (preg_match('/:\/\/youtu.be\/([A-Za-z0-9_-]{11})(\?|$)/', $url, $matches)) {
+            $url = sprintf('https://www.youtube.com/watch?v=%s', $matches[1]);
+        }
+
         $pluginSettings = EmbeddedAssets::$plugin->getSettings();
         $cacheService = Craft::$app->getCache();
         $cacheKey = 'embeddedasset:' . $url;
@@ -647,7 +652,7 @@ class Service extends Component
     private function _convertFromExtractor(Extractor $extractor): array
     {
         return [
-            'title' => $extractor->title,
+            'title' => $extractor->title ?: (string)$extractor->url,
             'description' => $extractor->description,
             'url' => (string)$extractor->url,
             'type' => $extractor->type,
