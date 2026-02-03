@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug causing Embed button duplication
+
 ## 5.4.6 - 2026-01-28
 
 ### Fixed

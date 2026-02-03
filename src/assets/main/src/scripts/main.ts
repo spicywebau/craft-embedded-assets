@@ -12,8 +12,27 @@ declare global {
 }
 
 const embeddedAssets = new EmbeddedAssets()
+const button = new Button('Embed')
+const replaceButton = new Button('Replace')
+let buttonInit = false
 
 monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
+  if (buttonInit) {
+    // At least make sure it's in the right place
+    const inHeader = this.$uploadButton.closest('#header').length > 0
+    const inModal = this.$uploadButton.closest('.modal').length > 0
+
+    if (inHeader) {
+      this.$uploadButton.before(button.$element)
+      this.$uploadButton.before(replaceButton.$element)
+    } else if (inModal) {
+      this.$uploadButton.after(button.$element)
+      this.$uploadButton.after(replaceButton.$element)
+    }
+
+    return
+  }
+
   const $uploadButton = this.$uploadButton
 
   // If there's no upload button, there should be no embed button
@@ -21,8 +40,7 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
     return
   }
 
-  const button = new Button('Embed')
-  const replaceButton = new Button('Replace')
+  buttonInit = true
   const inHeader = $uploadButton.closest('#header').length > 0
   const inModal = $uploadButton.closest('.modal').length > 0
 
