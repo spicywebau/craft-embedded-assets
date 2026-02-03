@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.4.7 - 2026-02-03
 
 ### Fixed
 - Fixed a bug causing Embed button duplication
