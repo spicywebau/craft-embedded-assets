@@ -296,7 +296,11 @@ class Service extends Component
      */
     public function isValidEmbeddedAssetData(array $array): bool
     {
-        return $this->createEmbeddedAsset($array) !== null;
+        try {
+            return $this->createEmbeddedAsset($array) !== null;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     /**
