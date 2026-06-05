@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.4.8 - 2026-06-05
 
 ### Fixed
 - Fixed an error that occurred when uploading a JSON file that is not an embedded asset
