@@ -4,6 +4,7 @@ namespace spicyweb\embeddedassets;
 
 use Craft;
 use craft\db\Table;
+use craft\fields\Assets as AssetsField;
 use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\models\VolumeFolder;
@@ -48,26 +49,7 @@ class Controller extends BaseController
         $requestService = Craft::$app->getRequest();
 
         $url = $requestService->getRequiredBodyParam('url');
-        $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getBodyParam('targetUid');
-        $targetId = $requestService->getBodyParam('targetId');
-
-        if (!$targetId && !$targetUid) {
-            throw new BadRequestHttpException('One of targetUid or targetId is required.');
-        }
-
-        $folderCriteria = [];
-
-        if ($targetId) {
-            $folderCriteria['id'] = $targetId;
-        } elseif (str_ends_with($targetType, 'folder')) {
-            $folderCriteria['uid'] = $targetUid;
-        } else {
-            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
-            $folderCriteria['parentId'] = ':empty:';
-        }
-
-        $folder = $this->_findFolder($folderCriteria);
+        $folder = $this->_resolveFolder($requestService);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = Craft::$app->getElements()->saveElement($asset);
@@ -116,14 +98,7 @@ class Controller extends BaseController
         $requestService = Craft::$app->getRequest();
 
         $url = $requestService->getRequiredParam('url');
-        $targetType = $requestService->getRequiredBodyParam('targetType');
-        $targetUid = $requestService->getBodyParam('targetUid');
-        $targetId = $requestService->getBodyParam('targetId');
         $assetId = $requestService->getRequiredParam('assetId');
-
-        if (!$targetId && !$targetUid) {
-            throw new BadRequestHttpException('One of targetUid or targetId is required.');
-        }
 
         $assetToReplace = null;
 
@@ -131,18 +106,7 @@ class Controller extends BaseController
             throw new NotFoundHttpException('Asset not found.');
         }
 
-        $folderCriteria = [];
-
-        if ($targetId) {
-            $folderCriteria['id'] = $targetId;
-        } elseif (str_ends_with($targetType, 'folder')) {
-            $folderCriteria['uid'] = $targetUid;
-        } else {
-            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
-            $folderCriteria['parentId'] = ':empty:';
-        }
-
-        $folder = $this->_findFolder($folderCriteria);
+        $folder = $this->_resolveFolder($requestService);
         $embeddedAsset = EmbeddedAssets::$plugin->methods->requestUrl($url);
         $asset = EmbeddedAssets::$plugin->methods->createAsset($embeddedAsset, $folder);
         $result = $elementsService->saveElement($asset);
@@ -238,6 +202,65 @@ class Controller extends BaseController
         $headers->set('content-type', 'text/html; charset=utf-8');
 
         return $response;
+    }
+
+    /**
+     * Resolves the target VolumeFolder for a save/replace request, either from
+     * an explicit targetType/targetUid/targetId, or -- when the request instead
+     * carries a fieldId (and optionally elementId) -- by resolving the Assets
+     * field's (possibly dynamic) subpath, creating the folder if it doesn't
+     * exist yet. This mirrors craft\controllers\AssetsController::actionUpload().
+     */
+    private function _resolveFolder(\yii\web\Request $requestService): VolumeFolder
+    {
+        $fieldId = $requestService->getBodyParam('fieldId');
+
+        if ($fieldId) {
+            return $this->_findFolderByField((int)$fieldId, $requestService->getBodyParam('elementId'));
+        }
+
+        $targetType = $requestService->getRequiredBodyParam('targetType');
+        $targetUid = $requestService->getBodyParam('targetUid');
+        $targetId = $requestService->getBodyParam('targetId');
+
+        if (!$targetId && !$targetUid) {
+            throw new BadRequestHttpException('One of targetUid, targetId or fieldId is required.');
+        }
+
+        $folderCriteria = [];
+
+        if ($targetId) {
+            $folderCriteria['id'] = $targetId;
+        } elseif (str_ends_with($targetType, 'folder')) {
+            $folderCriteria['uid'] = $targetUid;
+        } else {
+            $folderCriteria['volumeId'] = Db::idByUid(Table::VOLUMES, $targetUid);
+            $folderCriteria['parentId'] = ':empty:';
+        }
+
+        return $this->_findFolder($folderCriteria);
+    }
+
+    private function _findFolderByField(int $fieldId, mixed $elementId): VolumeFolder
+    {
+        $field = Craft::$app->getFields()->getFieldById($fieldId);
+
+        if (!$field instanceof AssetsField) {
+            throw new BadRequestHttpException('The field provided is not an Assets field');
+        }
+
+        $element = $elementId ? Craft::$app->getElements()->getElementById((int)$elementId) : null;
+        $folderId = $field->resolveDynamicPathToFolderId($element);
+        $folder = Craft::$app->getAssets()->findFolder(['id' => $folderId]);
+
+        if (!$folder) {
+            throw new BadRequestHttpException('The target folder provided for uploading is not valid');
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById($folder->volumeId);
+        $this->requirePermission('saveAssets:' . $volume->uid);
+
+        return $folder;
     }
 
     private function _findFolder(array $criteria): VolumeFolder

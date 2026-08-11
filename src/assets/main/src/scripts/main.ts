@@ -91,13 +91,29 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
       }
     }
 
-    const split = this.sourceKey.split(':')
+    const split = (this.sourceKey ?? '').split(':')
 
     if (typeof split[split.length - 2] !== 'undefined') {
       return {
         targetType: split[split.length - 2],
         targetUid: split[split.length - 1]
       }
+    }
+
+    // No real folder/source could be resolved -- this happens when an Assets
+    // field is restricted to a single folder with a dynamic (Twig) subpath
+    // that hasn't been created yet, so Craft's asset index falls back to the
+    // "temp" pseudo-source with an empty sourcePath. Fall back to the same
+    // fieldId/elementId params Craft's own AssetSelectInput uploader sends in
+    // that situation, and let the server resolve (and create) the folder.
+    if (this.settings.fieldId != null) {
+      const target: { fieldId: number, elementId?: number } = { fieldId: this.settings.fieldId }
+
+      if (this.settings.sourceElementId != null) {
+        target.elementId = this.settings.sourceElementId
+      }
+
+      return target
     }
 
     return {}
