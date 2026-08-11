@@ -103,14 +103,20 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
     // No real folder/source could be resolved -- this happens when an Assets
     // field is restricted to a single folder with a dynamic (Twig) subpath
     // that hasn't been created yet, so Craft's asset index falls back to the
-    // "temp" pseudo-source with an empty sourcePath. Fall back to the same
-    // fieldId/elementId params Craft's own AssetSelectInput uploader sends in
-    // that situation, and let the server resolve (and create) the folder.
-    if (this.settings.fieldId != null) {
-      const target: { fieldId: number, elementId?: number } = { fieldId: this.settings.fieldId }
+    // "temp" pseudo-source with an empty sourcePath. The field's ID is baked
+    // into the modal's storage key as "BaseElementSelectInput.field.<id>"
+    // (see craft\fields\BaseRelationField::inputHtml()), and the element
+    // being edited is settings.referenceElementId (or referenceElementOwnerId
+    // for a nested element's owner) -- fall back to those and let the server
+    // resolve (and create) the folder the same way Craft's own asset upload does.
+    const fieldIdMatch = /\.field\.(\d+)/.exec(this.settings.storageKey ?? '')
 
-      if (this.settings.sourceElementId != null) {
-        target.elementId = this.settings.sourceElementId
+    if (fieldIdMatch !== null) {
+      const target: { fieldId: number, elementId?: number } = { fieldId: Number(fieldIdMatch[1]) }
+      const elementId = this.settings.referenceElementId ?? this.settings.referenceElementOwnerId
+
+      if (elementId != null) {
+        target.elementId = elementId
       }
 
       return target
