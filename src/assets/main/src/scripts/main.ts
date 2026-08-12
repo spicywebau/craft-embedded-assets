@@ -91,13 +91,29 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
       }
     }
 
-    const split = this.sourceKey.split(':')
+    const split = (this.sourceKey ?? '').split(':')
 
     if (typeof split[split.length - 2] !== 'undefined') {
       return {
         targetType: split[split.length - 2],
         targetUid: split[split.length - 1]
       }
+    }
+
+    // No real folder/source could be resolved 
+    // fall back to temp pseudo-source with empty sourcePath
+    // let the server resolve (and create) the folder the same way Craft's own asset upload does.
+    const fieldIdMatch = /\.field\.(\d+)/.exec(this.settings.storageKey ?? '')
+
+    if (fieldIdMatch !== null) {
+      const target: { fieldId: number, elementId?: number } = { fieldId: Number(fieldIdMatch[1]) }
+      const elementId = this.settings.referenceElementId ?? this.settings.referenceElementOwnerId
+
+      if (elementId != null) {
+        target.elementId = elementId
+      }
+
+      return target
     }
 
     return {}
