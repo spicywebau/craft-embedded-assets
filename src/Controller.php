@@ -205,10 +205,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Resolves the target VolumeFolder for a save/replace request, either from
-     * an explicit targetType/targetUid/targetId, or -- when the request instead
-     * carries a fieldId (and optionally elementId) -- by resolving the Assets
-     * field's (possibly dynamic) subpath, creating the folder if it doesn't
+     * Resolves the target VolumeFolder for a save/replace request, creating the folder if it doesn't
      * exist yet. This mirrors craft\controllers\AssetsController::actionUpload().
      */
     private function _resolveFolder(\yii\web\Request $requestService): VolumeFolder
