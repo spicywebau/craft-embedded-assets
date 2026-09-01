@@ -200,6 +200,25 @@ class EmbeddedAsset extends Model implements JsonSerializable
     }
 
     /**
+     * Returns deprecated property values without triggering their deprecation accessors.
+     *
+     * This is used internally when refreshing an existing embedded asset so the values can be
+     * retained for backwards compatibility without logging deprecation warnings.
+     *
+     * @return array<string, mixed>
+     */
+    public function getDeprecatedPropertyValues(): array
+    {
+        $values = [];
+
+        foreach (static::deprecatedProperties() as $property) {
+            $values[$property] = $this->{"_$property"};
+        }
+
+        return $values;
+    }
+
+    /**
      * @inheritdoc
      */
     public function __construct($config = [])
