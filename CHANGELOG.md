@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.4.9 - 2026-09-05
+
+### Fixed
+- Fixed deprecation warnings during asset refresh (thanks @romainpoirier)
+
 ## 5.4.8 - 2026-06-05
 
 ### Fixed
