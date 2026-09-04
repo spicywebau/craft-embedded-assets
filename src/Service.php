@@ -371,10 +371,12 @@ class Service extends Component
         $folder = $asset->getFolder();
         $newEmbeddedAsset = $this->requestUrl($embeddedAsset->url, false);
 
-        // Retain deprecated property values not supported by Embed 4
-        foreach (['imageHeight', 'imageWidth', 'images', 'providerIcons', 'tags', 'type'] as $prop) {
-            $newEmbeddedAsset->{$prop} = $embeddedAsset->{$prop};
+        // Retain deprecated property values not supported by Embed 4 without triggering deprecation warnings
+        foreach ($embeddedAsset->getDeprecatedPropertyValues() as $prop => $value) {
+            $newEmbeddedAsset->{$prop} = $value;
         }
+
+        $newEmbeddedAsset->type = $embeddedAsset->type;
 
         $newAsset = $this->createAsset($newEmbeddedAsset, $folder);
         $result = $elementsService->saveElement($newAsset);
