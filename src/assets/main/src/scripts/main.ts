@@ -76,7 +76,17 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
   showButtonIfJsonAllowed(button, allowedAssetKinds)
   replaceButton.hide()
 
+  // Set whenever getActionTarget() has to fall back to fieldId/elementId
+  // because no real folder/source could be resolved from the modal's current
+  // sourcePath/sourceKey (see below). In that case the folder the asset was
+  // just saved into is a brand new dynamic subfolder that was never rendered
+  // as a source in this modal, so there's nothing for updateElements() to
+  // refresh into -- the asset has to be injected straight into the field instead.
+  let usedFieldFallback = false
+
   const getActionTarget: () => Object = () => {
+    usedFieldFallback = false
+
     const sourcePathLength = this.sourcePath?.length ?? 0
 
     if (sourcePathLength > 0) {
@@ -91,13 +101,31 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
       }
     }
 
-    const split = this.sourceKey.split(':')
+    const split = (this.sourceKey ?? '').split(':')
 
     if (typeof split[split.length - 2] !== 'undefined') {
       return {
         targetType: split[split.length - 2],
         targetUid: split[split.length - 1]
       }
+    }
+
+    // No real folder/source could be resolved
+    // fall back to temp pseudo-source with empty sourcePath
+    // let the server resolve (and create) the folder the same way Craft's own asset upload does.
+    const fieldIdMatch = /\.field\.(\d+)/.exec(this.settings.storageKey ?? '')
+
+    if (fieldIdMatch !== null) {
+      const target: { fieldId: number, elementId?: number } = { fieldId: Number(fieldIdMatch[1]) }
+      const elementId = this.settings.referenceElementId ?? this.settings.referenceElementOwnerId
+
+      if (elementId != null) {
+        target.elementId = elementId
+      }
+
+      usedFieldFallback = true
+
+      return target
     }
 
     return {}
@@ -108,9 +136,53 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
 
   let idsToSelect: string[] = []
 
+  // Adds the newly-created asset to the field directly, bypassing the
+  // modal's element listing entirely. Used when the asset was saved into a
+  // dynamic subfolder that didn't exist yet when the modal was opened (see
+  // usedFieldFallback above) -- there's no source in the modal's sidebar for
+  // that folder, so updateElements() has nothing to refresh into.
+  //
+  // modal.onSelect() is exactly what Craft calls when you click the modal's
+  // own "Select" button (see Craft.BaseElementSelectorModal::selectElements()
+  // and Craft.BaseElementSelectInput::onModalSelect()) -- that handler does
+  // its own app/render-elements call and hides the modal itself, so all it
+  // needs from us is the id/siteId, not a fully-rendered element.
+  const selectEmbeddedAssetInField = (assetId: string): void => {
+    const modal = this.settings.modal
+
+    if (typeof modal?.onSelect !== 'function') {
+      idsToSelect.push(assetId)
+      this.updateElements()
+      return
+    }
+
+    try {
+      modal.onSelect([{
+        id: assetId,
+        // this.settings.criteria?.siteId is frequently undefined (and gets
+        // dropped entirely by JSON.stringify, tripping an "undefined array
+        // key" error server-side in app/render-elements) -- this.siteId is
+        // the element index's own always-populated current site, used the
+        // same way internally for its own element queries.
+        siteId: this.siteId ?? this.settings.criteria?.siteId ?? null
+      }])
+    } catch (e) {
+      console.error('Embedded Assets: failed to add the new asset to the field', e)
+
+      // At least the upload itself succeeded -- fall back to trying to
+      // refresh the current listing rather than losing the asset silently.
+      idsToSelect.push(assetId)
+      this.updateElements()
+    }
+  }
+
   embeddedAssets.on('save', (e: any) => {
-    idsToSelect.push(e.assetId)
-    this.updateElements()
+    if (usedFieldFallback) {
+      selectEmbeddedAssetInField(e.assetId)
+    } else {
+      idsToSelect.push(e.assetId)
+      this.updateElements()
+    }
   })
 
   this.on('updateElements', () => {
