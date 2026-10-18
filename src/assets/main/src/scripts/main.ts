@@ -12,27 +12,8 @@ declare global {
 }
 
 const embeddedAssets = new EmbeddedAssets()
-const button = new Button('Embed')
-const replaceButton = new Button('Replace')
-let buttonInit = false
 
 monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
-  if (buttonInit) {
-    // At least make sure it's in the right place
-    const inHeader = this.$uploadButton.closest('#header').length > 0
-    const inModal = this.$uploadButton.closest('.modal').length > 0
-
-    if (inHeader) {
-      this.$uploadButton.before(button.$element)
-      this.$uploadButton.before(replaceButton.$element)
-    } else if (inModal) {
-      this.$uploadButton.after(button.$element)
-      this.$uploadButton.after(replaceButton.$element)
-    }
-
-    return
-  }
-
   const $uploadButton = this.$uploadButton
 
   // If there's no upload button, there should be no embed button
@@ -40,7 +21,27 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
     return
   }
 
-  buttonInit = true
+  // Each asset index (e.g. each Assets field's selector modal) gets its own buttons, so that embedded assets are
+  // saved to that index's folder and the new asset is selected in that index. Craft recreates the upload button
+  // whenever the source changes, so existing buttons just need to be moved next to the new one.
+  if (typeof this.embeddedAssetsButtons !== 'undefined') {
+    const { button, replaceButton } = this.embeddedAssetsButtons
+
+    if ($uploadButton.closest('#header').length > 0) {
+      $uploadButton.before(button.$element)
+      $uploadButton.before(replaceButton.$element)
+    } else if ($uploadButton.closest('.modal').length > 0) {
+      $uploadButton.after(button.$element)
+      $uploadButton.after(replaceButton.$element)
+    }
+
+    return
+  }
+
+  const button = new Button('Embed')
+  const replaceButton = new Button('Replace')
+  this.embeddedAssetsButtons = { button, replaceButton }
+
   const inHeader = $uploadButton.closest('#header').length > 0
   const inModal = $uploadButton.closest('.modal').length > 0
 
@@ -100,6 +101,17 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
       }
     }
 
+    // Sources without a `type:uid` key, e.g. the Temporary Uploads source used by Assets fields restricted to a
+    // dynamic subfolder that doesn't exist yet -- use the same folder Craft uses for regular uploads
+    const folderId = this.currentFolderId ?? this.$source?.data('folder-id')
+
+    if (folderId !== undefined && folderId !== null) {
+      return {
+        targetType: 'folder',
+        targetId: folderId
+      }
+    }
+
     return {}
   }
 
@@ -109,6 +121,11 @@ monkeypatch(Craft.AssetIndex, 'createUploadInputs', function () {
   let idsToSelect: string[] = []
 
   embeddedAssets.on('save', (e: any) => {
+    // Only the index whose button was used should select the new asset
+    if (embeddedAssets.currentButton !== button && embeddedAssets.currentButton !== replaceButton) {
+      return
+    }
+
     idsToSelect.push(e.assetId)
     this.updateElements()
   })

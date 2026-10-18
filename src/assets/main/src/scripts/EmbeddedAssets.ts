@@ -5,6 +5,7 @@ import Modal from './Modal'
 export default class EmbeddedAssets extends Emitter {
   public modal: Modal | null
   public buttons: Button[]
+  public currentButton: Button | null = null
   private _replaceAssetId: string
   private _currentGetActionTarget: Function
   private _preventNonWhitelistedUploads?: boolean
@@ -56,6 +57,7 @@ export default class EmbeddedAssets extends Emitter {
     button.$element?.on('click', () => {
       if (this.modal !== null) {
         this._currentGetActionTarget = getActionTarget
+        this.currentButton = button
 
         this.buttons.forEach((b) => b.setActive(b === button))
         this.modal.show(button.$element as JQuery, { orientations }, replace)
